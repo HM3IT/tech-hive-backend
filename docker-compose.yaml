@@ -1,15 +1,4 @@
-version: "3.9"
-
 services:
-  techhive-app:
-    build:
-      context: ./
-      dockerfile: Dockerfile
-    container_name: "techhive-app"
-    depends_on:
-      - techhive-db
-    ports:
-      - "80:80"
   techhive-db:
     image: postgres:17
     container_name: "techhive-db"
@@ -17,7 +6,7 @@ services:
     environment:
       POSTGRES_USER: heinmin2maw
       POSTGRES_PASSWORD: heinmin2maw
-      POSTGRES_DB: techhive
+      POSTGRES_DB: techhive-db
     ports:
       - "5432:5432"
     volumes:
