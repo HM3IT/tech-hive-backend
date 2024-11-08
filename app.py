@@ -32,7 +32,10 @@ openapi_config = OpenAPIConfig(
  
 dependencies = {"user_service": Provide(provide_user_service)}
 dependencies.update(create_collection_dependencies())
- 
+
+logger.info("dependencies")
+logger.info(dependencies) 
+
 app = Litestar(
     debug=True,
     route_handlers=[UserController],

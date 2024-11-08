@@ -19,7 +19,7 @@ from domain.users.schemas import User, UserCreate, UserUpdate
 from domain.users.services import UserService
 from domain.users.dependencies import provide_user_service
 from db.models.enums import UserType
-
+from litestar.repository.filters import CollectionFilter
 
 from uuid import UUID
 
@@ -36,22 +36,22 @@ class UserController(Controller):
     dto = None
     return_dto = None
 
-    # @get(
-    #     operation_id="ListUsers",
-    #     name="users:list",
-    #     summary="List Users",
-    #     description="Retrieve the users.",
-    #     path=urls.ACCOUNT_LIST,
-    #     cache=60,
-    # )
-    # async def list_users(
-    #     self,
-    #     user_service: UserService,
-    #     filters: Annotated[list[FilterTypes], Dependency(skip_validation=True)],
-    # ) -> OffsetPagination[User]:
-    #     """List users."""
-    #     results, total = await user_service.list_and_count(*filters)
-    #     return user_service.to_schema(data=results, total=total, schema_type=User, filters=filters)
+    @get(
+        operation_id="ListUsers",
+        name="users:list",
+        summary="List Users",
+        description="Retrieve the users.",
+        path=urls.ACCOUNT_LIST,
+        cache=60,
+    )
+    async def list_users(
+        self,
+        user_service: UserService,
+        filters: Annotated[CollectionFilter, Dependency(skip_validation=True)] = None,
+    ) -> OffsetPagination[User]:
+        filters = filters or []
+        results, total = await user_service.list_and_count(*filters)
+        return user_service.to_schema(data=results, total=total, schema_type=User, filters=filters)
 
     @get(
         operation_id="GetUser",
