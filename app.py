@@ -1,67 +1,43 @@
 from __future__ import annotations
-
 import os
-from advanced_alchemy.extensions.litestar.plugins.init.config.asyncio import autocommit_before_send_handler
-from litestar import Litestar, get
-from litestar.contrib.sqlalchemy.base import UUIDBase
-from litestar.contrib.sqlalchemy.plugins import SQLAlchemyAsyncConfig, SQLAlchemyPlugin
+ 
+from litestar import Litestar
+from litestar.contrib.sqlalchemy.plugins import  SQLAlchemyPlugin
 
 from litestar.di import Provide
 
-from litestar.params import Parameter
-from litestar.repository.filters import LimitOffset
+from domain.users.dependencies import provide_user_service
 
-from services import provide_user_service, provide_product_service, provide_order_service
-
-from models import *
+from domain.users.guards import oauth2_auth
 from dotenv import load_dotenv
+import logging 
+from db.base import db_config
+from db.dependencies import create_collection_dependencies
+from domain.users.controllers import UserController
+
+from litestar.openapi.config import OpenAPIConfig
 
 load_dotenv()
-
 DATABASE_URI = os.environ["DATABASE_URI"]
 
-def provide_limit_offset_pagination(
-    current_page: int = Parameter(ge=1, query="currentPage", default=1, required=False),
-    page_size: int = Parameter(
-        query="pageSize",
-        ge=1,
-        default=10,
-        required=False,
-    ),
-) -> LimitOffset:
-    """Add offset/limit pagination.
+logger = logging.getLogger()
+logging.basicConfig(level=logging.DEBUG)
+# logging.getLogger("sqlalchemy.engine").setLevel(logging.INFO)
+# logging.getLogger("sqlalchemy.orm").setLevel(logging.DEBUG)
 
-    Return type consumed by `Repository.apply_limit_offset_pagination()`.
-
-    Parameters
-    ----------
-    current_page : int
-        LIMIT to apply to select.
-    page_size : int
-        OFFSET to apply to select.
-    """
-    return LimitOffset(page_size, page_size * (current_page - 1))
-
-
-@get("/")
-async def hello_world() -> str:
-    return "Hello, world!"
-
-
-
-
-
-db_config = SQLAlchemyAsyncConfig(
-    connection_string="sqlite+aiosqlite:///todo.sqlite",
-    metadata=UUIDBase.metadata,
-    create_all=True,
-    before_send_handler=autocommit_before_send_handler,
-
+openapi_config = OpenAPIConfig(
+    title="My API",
+    version="1.0.0",
 )
-
+ 
+dependencies = {"user_service": Provide(provide_user_service)}
+dependencies.update(create_collection_dependencies())
+ 
 app = Litestar(
-    [hello_world],
-    dependencies={"user_service":provide_user_service },
+    debug=True,
+    route_handlers=[UserController],
+    dependencies=dependencies,
     plugins=[SQLAlchemyPlugin(db_config)],
-
+    # on_app_init=[oauth2_auth.on_app_init],
+    openapi_config=openapi_config,
 )

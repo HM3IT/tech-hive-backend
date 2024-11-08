@@ -23,6 +23,7 @@ MarkupSafe==3.0.2
 mdurl==0.1.2
 msgspec==0.18.6
 multidict==6.1.0
+passlib==1.7.4
 polyfactory==2.18.0
 pydantic==2.9.2
 pydantic_core==2.23.4
