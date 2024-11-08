@@ -13,7 +13,7 @@ from dotenv import load_dotenv
 import logging 
 from db.base import db_config
 from db.dependencies import create_collection_dependencies
-from domain.users.controllers import UserController
+from domain.users.controllers import UserController, AccessController
 
 from litestar.openapi.config import OpenAPIConfig
 
@@ -28,6 +28,7 @@ logging.basicConfig(level=logging.DEBUG)
 openapi_config = OpenAPIConfig(
     title="My API",
     version="1.0.0",
+    security=[{"BearerToken": []}]
 )
  
 dependencies = {"user_service": Provide(provide_user_service)}
@@ -38,9 +39,9 @@ logger.info(dependencies)
 
 app = Litestar(
     debug=True,
-    route_handlers=[UserController],
+    route_handlers=[UserController, AccessController],
     dependencies=dependencies,
     plugins=[SQLAlchemyPlugin(db_config)],
-    # on_app_init=[oauth2_auth.on_app_init],
+    on_app_init=[oauth2_auth.on_app_init],
     openapi_config=openapi_config,
 )

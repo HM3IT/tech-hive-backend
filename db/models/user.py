@@ -16,7 +16,7 @@ class User(UUIDAuditBase):
     name: Mapped[str] = mapped_column(String(255), default=None, nullable=True)
     email: Mapped[str] = mapped_column(String(255), index=True, unique=True, nullable=False)
     address: Mapped[str] = mapped_column(TEXT, nullable=True)
-    password: Mapped[str] = mapped_column(String(255), nullable=True)
+    hashed_password: Mapped[str] = mapped_column(String(255), nullable=True)
     image_url: Mapped[str] = mapped_column(String(255),default=None ,nullable=True)
     user_type: Mapped[UserType] = mapped_column(default=UserType.CUSTOMER)
     user_level: Mapped[CustomerLevel] = mapped_column(default=CustomerLevel.CLASSIC, nullable=True)

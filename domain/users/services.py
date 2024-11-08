@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from typing import  Any, TYPE_CHECKING
  
 from advanced_alchemy.service import (
     ModelDictT,
@@ -8,19 +7,13 @@ from advanced_alchemy.service import (
 )
 from litestar.exceptions import PermissionDeniedException
 
-import hashlib
 from db.models import User
 from db.models.enums import UserType
 from domain.repositories import (
-    # UserOauthAccountRepository,
     UserRepository,
 )
 from domain.lib import crypt
 import logging
-
-from datetime import datetime, timezone
-
-from uuid import UUID  # noqa: TCH003
 
 from advanced_alchemy.repository import Empty, EmptyType, ErrorMessages
 from advanced_alchemy.service import (
@@ -52,12 +45,6 @@ class UserService(SQLAlchemyAsyncRepositoryService[User]):
         error_messages: ErrorMessages | None | EmptyType = Empty,
     ) -> User:
         """Create a new User and assign default Role."""
-        if isinstance(data, dict):
-            password = data["password"]
-            hashed_password = hashlib.sha512(password.encode()).hexdigest()
-            data["password"] = hashed_password
-            logger.error("Hashed password")
-            logger.error(hashed_password)
     
         return await super().create(
             data=data,

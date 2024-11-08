@@ -46,9 +46,12 @@ class UserUpdate(CamelizedBaseStruct, omit_defaults=True):
 
 
 class AccountLogin(CamelizedBaseStruct):
-    name: str
+    email: str
     password: str
 
+class APIAuth(CamelizedBaseStruct):
+    username: str
+    password: str
 
 class AccountRegister(CamelizedBaseStruct):
     email: str

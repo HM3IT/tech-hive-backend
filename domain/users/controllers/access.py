@@ -14,9 +14,11 @@ from litestar.security.jwt import OAuth2Login
 from db.models import User as UserModel
 from domain.users import urls
 from domain.users.guards import oauth2_auth, requires_active_user
-from domain.users.schemas import AccountLogin, AccountRegister, User
+from domain.users.schemas import AccountLogin, AccountRegister, User, APIAuth
 from domain.users.services import UserService
- 
+import logging
+
+logger = logging.getLogger()
 
 class AccessController(Controller):
     """User login and registration."""
@@ -39,13 +41,29 @@ class AccessController(Controller):
     )
     async def login(
         self,
-        users_service: UserService,
+        user_service: UserService,
         data: Annotated[AccountLogin, Body(title="OAuth2 Login", media_type=RequestEncodingType.URL_ENCODED)],
     ) -> Response[OAuth2Login]:
         """Authenticate a user."""
-        user = await users_service.authenticate(data.username, data.password)
+        user = await user_service.authenticate(data.email, data.password)
         return oauth2_auth.login(user.email)
 
+    @post(
+        operation_id="AccountAuth",
+        name="account:auth",
+        path=urls.ACCOUNT_AUTH,
+        cache=False,
+        summary="API endpoint authorization",
+        exclude_from_auth=True,
+    )
+    async def api_authorized(
+        self,
+        user_service: UserService,
+        data: Annotated[APIAuth, Body(title="OAuth2 Login", media_type=RequestEncodingType.URL_ENCODED)],
+    ) -> Response[OAuth2Login]:
+        """Authenticate a user."""
+        user = await user_service.authenticate(data.username, data.password)
+        return oauth2_auth.login(user.email)
     @post(
         operation_id="AccountLogout",
         name="account:logout",
@@ -81,13 +99,13 @@ class AccessController(Controller):
     async def signup(
         self,
         request: Request,
-        users_service: UserService,
+        user_service: UserService,
         data: AccountRegister,
     ) -> User:
         """User Signup."""
         user_data = data.to_dict()
-        user = await users_service.create(user_data)
-        return users_service.to_schema(user, schema_type=User)
+        user = await user_service.create(user_data)
+        return user_service.to_schema(user, schema_type=User)
 
     @get(
         operation_id="AccountProfile",
@@ -97,6 +115,6 @@ class AccessController(Controller):
         summary="User Profile",
         description="User profile information.",
     )
-    async def profile(self, request: Request, current_user: UserModel, users_service: UserService) -> User:
+    async def profile(self, request: Request, current_user: UserModel, user_service: UserService) -> User:
         """User Profile."""
-        return users_service.to_schema(current_user, schema_type=User)
+        return user_service.to_schema(current_user, schema_type=User)
