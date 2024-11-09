@@ -14,13 +14,12 @@ from domain.products.services import ProductService
 from domain.products import urls
 from domain.products.schemas import ProductCreate, Product
 from domain.users.guards import requires_active_user, requires_superuser
-
-if TYPE_CHECKING:
-    from uuid import UUID
+ 
+from uuid import UUID
 
 class ProductController(Controller):
     """Product CRUD"""
-
+    tags = ["Product"]
     dependencies = {"product_service": Provide(provide_product_service)}
 
     @get(path=urls.PRODUCT_LIST)

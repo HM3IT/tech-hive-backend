@@ -5,8 +5,8 @@ FROM python:${PYTHON_BUILDER_IMAGE} as python-base
 
 WORKDIR /app
 
-
 COPY requirements.txt requirements.txt
+
 RUN pip install -r requirements.txt
 
 COPY . /app

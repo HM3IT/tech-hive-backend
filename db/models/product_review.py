@@ -5,7 +5,7 @@ from sqlalchemy import ForeignKey, DECIMAL, TEXT
 
 if TYPE_CHECKING:
     from .product import Product
-
+ 
 
 class ProductReview(UUIDAuditBase):
     __tablename__ = "product_review"
@@ -15,3 +15,4 @@ class ProductReview(UUIDAuditBase):
     rating: Mapped[float] = mapped_column(DECIMAL(2, 1))
     review_text: Mapped[str] = mapped_column(TEXT)
     product: Mapped["Product"] = relationship(back_populates="product_reviews")
+  

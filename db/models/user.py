@@ -9,7 +9,6 @@ from .enums import UserType, CustomerLevel
 
 if TYPE_CHECKING:
     from .order import Order
-    from .product_review import ProductReview
 
 class User(UUIDAuditBase):
     __tablename__ = "user"
@@ -27,4 +26,3 @@ class User(UUIDAuditBase):
     is_verified: Mapped[bool] = mapped_column(default=False, nullable=False)
     verified_at: Mapped[date] = mapped_column(default=None, nullable=True)
     orders: Mapped[list["Order"]] = relationship(back_populates="user", lazy="selectin")
-    product_reviews: Mapped[list["ProductReview"]] = relationship(back_populates="user", lazy="selectin")

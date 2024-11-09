@@ -2,7 +2,7 @@ services:
   techhive-db:
     image: postgres:17
     container_name: "techhive-db"
-    hostname: "techhive-db"
+    restart: unless-stopped
     environment:
       POSTGRES_USER: heinmin2maw
       POSTGRES_PASSWORD: heinmin2maw
@@ -11,6 +11,7 @@ services:
       - "5432:5432"
     volumes:
       - db_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
 
 volumes:
   db_data: {}
