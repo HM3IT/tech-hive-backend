@@ -14,6 +14,8 @@ import logging
 from db.base import db_config
 from db.dependencies import create_collection_dependencies
 from domain.users.controllers import UserController, AccessController
+from domain.products.controller import ProductController
+# from domain.categories.controller import CategoryController
 
 from litestar.openapi.config import OpenAPIConfig
 
@@ -38,7 +40,7 @@ logger.info(dependencies)
 
 app = Litestar(
     debug=True,
-    route_handlers=[UserController, AccessController],
+    route_handlers=[UserController, AccessController, ProductController],
     dependencies=dependencies,
     plugins=[SQLAlchemyPlugin(db_config)],
     on_app_init=[oauth2_auth.on_app_init],

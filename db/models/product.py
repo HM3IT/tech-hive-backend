@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from .category import Category
-    from .subcategory import SubCategory
+    from .product_review import ProductReview 
 
 class Product(UUIDBase):
     __tablename__ = "product"
@@ -21,7 +21,7 @@ class Product(UUIDBase):
 
     category_id: Mapped[int] = mapped_column(ForeignKey("category.id"))
     category: Mapped["Category"] = relationship(back_populates="products", lazy="selectin")
-
-    subcategory_id: Mapped[int] = mapped_column(ForeignKey("subcategory.id"))
-    subcategory: Mapped["SubCategory"] = relationship(back_populates="products", lazy="selectin")
-
+    product_reviews: Mapped[list["ProductReview"]] = relationship(back_populates="product", lazy="selectin", cascade="delete, all")
+    @property
+    def category_name(self) -> str|None:
+        return self.category.name if self.category else None

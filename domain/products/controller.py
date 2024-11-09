@@ -13,7 +13,6 @@ from domain.products.depedencies import provide_product_service
 from domain.products.services import ProductService
 from domain.products import urls
 from domain.products.schemas import ProductCreate, Product
-from db.models import Product as ProductModel
 from domain.users.guards import requires_active_user, requires_superuser
 
 if TYPE_CHECKING:
@@ -29,19 +28,16 @@ class ProductController(Controller):
         self,
         product_service: ProductService,
         limit_offset: LimitOffset,
-    ) -> OffsetPagination[ProductModel]:
+    ) -> OffsetPagination[Product]:
         """List Products."""
         results, total = await product_service.list_and_count(limit_offset)
-     
-        return OffsetPagination[ProductModel](
-            items=results,
-            total=total,
-            limit=limit_offset.limit,
-            offset=limit_offset.offset,
-        )
+
+        filters = [limit_offset]
+ 
+        return product_service.to_schema(data=results, total=total, schema_type=Product, filters=filters)
 
     @post(path=urls.PRODUCT_ADD, guards=[requires_superuser, requires_active_user])
-    async def create_Product(
+    async def create_product(
         self,
         product_service: ProductService,
         data: ProductCreate,
@@ -53,7 +49,7 @@ class ProductController(Controller):
 
 
     @get(path=urls.PRODUCT_DETAIL)
-    async def get_Product(
+    async def get_product(
         self,
         product_service: ProductService,
         id: UUID = Parameter(
@@ -68,7 +64,7 @@ class ProductController(Controller):
     @patch(
         path=urls.PRODUCT_UPDATE, guards=[requires_superuser, requires_active_user]
     )
-    async def update_Product(
+    async def update_product(
         self,
         product_service: ProductService,
         data: ProductCreate,
@@ -86,7 +82,7 @@ class ProductController(Controller):
         return product_service.to_schema(db_obj, schema_type=Product)
 
     @delete(path=urls.PRODUCT_REMOVE, guards=[requires_superuser, requires_active_user])
-    async def delete_Product(
+    async def delete_product(
         self,
         product_service: ProductService,
         id: UUID = Parameter(

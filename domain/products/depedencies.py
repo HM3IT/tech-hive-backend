@@ -1,19 +1,20 @@
-from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 
 from db.models import Product
-from domain.repositories import ProductRepository
+from domain.products.services import ProductService
 
 from sqlalchemy.ext.asyncio import AsyncSession
+from collections.abc import AsyncGenerator
 
+ 
 
+async def provide_product_service(db_session: AsyncSession) -> AsyncGenerator[ProductService, None]:
 
-async def provide_product_service(db_session: AsyncSession) -> ProductRepository:
-    return ProductRepository(
-        statement=select(Product)
-            .options(
-                selectinload(Product.category),    
-                selectinload(Product.subcategory)  
-            ), 
+    async with ProductService.new(
         session=db_session,
-    )
+        load=[selectinload(Product.category), selectinload(Product.product_reviews)],
+        error_messages={"duplicate_key": "This user already exists.", "integrity": "User operation failed."},
+    ) as service:
+        yield service
+
+ 
