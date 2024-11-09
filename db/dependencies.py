@@ -1,7 +1,9 @@
+from typing import Any
 from litestar.di import Provide
-
+from litestar import Request
 from litestar.params import Parameter, Dependency
 from uuid import UUID
+from db.models import User as UserModel
 from advanced_alchemy.filters import (
     BeforeAfter,
     CollectionFilter,
@@ -23,6 +25,7 @@ __all__ = [
     "OrderBy",
     "SearchFilter",
     "FilterTypes",
+    "provide_user"
 ]
 
 def provide_id_filter(
@@ -60,6 +63,18 @@ def provide_limit_offset_pagination(
     """
     return LimitOffset(page_size, page_size * (current_page - 1))
 
+
+
+async def provide_user(request: Request[UserModel, Any, Any]) -> UserModel:
+    """Get the user from the connection.
+
+    Args:
+        request: current connection.
+
+    Returns:
+        User
+    """
+    return request.user
 
 
 def provide_search_filter(

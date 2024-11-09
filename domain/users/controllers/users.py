@@ -2,13 +2,11 @@
 
 from __future__ import annotations
 
-import secrets
-from typing import TYPE_CHECKING, Annotated
+from typing import Annotated
 
 import logging
-from litestar import Controller, Response, delete, get, patch, post
-from litestar.di import Provide
-from litestar.exceptions import InternalServerException
+from litestar import Controller, Request, delete, get, patch, post
+ 
 from litestar.params import Dependency, Parameter
 
 
@@ -17,13 +15,10 @@ from domain.users  import urls
 from domain.users.guards import requires_active_user, requires_superuser
 from domain.users.schemas import User, UserCreate, UserUpdate
 from domain.users.services import UserService
-from domain.users.dependencies import provide_user_service
 from db.models.enums import UserType
 from litestar.repository.filters import CollectionFilter
 
 from uuid import UUID
-
-from advanced_alchemy.filters import FilterTypes
 from advanced_alchemy.service import OffsetPagination
 
 logger = logging.getLogger()
@@ -73,6 +68,18 @@ class UserController(Controller):
         """Get a user."""
         db_obj = await user_service.get(user_id)
         return user_service.to_schema(db_obj, schema_type=User)
+    
+    @get(
+        operation_id="AccountProfile",
+        name="account:profile",
+        path=urls.ACCOUNT_PROFILE,
+        guards=[requires_active_user],
+        summary="User Profile",
+        description="User profile information.",
+    )
+    async def profile(self, request: Request, current_user: UserModel, user_service: UserService) -> User:
+        """User Profile."""
+        return user_service.to_schema(current_user, schema_type=User)
 
 
     @post(

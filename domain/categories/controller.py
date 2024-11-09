@@ -102,7 +102,7 @@ class SubCategoryController(Controller):
         """List Products."""
         results, total = await subcategory_service.list_and_count(limit_offset)
         filters = [limit_offset]
-        return subcategory_service.to_schema(data=results, total=total, schema_type=Category, filters=filters)
+        return subcategory_service.to_schema(data=results, total=total, schema_type=SubCategory, filters=filters)
 
     @post(path=urls.SUBCATEGORY_ADD, guards=[requires_superuser, requires_active_user])
     async def create_subcategory(

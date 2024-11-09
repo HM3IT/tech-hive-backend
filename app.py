@@ -7,6 +7,7 @@ from litestar.contrib.sqlalchemy.plugins import  SQLAlchemyPlugin
 from litestar.di import Provide
 
 from domain.users.dependencies import provide_user_service
+from db.dependencies import provide_user
 
 from domain.users.guards import oauth2_auth
 from dotenv import load_dotenv
@@ -32,7 +33,10 @@ openapi_config = OpenAPIConfig(
     version="1.0.0",
 )
  
-dependencies = {"user_service": Provide(provide_user_service)}
+dependencies = {
+    "user_service": Provide(provide_user_service),
+    "current_user": Provide(provide_user)}
+
 dependencies.update(create_collection_dependencies())
 
 logger.info("dependencies")

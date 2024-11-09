@@ -106,15 +106,4 @@ class AccessController(Controller):
         user_data = data.to_dict()
         user = await user_service.create(user_data)
         return user_service.to_schema(user, schema_type=User)
-
-    @get(
-        operation_id="AccountProfile",
-        name="account:profile",
-        path=urls.ACCOUNT_PROFILE,
-        guards=[requires_active_user],
-        summary="User Profile",
-        description="User profile information.",
-    )
-    async def profile(self, request: Request, current_user: UserModel, user_service: UserService) -> User:
-        """User Profile."""
-        return user_service.to_schema(current_user, schema_type=User)
+ 
