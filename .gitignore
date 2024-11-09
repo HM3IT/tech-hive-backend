@@ -23,7 +23,7 @@ dist/
 target/
 dist/
 .env
-.venv
+.venv/
 # JetBrains IDE
 .idea/
 

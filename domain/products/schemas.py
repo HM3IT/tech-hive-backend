@@ -1,6 +1,8 @@
-from pydantic import BaseModel
+from uuid import UUID 
+from domain.lib.schema import CamelizedBaseStruct
 
-class ProductCreate(BaseModel):
+
+class ProductCreate(CamelizedBaseStruct):
     name:str
     description: str
     price: float
@@ -12,3 +14,16 @@ class ProductCreate(BaseModel):
     stock:int =0
     discount_percent:float = 0.0
 
+
+class Product(CamelizedBaseStruct):
+    id:UUID
+    name:str
+    description: str
+    image_url:str
+    brand:str
+    category_id: int
+    subcategory_id: int
+    price: float= 0.0
+    stock:int =0
+    sub_image_url:dict ={}
+    discount_percent:float = 0.0

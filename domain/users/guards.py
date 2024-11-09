@@ -19,8 +19,7 @@ from litestar.handlers.base import BaseRouteHandler
 from litestar.security.jwt import Token
 
 
-__all__ = ("current_user_from_token","requires_active_user" ,"oauth2_auth","requires_superuser")
-# __all__ = ("requires_superuser", "requires_active_user", "requires_verified_user", "current_user_from_token", "auth")
+__all__ = ("current_user_from_token","requires_active_user" ,"oauth2_auth", "requires_verified_user", "requires_superuser")
 
 load_dotenv()
 SECRET_KEY = os.environ.get("SECRET_KEY")
@@ -61,22 +60,22 @@ def requires_superuser(connection: ASGIConnection, _: BaseRouteHandler) -> None:
     raise PermissionDeniedException(detail="Insufficient privileges")
 
 
-# def requires_verified_user(connection: ASGIConnection, _: BaseRouteHandler) -> None:
-#     """Verify the connection user is a superuser.
+def requires_verified_user(connection: ASGIConnection, _: BaseRouteHandler) -> None:
+    """Verify the connection user is a superuser.
 
-#     Args:
-#         connection (ASGIConnection): Request/Connection object.
-#         _ (BaseRouteHandler): Route handler.
+    Args:
+        connection (ASGIConnection): Request/Connection object.
+        _ (BaseRouteHandler): Route handler.
 
-#     Raises:
-#         PermissionDeniedException: Not authorized
+    Raises:
+        PermissionDeniedException: Not authorized
 
-#     Returns:
-#         None: Returns None when successful
-#     """
-#     if connection.user.is_verified:
-#         return
-#     raise PermissionDeniedException(detail="User account is not verified.")
+    Returns:
+        None: Returns None when successful
+    """
+    if connection.user.is_verified:
+        return
+    raise PermissionDeniedException(detail="User account is not verified.")
 
 
 async def current_user_from_token(token: Token, connection: ASGIConnection[Any, Any, Any, Any]) -> User | None:

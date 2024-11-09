@@ -28,7 +28,6 @@ logging.basicConfig(level=logging.DEBUG)
 openapi_config = OpenAPIConfig(
     title="My API",
     version="1.0.0",
-    security=[{"BearerToken": []}]
 )
  
 dependencies = {"user_service": Provide(provide_user_service)}
