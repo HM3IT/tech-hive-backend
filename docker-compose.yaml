@@ -13,7 +13,6 @@ services:
     image: postgres:17
     container_name: "techhive-db"
     restart: unless-stopped
-    user: "1000:1001"
     environment:
       POSTGRES_USER: heinmin2maw
       POSTGRES_PASSWORD: heinmin2maw
@@ -22,5 +21,9 @@ services:
       - "5432:5432"
     volumes:
       - ./db_data:/var/lib/postgresql/data
-volumes:
-  db_data:
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $POSTGRES_USER"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
