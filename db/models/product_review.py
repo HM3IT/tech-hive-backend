@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from advanced_alchemy.base import UUIDAuditBase
+from litestar.contrib.sqlalchemy.base import UUIDAuditBase
 from sqlalchemy import ForeignKey, DECIMAL, TEXT
 from uuid import UUID
 if TYPE_CHECKING:

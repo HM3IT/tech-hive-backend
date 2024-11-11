@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, Any
 from litestar.exceptions import PermissionDeniedException
 from litestar.security.jwt import OAuth2PasswordBearerAuth
 
-from db.base import db_config
+from db.base import sqlalchemy_config
 
 from db.models import User
 from domain.users import urls
@@ -92,7 +92,7 @@ async def current_user_from_token(token: Token, connection: ASGIConnection[Any, 
     Returns:
         User: User record mapped to the JWT identifier
     """
-    user_service = await anext(provide_user_service(db_config.provide_session(connection.app.state, connection.scope)))
+    user_service = await anext(provide_user_service(sqlalchemy_config.provide_session(connection.app.state, connection.scope)))
     user = await user_service.get_one_or_none(email=token.sub)
     return user if user and user.is_active else None
 

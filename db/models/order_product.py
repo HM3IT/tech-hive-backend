@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Mapped, mapped_column
-from advanced_alchemy.base import UUIDAuditBase
+from litestar.contrib.sqlalchemy.base import UUIDAuditBase
 from sqlalchemy import Integer, ForeignKey, DECIMAL
 from uuid import UUID
 

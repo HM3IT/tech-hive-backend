@@ -1,8 +1,12 @@
 from __future__ import annotations
 
 import os
+
+from typing import Annotated
+from litestar.params import Body
 from litestar.datastructures import UploadFile
 from litestar import get, post, delete, patch, Response
+from litestar.enums import RequestEncodingType
 from litestar.exceptions import HTTPException
 from litestar.controller import Controller
 from litestar.di import Provide
@@ -52,10 +56,10 @@ class ProductController(Controller):
         return product_service.to_schema(data=project_obj, schema_type=Product)
 
     @post(path=urls.PRODUCT_IMG_UPLOAD, guards=[requires_superuser, requires_active_user])
-    async def upload_primary_photo(
+    async def upload_img_file(
         self,
         product_service: ProductService,
-        data: UploadFile,
+        data: Annotated[UploadFile, Body(media_type=RequestEncodingType.MULTI_PART)],
     ) -> Response:
         """Create a new Product."""
         filename = data.filename
@@ -65,7 +69,7 @@ class ProductController(Controller):
              raise HTTPException(status_code=400, detail="Unsupported file type. Only JPEG, PNG, and JPG are allowed.")
         content = await data.read()
         file_UUID = uuid4()
-        file_path = f"IMG_FILE_PATH/{file_UUID}_{filename}"
+        file_path = f"{IMG_FILE_PATH}/{file_UUID}_{filename}"
         with open(file_path, mode="wb") as f:
             f.write(content)
  

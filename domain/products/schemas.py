@@ -1,6 +1,7 @@
 from uuid import UUID 
 from domain.lib.schema import CamelizedBaseStruct
-
+from pydantic import field_validator
+from litestar.datastructures import UploadFile
 
 class ProductCreate(CamelizedBaseStruct):
     name:str

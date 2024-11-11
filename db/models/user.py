@@ -1,7 +1,7 @@
 from __future__ import annotations
 from datetime import date
 from sqlalchemy.orm import relationship, Mapped, mapped_column
-from advanced_alchemy.base import UUIDAuditBase
+from litestar.contrib.sqlalchemy.base import UUIDAuditBase
 from sqlalchemy import String, DECIMAL, TEXT
 from typing import TYPE_CHECKING
  

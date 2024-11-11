@@ -1,7 +1,4 @@
-ARG PYTHON_BUILDER_IMAGE=3.12-bookworm
-
-FROM python:${PYTHON_BUILDER_IMAGE} as python-base
-
+FROM python:3.12-bookworm
 
 WORKDIR /app
 
@@ -13,4 +10,4 @@ COPY . /app
 
 EXPOSE 80
 
-CMD ["litestar", "run", "--host", "0.0.0.0", "--port", "80"]
+CMD ["litestar", "run", "--host", "0.0.0.0", "--port", "8000"]
