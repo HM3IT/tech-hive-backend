@@ -22,6 +22,7 @@ SET row_security = off;
 --
 
 COPY public.category (name, decription, id, sa_orm_sentinel) FROM stdin;
+CPU	\N	ef296e7a-7f6d-4b97-bd1f-ab881ba98ce4	\N
 \.
 
 
@@ -30,7 +31,7 @@ COPY public.category (name, decription, id, sa_orm_sentinel) FROM stdin;
 --
 
 COPY public."user" (name, email, address, hashed_password, image_url, user_type, user_level, total_spent, is_active, is_superuser, is_verified, verified_at, id, sa_orm_sentinel, created_at, updated_at) FROM stdin;
-admin	admin@gmail.com	\N	$argon2id$v=19$m=65536,t=3,p=4$eg9BSIlRilHKGSMkpPQ+Zw$a+WmIOx+9xyZ4A1a9PAytdzXVXkvH6i4NSgyDFqJPJ8	\N	ADMIN	CLASSIC	0.00	t	t	f	\N	1954fe2f-53ec-402e-b707-8f1097fd29b9	\N	2024-11-12 08:15:10.864226+00	2024-11-12 08:15:10.864229+00
+swan	adminswan@gmail.com	\N	$argon2id$v=19$m=65536,t=3,p=4$NYZQ6t1bizFGiDEmZIzx3g$7PEJXTd+rR4vV42aGQGrcitmgQ/0yXXYfrli1rF2d8o	\N	ADMIN	CLASSIC	0.00	t	t	f	\N	bee49ca0-cb1d-4cb4-9f3b-a3eeb16258cb	\N	2024-11-12 08:58:14.2812+00	2024-11-12 08:58:14.281204+00
 \.
 
 
@@ -47,6 +48,7 @@ COPY public."order" (user_id, address, total_price, status, id, sa_orm_sentinel,
 --
 
 COPY public.product (name, description, price, discount_percent, image_url, sub_image_url, brand, stock, category_id, id, sa_orm_sentinel) FROM stdin;
+CPU1	Testing	500.00	0.00	images/f07f9df0-8262-44fc-a75a-6ba6c462ba3c_Screenshot 2024-08-02 114819.png	{}	Intel	5	ef296e7a-7f6d-4b97-bd1f-ab881ba98ce4	6aa78709-8cab-471a-9aa2-0d39e97f744f	\N
 \.
 
 
@@ -71,6 +73,8 @@ COPY public.product_review (user_id, product_id, rating, review_text, id, sa_orm
 --
 
 COPY public.subcategory (name, category_id, id, sa_orm_sentinel) FROM stdin;
+Intel	ef296e7a-7f6d-4b97-bd1f-ab881ba98ce4	333fc789-2534-4040-b669-98ec9d65c183	\N
+AMD	ef296e7a-7f6d-4b97-bd1f-ab881ba98ce4	8af6f52a-52dd-4724-842a-1f27a62a1488	\N
 \.
 
 
