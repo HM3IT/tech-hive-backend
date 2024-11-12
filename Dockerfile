@@ -7,7 +7,6 @@ COPY requirements.txt requirements.txt
 RUN pip install -r requirements.txt
 
 COPY src /app
-COPY db_data /var/lib/postgresql/data
 
 EXPOSE 80
 

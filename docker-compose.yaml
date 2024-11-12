@@ -13,6 +13,7 @@ services:
     image: postgres:17
     container_name: "techhive-db"
     restart: unless-stopped
+    
     environment:
       POSTGRES_USER: heinmin2maw
       POSTGRES_PASSWORD: heinmin2maw
@@ -20,7 +21,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - ./db_data:/var/lib/postgresql/data
+      - ./postgres-data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U heinmin2maw -d techhive-db"]
       interval: 10s
@@ -28,4 +29,4 @@ services:
       retries: 5
       start_period: 5s
 volumes:
-  db_data:
+  postgres-data:
