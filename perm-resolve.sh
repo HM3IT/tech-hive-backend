@@ -1,1 +1,1 @@
-sudo chmod -R 755 db_data
+sudo chmod -R 755 postgres-data
