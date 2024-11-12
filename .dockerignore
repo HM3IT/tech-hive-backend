@@ -5,3 +5,4 @@ __pycache__
 *.pyc
 dist/
 tmp/
+db_data/
