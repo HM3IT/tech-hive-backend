@@ -13,6 +13,7 @@ services:
     image: postgres:17
     container_name: "techhive-db"
     restart: unless-stopped
+    user: "1000:1001"
     environment:
       POSTGRES_USER: heinmin2maw
       POSTGRES_PASSWORD: heinmin2maw
