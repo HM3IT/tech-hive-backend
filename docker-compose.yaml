@@ -20,10 +20,12 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - ./db_data:/var/lib/postgresql/data
+      - db_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U $POSTGRES_USER"]
+      test: ["CMD-SHELL", "pg_isready -U heinmin2maw -d techhive-db"]
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 5s
+volumes:
+  db_data:
