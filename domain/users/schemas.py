@@ -19,7 +19,7 @@ class User(CamelizedBaseStruct):
     email: str
     name: str
     user_level:str
-    address: str|None = None
+    address: str|None = NonefUserCreate
     image_url: str|None = None
     is_superuser: bool = False
     is_active: bool = False
@@ -37,9 +37,8 @@ class UserCreate(CamelizedBaseStruct):
 
 
 class UserUpdate(CamelizedBaseStruct, omit_defaults=True):
-    email: str | None 
-    password: str | None
-    name: str | None
+    email: str 
+    name: str
     is_superuser: bool | None 
     is_active: bool | None 
     is_verified: bool | None 

@@ -1,3 +1,3 @@
-cp .env.docker.example src/.env
+cp .env.docker.example .env
 
 docker-compose build && docker-compose up
