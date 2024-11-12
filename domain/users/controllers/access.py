@@ -42,7 +42,7 @@ class AccessController(Controller):
     async def login(
         self,
         user_service: UserService,
-        data: Annotated[AccountLogin, Body(title="OAuth2 Login", media_type=RequestEncodingType.URL_ENCODED)],
+        data: Annotated[AccountLogin, Body(title="OAuth2 Login", media_type=RequestEncodingType.JSON)],
     ) -> Response[OAuth2Login]:
         """Authenticate a user."""
         user = await user_service.authenticate(data.email, data.password)
@@ -98,7 +98,6 @@ class AccessController(Controller):
     )
     async def signup(
         self,
-        request: Request,
         user_service: UserService,
         data: AccountRegister,
     ) -> User:

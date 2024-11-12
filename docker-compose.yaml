@@ -1,13 +1,14 @@
 services:
   techhive-app:
-      build:
-        context: ./
-        dockerfile: Dockerfile
-      container_name: "techhive-app"
-      depends_on:
-        - techhive-db
-      ports:
-        - "8000:8000"
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    container_name: "techhive-app"
+    depends_on:
+      - techhive-db
+    ports:
+      - "8000:8000"
+
   techhive-db:
     image: postgres:17
     container_name: "techhive-db"
@@ -19,8 +20,6 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - db_data:/var/lib/postgresql/data
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
-
+      - ./db_data:/var/lib/postgresql/data
 volumes:
-  db_data: {}
+  db_data:
