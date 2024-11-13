@@ -105,7 +105,7 @@ class AccessController(Controller):
         user_data = data.to_dict()
         user = await user_service.create(user_data)
         if not user:
-            return Response(content={"message": "failed to Signup"}, status_code=500)
+            return Response(content={"message": "Failed to Signup"}, status_code=500)
         user = await user_service.authenticate(data.email, data.password)
         return oauth2_auth.login(user.email)
  

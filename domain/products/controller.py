@@ -121,3 +121,10 @@ class ProductController(Controller):
         """Delete a Product from the system."""
         await product_service.delete(item_id=id)
 
+
+    # Typesense part
+
+    @post(path="/sync-products-to-typesense")
+    async def sync_products_to_typesense(self, product_service: ProductService) -> Response:
+        await product_service.bulk_insert_into_typesense()
+        return Response(content={"status": "Success", "message": "Products synced to Typesense"}, status_code=201)
