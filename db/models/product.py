@@ -6,7 +6,6 @@ from typing import TYPE_CHECKING
 from sqlalchemy.dialects.postgresql import UUID 
 if TYPE_CHECKING:
     from .category import Category
-    from .subcategory import SubCategory
     from .product_review import ProductReview 
 
 class Product(UUIDBase):
@@ -25,8 +24,8 @@ class Product(UUIDBase):
     category_id: Mapped[UUID] = mapped_column(ForeignKey("category.id"))
     category: Mapped["Category"] = relationship(back_populates="products", lazy="selectin")
 
-
     product_reviews: Mapped[list["ProductReview"]] = relationship(back_populates="product", lazy="selectin", cascade="delete, all")
+    
     @property
     def category_name(self) -> str|None:
         return self.category.name if self.category else None

@@ -62,7 +62,7 @@ class AccessController(Controller):
         data: Annotated[APIAuth, Body(title="OAuth2 Login", media_type=RequestEncodingType.URL_ENCODED)],
     ) -> Response[OAuth2Login]:
         """Authenticate a user."""
-        user = await user_service.authenticate(data.email, data.password)
+        user = await user_service.authenticate(data.username, data.password)
         return oauth2_auth.login(user.email)
     @post(
         operation_id="AccountLogout",

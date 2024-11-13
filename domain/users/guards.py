@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import os
 from dotenv import load_dotenv
-from typing import TYPE_CHECKING, Any
+from typing import Any
 
 from litestar.exceptions import PermissionDeniedException
 from litestar.security.jwt import OAuth2PasswordBearerAuth
@@ -12,7 +12,6 @@ from db.base import sqlalchemy_config
 from db.models import User
 from domain.users import urls
 from domain.users.dependencies import provide_user_service
-import logging
  
 from litestar.connection import ASGIConnection
 from litestar.handlers.base import BaseRouteHandler

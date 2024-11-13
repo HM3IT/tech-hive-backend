@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import os
-
+import typesense
 from typing import Annotated
 from litestar.params import Body
 from litestar.datastructures import UploadFile
@@ -25,6 +25,22 @@ load_dotenv()
 
 IMG_FILE_PATH = os.environ["IMG_FILE_PATH"]
 ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/jpg",]
+
+TYPESENSE_HOST = os.environ["TYPESENSE_HOST"]
+TYPESENSE_PORT = os.environ["TYPESENSE_PORT"]
+TYPESENSE_PROTOCOL = os.environ["TYPESENSE_PROTOCOL"]
+TYPESENSE_API_KEY = os.environ["TYPESENSE_API_KEY"]
+
+typesense_client = typesense.Client({
+    "nodes": [{
+        "host": TYPESENSE_HOST,
+        "port": TYPESENSE_PORT,
+        "protocol": TYPESENSE_PROTOCOL
+    }],
+    "api_key": TYPESENSE_API_KEY,
+    "connection_timeout_seconds": 180
+})
+
 
 class ProductController(Controller):
     """Product CRUD"""
@@ -52,7 +68,12 @@ class ProductController(Controller):
     ) -> Product:
         """Create a new Product."""
         product = data.to_dict()
+        product.update({"sold":0})
         project_obj = await product_service.create(product)
+        typesense_product = await product_service.get_products_for_typesense([project_obj])
+        isSuccess = await product_service.add_product_into_typesense(typesense_client=typesense_client, product=typesense_product[0])
+        if not isSuccess:
+            raise HTTPException(detail="Failed to add product to typesene", status_code=500)
         return product_service.to_schema(data=project_obj, schema_type=Product)
 
     @post(path=urls.PRODUCT_IMG_UPLOAD, guards=[requires_superuser, requires_active_user])
