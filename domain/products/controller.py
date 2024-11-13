@@ -20,7 +20,10 @@ from domain.products.schemas import ProductCreate, Product
 from domain.users.guards import requires_active_user, requires_superuser
 from dotenv import load_dotenv 
 from uuid import uuid4, UUID
+from logging import getLogger
 
+
+logger = getLogger()
 load_dotenv()
 
 IMG_FILE_PATH = os.environ["IMG_FILE_PATH"]
@@ -71,6 +74,8 @@ class ProductController(Controller):
         product.update({"sold":0})
         project_obj = await product_service.create(product)
         typesense_product = await product_service.get_products_for_typesense([project_obj])
+        logger.error("typesense_product")
+        logger.error(typesense_product)
         isSuccess = await product_service.add_product_into_typesense(typesense_client=typesense_client, product=typesense_product[0])
         if not isSuccess:
             raise HTTPException(detail="Failed to add product to typesene", status_code=500)
@@ -117,17 +122,13 @@ class ProductController(Controller):
         self,
         product_service: ProductService,
         data: ProductCreate,
-        id: UUID = Parameter(
-            title="Product ID",
-            description="The Product to update.",
-        ),
     ) -> Product:
         """Update an Product."""
         product = data.to_dict()
-        # item_id = product.get("id")
-        # if item_id is None:
-        #     raise HTTPException(detail="Product Id must included", status_code = 400)
-        db_obj = await product_service.update(item_id=id, data=product)
+        item_id = product.pop("id")
+        if item_id is None:
+            raise HTTPException(detail="Product Id must included", status_code = 400)
+        db_obj = await product_service.update(item_id=item_id, data=product)
         return product_service.to_schema(db_obj, schema_type=Product)
 
     @delete(path=urls.PRODUCT_REMOVE, guards=[requires_superuser, requires_active_user])

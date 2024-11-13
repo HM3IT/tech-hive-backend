@@ -42,8 +42,8 @@ class ProductService(SQLAlchemyAsyncRepositoryService[Product]):
     async def add_product_into_typesense(self, typesense_client: typesense.Client, product: dict[str, Any]) -> bool:
         try:
             TypesenseProductSchema(**product)
-            typesense_client.collections[COLLECTION_NAME].documents.import_([product], {'action': 'upsert'})
-            return True
+            res = typesense_client.collections[COLLECTION_NAME].documents.import_([product], {'action': 'upsert'})
+            return res[0]['success']
         except typesense.exceptions.RequestMalformed as e:
             logger.error(f"Failed to add product into Typesense: {e}")
         return False
@@ -66,6 +66,6 @@ class ProductService(SQLAlchemyAsyncRepositoryService[Product]):
                 "category_name": product.category_name,
                 "product_rating": product_rating,
 
-                "embedding": self.generate_embedding(product) 
+                "embedding": await self.generate_embedding(product) 
             })
         return typesense_data
