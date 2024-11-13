@@ -55,6 +55,4 @@ class APIAuth(CamelizedBaseStruct):
 class AccountRegister(CamelizedBaseStruct):
     email: str
     password: str
-    name: str | None = None
-
- 
+    name: str 

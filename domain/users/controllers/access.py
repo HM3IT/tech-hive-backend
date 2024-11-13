@@ -62,7 +62,7 @@ class AccessController(Controller):
         data: Annotated[APIAuth, Body(title="OAuth2 Login", media_type=RequestEncodingType.URL_ENCODED)],
     ) -> Response[OAuth2Login]:
         """Authenticate a user."""
-        user = await user_service.authenticate(data.username, data.password)
+        user = await user_service.authenticate(data.email, data.password)
         return oauth2_auth.login(user.email)
     @post(
         operation_id="AccountLogout",
@@ -100,9 +100,12 @@ class AccessController(Controller):
         self,
         user_service: UserService,
         data: AccountRegister,
-    ) -> User:
+    ) -> Response[AccountLogin]:
         """User Signup."""
         user_data = data.to_dict()
         user = await user_service.create(user_data)
-        return user_service.to_schema(user, schema_type=User)
+        if not user:
+            return Response(content={"message": "failed to Signup"}, status_code=500)
+        user = await user_service.authenticate(data.email, data.password)
+        return oauth2_auth.login(user.email)
  
