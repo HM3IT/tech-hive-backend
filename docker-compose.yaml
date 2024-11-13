@@ -10,6 +10,7 @@ services:
       - "8000:8000"
     volumes:
       - ./images:/app/images 
+      - ./alembic/versions:/app/alembic/versions
 
   techhive-db:
     image: postgres:17
