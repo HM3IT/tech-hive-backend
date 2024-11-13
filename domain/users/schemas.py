@@ -19,7 +19,7 @@ class User(CamelizedBaseStruct):
     email: str
     name: str
     user_level:str
-    address: str = ""
+    address: str|None = ""
     image_url: str|None = None
     is_superuser: bool = False
     is_active: bool = False

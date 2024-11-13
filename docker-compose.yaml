@@ -8,6 +8,8 @@ services:
       - techhive-db
     ports:
       - "8000:8000"
+    volumes:
+      - ./images:/app/images 
 
   techhive-db:
     image: postgres:17

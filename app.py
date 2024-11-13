@@ -1,25 +1,23 @@
 from __future__ import annotations
 import os
  
+import logging 
+from dotenv import load_dotenv
+
 from litestar import Litestar
-from litestar.contrib.sqlalchemy.plugins import  SQLAlchemyPlugin
-
 from litestar.di import Provide
-
-from domain.users.dependencies import provide_user_service
-from db.dependencies import provide_user
+from litestar.config.cors import CORSConfig
+from litestar.openapi.config import OpenAPIConfig
+from litestar.contrib.sqlalchemy.plugins import SQLAlchemyInitPlugin
 
 from domain.users.guards import oauth2_auth
-from dotenv import load_dotenv
-import logging 
-from db.base import sqlalchemy_config, on_startup
-from db.dependencies import create_collection_dependencies
+from domain.users.dependencies import provide_user_service
 from domain.users.controllers import UserController, AccessController
 from domain.products.controller import ProductController
 from domain.categories.controller import CategoryController, SubCategoryController
-from litestar.contrib.sqlalchemy.plugins import SQLAlchemyInitPlugin
-from litestar.openapi.config import OpenAPIConfig
-from litestar.config.cors import CORSConfig
+
+from db.base import sqlalchemy_config, on_startup
+from db.dependencies import create_collection_dependencies, provide_user
 
 load_dotenv()
 DATABASE_URI = os.environ["DATABASE_URI"]
