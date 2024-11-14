@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 import os
-import typesense
+import tempfile
+import mimetypes
 from typing import Annotated
 from litestar.params import Body
 from litestar.datastructures import UploadFile
@@ -16,30 +17,34 @@ from litestar.repository.filters import LimitOffset
 from domain.products.depedencies import provide_product_service
 from domain.products.services import ProductService
 from domain.products import urls
-from domain.products.schemas import ProductCreate, Product
+from domain.products.schemas import ProductCreate, Product, imageFilePath
 from domain.users.guards import requires_active_user, requires_superuser
 from dotenv import load_dotenv 
 from uuid import uuid4, UUID
-
+from litestar.response import File
+from logging import getLogger
+from urllib.parse import unquote
 load_dotenv()
 
 IMG_FILE_PATH = os.environ["IMG_FILE_PATH"]
 ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/jpg",]
 
-TYPESENSE_HOST = os.environ["TYPESENSE_HOST"]
-TYPESENSE_PORT = os.environ["TYPESENSE_PORT"]
-TYPESENSE_PROTOCOL = os.environ["TYPESENSE_PROTOCOL"]
-TYPESENSE_API_KEY = os.environ["TYPESENSE_API_KEY"]
+# TYPESENSE_HOST = os.environ["TYPESENSE_HOST"]
+# TYPESENSE_PORT = os.environ["TYPESENSE_PORT"]
+# TYPESENSE_PROTOCOL = os.environ["TYPESENSE_PROTOCOL"]
+# TYPESENSE_API_KEY = os.environ["TYPESENSE_API_KEY"]
 
-typesense_client = typesense.Client({
-    "nodes": [{
-        "host": TYPESENSE_HOST,
-        "port": TYPESENSE_PORT,
-        "protocol": TYPESENSE_PROTOCOL
-    }],
-    "api_key": TYPESENSE_API_KEY,
-    "connection_timeout_seconds": 180
-})
+# typesense_client = typesense.Client({
+#     "nodes": [{
+#         "host": TYPESENSE_HOST,
+#         "port": TYPESENSE_PORT,
+#         "protocol": TYPESENSE_PROTOCOL
+#     }],
+#     "api_key": TYPESENSE_API_KEY,
+#     "connection_timeout_seconds": 180
+# })
+
+logger = getLogger()
 
 
 class ProductController(Controller):
@@ -92,6 +97,34 @@ class ProductController(Controller):
  
         return Response(content={"file_path":file_path}, status_code=201)
 
+    @get(path="/api/products/images/{image_name:str}")
+    async def get_image(self, image_name:str ) -> File| None:
+        image_name = unquote(image_name.strip())
+        logger.info(f"image name {image_name}")
+        image_name= image_name.strip()
+        image_path = f"images/{image_name}"
+        logger.info(f'Image file path {image_path}')
+        if os.path.exists(f"./{image_path}"):
+          
+            try:
+                with open(image_path, "rb") as f:
+                    content: bytes = f.read()
+                mime_type, _ = mimetypes.guess_type(image_path)
+                extension = image_path.split(".")[-1]
+         
+                with tempfile.NamedTemporaryFile(delete=False, suffix=f".{extension}") as tmp_file:
+                    tmp_file.write(content)
+                    tmp_file.flush()
+                    return File(
+                        content_disposition_type="attachment",
+                        path=tmp_file.name,
+                        media_type=mime_type,
+                    )
+
+            except Exception as e:
+                raise HTTPException(f"Failed to read document: {e!s}", status_code=500)
+        return None
+    
 
     @get(path=urls.PRODUCT_DETAIL)
     async def get_product(
