@@ -70,10 +70,6 @@ class ProductController(Controller):
         product = data.to_dict()
         product.update({"sold":0})
         project_obj = await product_service.create(product)
-        # typesense_product = await product_service.get_products_for_typesense([project_obj])
-        # isSuccess = await product_service.add_product_into_typesense(typesense_client=typesense_client, product=typesense_product[0])
-        # if not isSuccess:
-        #     raise HTTPException(detail="Failed to add product to typesene", status_code=500)
         return product_service.to_schema(data=project_obj, schema_type=Product)
 
     @post(path=urls.PRODUCT_IMG_UPLOAD, guards=[requires_superuser, requires_active_user])
@@ -124,11 +120,42 @@ class ProductController(Controller):
     ) -> Product:
         """Update an Product."""
         product = data.to_dict()
-        # item_id = product.get("id")
-        # if item_id is None:
-        #     raise HTTPException(detail="Product Id must included", status_code = 400)
-        db_obj = await product_service.update(item_id=id, data=product)
+        item_id = product.pop("id")
+        if item_id is None:
+            raise HTTPException(detail="Product Id must included", status_code = 400)
+        db_obj = await product_service.update(item_id=item_id, data=product)
         return product_service.to_schema(db_obj, schema_type=Product)
+
+
+    @patch(
+        path=urls.PRODUCT_IMG_UPDATE, 
+        guards=[requires_superuser, requires_active_user]
+    )
+    async def update_product_image(
+        self,
+        product_service: ProductService,
+        imageUrl: str = Parameter(
+            title="Image URL",
+            description="The new image URL for the product.",
+        ),
+        id: UUID = Parameter(
+            title="Product ID",
+            description="The ID of the product to update.",
+        ),
+    ) -> Product:
+        """Update only the imageUrl field of a Product."""
+        
+
+        existing_product = await product_service.get_one_or_none(id=str(id))
+        if not existing_product:
+            raise HTTPException(detail="Product not found", status_code=404)
+ 
+        update_data = {"image_url": imageUrl}
+        
+        db_obj = await product_service.update(item_id=id, data=update_data)
+  
+        return product_service.to_schema(db_obj, schema_type=Product)
+
 
     @delete(path=urls.PRODUCT_REMOVE, guards=[requires_superuser, requires_active_user])
     async def delete_product(

@@ -8,7 +8,7 @@ from db.models import Product
 from domain.products.schemas import TypesenseProductSchema
 from domain.repositories import ProductRepository
 from advanced_alchemy.service import SQLAlchemyAsyncRepositoryService
-from sentence_transformers import SentenceTransformer
+# from sentence_transformers import SentenceTransformer
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -26,11 +26,11 @@ class ProductService(SQLAlchemyAsyncRepositoryService[Product]):
     def __init__(self, **repo_kwargs: Any) -> None:
         self.repository: ProductRepository = self.repository_type(**repo_kwargs)
         self.model_type = self.repository.model_type
-        self.embedding_model = SentenceTransformer(EMBEDDING_MODEL) 
+        # self.embedding_model = SentenceTransformer(EMBEDDING_MODEL) 
 
-    async def generate_embedding(self, product: Product) -> list[float]:
-        text = f"Product Name: {product.name}, Price:{product.price}, Description: {product.description}"
-        return self.embedding_model.encode(text).tolist()
+    # async def generate_embedding(self, product: Product) -> list[float]:
+    #     text = f"Product Name: {product.name}, Price:{product.price}, Description: {product.description}"
+    #     return self.embedding_model.encode(text).tolist()
 
     async def bulk_insert_into_typesense(self, typesense_client: typesense.Client, products: list[TypesenseProductSchema]):
         try:
