@@ -77,7 +77,7 @@ class ProductController(Controller):
         project_obj = await product_service.create(product)
         return product_service.to_schema(data=project_obj, schema_type=Product)
 
-    @post(path=urls.PRODUCT_IMG_UPLOAD, guards=[requires_superuser, requires_active_user])
+    @post(path=urls.PRODUCT_IMG_UPLOAD)
     async def upload_img_file(
         self,
         product_service: ProductService,
@@ -205,7 +205,7 @@ class ProductController(Controller):
 
     # Typesense part
 
-    @post(path="/sync-products-to-typesense")
-    async def sync_products_to_typesense(self, product_service: ProductService) -> Response:
-        await product_service.bulk_insert_into_typesense()
-        return Response(content={"status": "Success", "message": "Products synced to Typesense"}, status_code=201)
+    # @post(path="/sync-products-to-typesense")
+    # async def sync_products_to_typesense(self, product_service: ProductService) -> Response:
+    #     await product_service.bulk_insert_into_typesense()
+    #     return Response(content={"status": "Success", "message": "Products synced to Typesense"}, status_code=201)
