@@ -11,6 +11,7 @@ from db.base import sqlalchemy_config
 
 from db.models import User
 from domain.users import urls
+from domain.categories import urls as category_urls
 from domain.products import urls as product_urls
 from domain.users.dependencies import provide_user_service
  
@@ -112,6 +113,7 @@ oauth2_auth = OAuth2PasswordBearerAuth[User](
         urls.ACCOUNT_CREATE,
         product_urls.PRODUCT_LIST,
         product_urls.PRODUCT_DETAIL,
+        category_urls.CATEGORY_LIST, 
         "/schema",
         "/tests"
     ],

@@ -24,7 +24,7 @@ class CategoryController(Controller):
     """Category CRUD"""
     tags = ["Category"]
     dependencies = {"category_service": Provide(provide_category_service), "subcategory_service":Provide(provide_subcategory_service)}
-    guards = [requires_active_user, requires_superuser]
+    # guards = [requires_active_user, requires_superuser]
 
     @get(path=urls.CATEGORY_LIST)
     async def list_category(
@@ -75,6 +75,19 @@ class CategoryController(Controller):
         # Return the category along with its subcategories
         return Category(id=category_obj.id, name=category_obj.name, sub_categories=sub_categories_list)
 
+
+
+    @delete(path=urls.CATEGORY_REMOVE)
+    async def delete_category(
+        self,
+        category_service: CategoryService,
+        id: UUID = Parameter(
+            title="Category ID",
+            description="The Product to update.",
+        ),
+    ) -> None:
+        """List Products."""
+        _ = await category_service.delete(item_id=id)
 
 
     @get(path=urls.CATEGORY_DETAIL)
