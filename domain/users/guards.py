@@ -58,7 +58,7 @@ def requires_superuser(connection: ASGIConnection, _: BaseRouteHandler) -> None:
     Returns:
         None: Returns None when successful
     """
-    logger.info(connection)
+   
     # if connection.user.is_superuser:
     #     return
     return
