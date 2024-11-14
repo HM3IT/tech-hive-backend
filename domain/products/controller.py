@@ -4,6 +4,7 @@ import os
 import tempfile
 import mimetypes
 import typesense
+from decimal import Decimal, getcontext
 from typing import Annotated
 from litestar.params import Body
 from litestar.datastructures import UploadFile
@@ -27,13 +28,15 @@ from logging import getLogger
 from urllib.parse import unquote
 from logging import getLogger
 
-
 logger = getLogger()
 load_dotenv()
 
 IMG_FILE_PATH = os.environ["IMG_FILE_PATH"]
 ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/jpg",]
 
+
+DISTANCE_THRESHOLD = os.environ["DISTANCE_THRESHOLD"]
+EMBEDDING_MODEL = os.environ["EMBEDDING_MODEL"]
 TYPESENSE_HOST = os.environ["TYPESENSE_HOST"]
 TYPESENSE_PORT = os.environ["TYPESENSE_PORT"]
 TYPESENSE_PROTOCOL = os.environ["TYPESENSE_PROTOCOL"]
@@ -50,11 +53,11 @@ typesense_client = typesense.Client({
 })
 
 
+
 class ProductController(Controller):
     """Product CRUD"""
     tags = ["Product"]
     dependencies = {"product_service": Provide(provide_product_service)}
-
     @get(path=urls.PRODUCT_LIST)
     async def list_products(
         self,
@@ -74,16 +77,16 @@ class ProductController(Controller):
         product_service: ProductService,
         data: ProductCreate,
     ) -> Product:
+   
         """Create a new Product."""
         product = data.to_dict()
         product.update({"sold":0})
         project_obj = await product_service.create(product)
-        typesense_product = await product_service.get_products_for_typesense([project_obj])
-        logger.error("typesense_product")
-        logger.error(typesense_product)
-        isSuccess = await product_service.add_product_into_typesense(typesense_client=typesense_client, product=typesense_product[0])
-        if not isSuccess:
-            raise HTTPException(detail="Failed to add product to typesene", status_code=500)
+        # typesense_product = await product_service.get_products_for_typesense(embedding_model, [project_obj])
+ 
+        # isSuccess = await product_service.add_product_into_typesense(typesense_client=typesense_client, product=typesense_product[0])
+        # if not isSuccess:
+        #     raise HTTPException(detail="Failed to add product to typesene", status_code=500)
         return product_service.to_schema(data=project_obj, schema_type=Product)
 
     @post(path=urls.PRODUCT_IMG_UPLOAD)
@@ -207,10 +210,80 @@ class ProductController(Controller):
         """Delete a Product from the system."""
         await product_service.delete(item_id=id)
 
-
+    #  ======================
     # Typesense part
+    #  ======================
 
-    @post(path="/sync-products-to-typesense")
+    @post(path=urls.PRODUCT_SYNC_TYPESNSE, guards=[requires_active_user])
     async def sync_products_to_typesense(self, product_service: ProductService) -> Response:
-        await product_service.bulk_insert_into_typesense()
-        return Response(content={"status": "Success", "message": "Products synced to Typesense"}, status_code=201)
+        from sentence_transformers import SentenceTransformer # loading sentence transformer inside for optimization
+
+        embedding_model = SentenceTransformer(EMBEDDING_MODEL) 
+        limit_offset = LimitOffset(limit=250, offset=0)
+        results, total = await product_service.list_and_count(limit_offset)
+     
+        typesense_products = await product_service.get_products_for_typesense(embedding_model=embedding_model, products = list(results))
+        documents_status = await product_service.bulk_insert_into_typesense(typesense_client=typesense_client, products=typesense_products)
+        
+        failed_documents = [
+            doc.get("error", "Unknown error") for doc in documents_status if not doc.get("success", False)
+        ]
+
+        if failed_documents:
+            return Response(
+                content={
+                    "status": "Failure",
+                    "message": "Some products failed to sync to Typesense",
+                    "errors": failed_documents
+                },
+                status_code=500
+            )
+        else:
+            return Response(
+                content={"status": "Success", "message": "All products synced to Typesense"},
+                status_code=201
+            )
+    @post(path=urls.PRODUCT_SEMANTIC_SEARCH, guards=[])
+    async def search_products(self,product_service: ProductService, query_str: str = Parameter(
+            title="the query to search product semantically",
+            description="The Product description or characterisitc.",
+        ),) -> list[dict]:
+        from sentence_transformers import SentenceTransformer # loading sentence transformer inside for optimization
+        
+        DISTANCE_THRESHOLD = os.environ["DISTANCE_THRESHOLD"]
+        EMBEDDING_MODEL = os.environ["EMBEDDING_MODEL"]
+        embedding_model = SentenceTransformer(EMBEDDING_MODEL) 
+ 
+        query_embedding = await product_service.generate_embedding(embedding_model=embedding_model, query=query_str)
+        logger.info("vector_query")
+        search_requests = {
+            'searches': [
+                {
+                    'collection': 'products-collection', 
+                    'q': '*',  
+                    'vector_query': f"embedding:({query_embedding}, k:10)",  
+                    'include_fields': 'id, name', 
+                    'limit': 10 
+                }
+            ]
+        }
+
+        common_search_params =  {
+            'query_by': 'embedding',
+        }
+ 
+        search_results = typesense_client.multi_search.perform(search_requests, common_search_params)
+        hits = search_results['results'][0]['hits'] 
+    
+        getcontext().prec = 20  
+
+        DISTANCE_THRESHOLD = Decimal(float(DISTANCE_THRESHOLD))
+
+        filtered_hits = [
+            hit for hit in hits if Decimal(str(float(hit.get('vector_distance', float('inf'))))) <= (DISTANCE_THRESHOLD + Decimal('0.00001'))
+        ]
+
+        filtered_hits.sort(key=lambda x: float(x['vector_distance']))
+
+        return filtered_hits
+ 

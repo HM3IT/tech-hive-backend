@@ -29,7 +29,6 @@ openapi_config = OpenAPIConfig(
     title="My API",
     version="1.0.0",
 )
- 
 dependencies = {
     "user_service": Provide(provide_user_service),
     "current_user": Provide(provide_user)}
