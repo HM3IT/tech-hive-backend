@@ -4,7 +4,7 @@ ACCOUNT_LOGOUT = "/api/access/logout"
 ACCOUNT_REGISTER = "/api/access/signup"
 TOKEN_REFRESH = "/api/access/refresh"
 
-ACCOUNT_PROFILE = "/api/me"
+ACCOUNT_PROFILE = "/api/access/me"
 ACCOUNT_LIST = "/api/users"
 ACCOUNT_DELETE = "/api/users/{user_id:uuid}"
 ACCOUNT_DETAIL = "/api/users/{user_id:uuid}"

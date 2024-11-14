@@ -6,6 +6,7 @@ import typesense
 from typing import Any  
 from db.models import Product
 from domain.products.schemas import TypesenseProductSchema
+from domain.products.schemas import TypesenseProductSchema
 from domain.repositories import ProductRepository
 from advanced_alchemy.service import SQLAlchemyAsyncRepositoryService
 from sentence_transformers import SentenceTransformer

@@ -1,6 +1,7 @@
 from uuid import UUID 
 from domain.lib.schema import CamelizedBaseStruct
 from pydantic import BaseModel
+from pydantic import BaseModel
 from pydantic import field_validator
 from litestar.datastructures import UploadFile
 
@@ -29,6 +30,9 @@ class Product(CamelizedBaseStruct):
     discount_percent:float = 0.0
 
 
+class imageFilePath(BaseModel):
+    img_file_path:str
+    
 class TypesenseProductSchema(BaseModel):
     id: str
     name: str
