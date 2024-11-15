@@ -10,7 +10,7 @@ from sqlalchemy.ext.asyncio import async_engine_from_config
 from alembic import context
 
 # from litestar.contrib.sqlalchemy.base import 
-from db.base import UUIDAuditBase
+from db.models.user import UUIDAuditBase
 
 load_dotenv()  # take environment variables from.env.
 

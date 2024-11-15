@@ -19,7 +19,7 @@ from litestar.repository.filters import LimitOffset
 from domain.products.depedencies import provide_product_service
 from domain.products.services import ProductService
 from domain.products import urls
-from domain.products.schemas import ProductCreate, Product, SearchParams
+from domain.products.schemas import ProductCreate, Product, SemanticSearch
 from domain.users.guards import requires_active_user, requires_superuser
 from dotenv import load_dotenv 
 from uuid import uuid4, UUID
@@ -242,7 +242,7 @@ class ProductController(Controller):
             )
     # Temporarily permit for admin/super users only 
     @post(path=urls.PRODUCT_SEMANTIC_SEARCH, guards=[requires_superuser])
-    async def semantic_search_products(self,product_service: ProductService, data: str = Parameter(
+    async def semantic_search_products(self,product_service: ProductService, data: SemanticSearch = Parameter(
             title="the query to search product semantically",
             description="The Product description or characterisitc to search with natural lagunage leveraging the power of AI.",
         ),) -> list[dict]:
@@ -252,14 +252,14 @@ class ProductController(Controller):
         EMBEDDING_MODEL = os.environ["EMBEDDING_MODEL"]
         embedding_model = SentenceTransformer(EMBEDDING_MODEL) 
  
-        query_embedding = await product_service.generate_embedding(embedding_model=embedding_model, query=data)
+        query_embedding = await product_service.generate_embedding(embedding_model=embedding_model, query=data.query)
    
         search_requests = {
             'searches': [
                 {
                     'collection': 'products-collection', 
-                    'q': '*',  
-                    'vector_query': f"embedding:({query_embedding}, k:3)",  
+                    'q': data.query,  
+                    'vector_query': f"embedding:({query_embedding}, k:10)",  
                     'include_fields': 'id, name', 
                     'limit': 10 
                 }
@@ -286,7 +286,7 @@ class ProductController(Controller):
         return filtered_hits
   
     @get(path=urls.PRODUCT_ADVANCED_SEARCH, guards=[requires_superuser])
-    def search_products(self, 
+    async def search_products(self, 
         name:str|None = None,
         category: str|None = None, 
         tags: str|None = None,

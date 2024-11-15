@@ -44,10 +44,6 @@ class TypesenseProductSchema(BaseModel):
     product_rating: float = 0.0 
 
 
-class SearchParams(BaseModel):
-    q: str = '*'
-    query_by: str = 'name, price'
-    filter_by: str = ''
-    sort_by: str = 'product_rating'
-    page: int = 1
-    per_page: int = 10
+class SemanticSearch(BaseModel):
+    query: str
+ 
