@@ -195,6 +195,48 @@ class ProductController(Controller):
         return product_service.to_schema(db_obj, schema_type=Product)
 
 
+    @post(path=urls.PRODUCT_EMBEDDING, guards=[requires_superuser])
+    async def generate_embedding_product(
+        self,
+        product_service: ProductService,
+        id:UUID = Parameter(
+            title="Product ID",
+            description="The Product to delete.",
+        )
+    ) -> Response:
+        """Create a new Product."""
+        from sentence_transformers import SentenceTransformer # loading sentence transformer inside for optimization
+        
+        EMBEDDING_MODEL = os.environ["EMBEDDING_MODEL"]
+        embedding_model = SentenceTransformer(EMBEDDING_MODEL) 
+        db_obj = await product_service.get(item_id=id)
+        if not db_obj:
+            raise HTTPException(detail="Product has not created", status_code=404)
+
+        typesense_products = await product_service.get_products_for_typesense(embedding_model=embedding_model, products = [db_obj])
+     
+        documents_status = await product_service.bulk_insert_into_typesense(typesense_client=typesense_client, products=typesense_products)
+        
+        failed_documents = [
+            doc.get("error", "Unknown error") for doc in documents_status if not doc.get("success", False)
+        ]
+
+        if failed_documents:
+            return Response(
+                content={
+                    "status": "Failure",
+                    "message": "Product failed to sync Typesense",
+                    "errors": failed_documents
+                },
+                status_code=500
+            )
+        else:
+            return Response(
+                content={"status": "Success", "message": f"Product {db_obj.id}  has synced to Typesense"},
+                status_code=201
+            )
+
+
     @delete(path=urls.PRODUCT_REMOVE, guards=[requires_superuser, requires_active_user])
     async def delete_product(
         self,
@@ -258,10 +300,10 @@ class ProductController(Controller):
             'searches': [
                 {
                     'collection': 'products-collection', 
-                    'q': data.query,  
+                    'q': "*",  
                     'vector_query': f"embedding:({query_embedding}, k:10)",  
                     'include_fields': 'id, name', 
-                    'limit': 10 
+                    'limit': 30 
                 }
             ]
         }
@@ -271,8 +313,11 @@ class ProductController(Controller):
         }
  
         search_results = typesense_client.multi_search.perform(search_requests, common_search_params)
+  
         hits = search_results['results'][0]['hits'] 
         logger.info(hits)
+        if len(hits) <= 0:
+            return []
     
         getcontext().prec = 20  
         

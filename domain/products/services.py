@@ -30,11 +30,19 @@ class ProductService(SQLAlchemyAsyncRepositoryService[Product]):
         self.model_type = self.repository.model_type
 
     async def generate_embedding(self, embedding_model:SentenceTransformer, product: Product|None = None, query:str="") -> list[float]:
-        text = query
+       
         if product:
-            text = f"Product Name: {product.name}, Brand: {product.brand}, Price:{product.price}, Description: {product.description}"
-        
-        return embedding_model.encode(text).tolist()
+            # product_related_content_embed = product.category.context_embedding
+            # product_related_content = product.category.context_embedding
+            # if product_related_content is None:
+            #     return [0.00] # not allow to generate embedding without related content of category 
+            text = f"Product Name: {product.name}, Brand: {product.brand}, Price:${product.price}, Description: {product.description}."
+            # product_info_embedding = embedding_model.encode(text).tolist()
+            # return [x + y for x, y in zip(product_info_embedding, product_info_embedding)]
+            return embedding_model.encode(text).tolist()
+        else:
+            return embedding_model.encode(query).tolist()
+
 
     async def bulk_insert_into_typesense(self, typesense_client: typesense.Client, products: list[TypesenseProductSchema]) ->list[dict[str, Any]]:
         try:
