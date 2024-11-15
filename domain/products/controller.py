@@ -8,7 +8,7 @@ from decimal import Decimal, getcontext
 from typing import Annotated
 from litestar.params import Body
 from litestar.datastructures import UploadFile
-from litestar import get, post, delete, patch, Response
+from litestar import get, post, delete, patch, Response, Request
 from litestar.enums import RequestEncodingType
 from litestar.exceptions import HTTPException
 from litestar.controller import Controller
@@ -19,7 +19,7 @@ from litestar.repository.filters import LimitOffset
 from domain.products.depedencies import provide_product_service
 from domain.products.services import ProductService
 from domain.products import urls
-from domain.products.schemas import ProductCreate, Product
+from domain.products.schemas import ProductCreate, Product, SearchParams
 from domain.users.guards import requires_active_user, requires_superuser
 from dotenv import load_dotenv 
 from uuid import uuid4, UUID
@@ -211,7 +211,7 @@ class ProductController(Controller):
     # Typesense part
     #  ======================
 
-    @post(path=urls.PRODUCT_SYNC_TYPESNSE, guards=[requires_active_user])
+    @post(path=urls.PRODUCT_SYNC_TYPESNSE, guards=[requires_superuser])
     async def sync_products_to_typesense(self, product_service: ProductService) -> Response:
         from sentence_transformers import SentenceTransformer # loading sentence transformer inside for optimization
 
@@ -240,10 +240,11 @@ class ProductController(Controller):
                 content={"status": "Success", "message": "All products synced to Typesense"},
                 status_code=201
             )
-    @post(path=urls.PRODUCT_SEMANTIC_SEARCH, guards=[])
-    async def search_products(self,product_service: ProductService, query_str: str = Parameter(
+    # Temporarily permit for admin/super users only 
+    @post(path=urls.PRODUCT_SEMANTIC_SEARCH, guards=[requires_superuser])
+    async def semantic_search_products(self,product_service: ProductService, data: str = Parameter(
             title="the query to search product semantically",
-            description="The Product description or characterisitc.",
+            description="The Product description or characterisitc to search with natural lagunage leveraging the power of AI.",
         ),) -> list[dict]:
         from sentence_transformers import SentenceTransformer # loading sentence transformer inside for optimization
         
@@ -251,7 +252,7 @@ class ProductController(Controller):
         EMBEDDING_MODEL = os.environ["EMBEDDING_MODEL"]
         embedding_model = SentenceTransformer(EMBEDDING_MODEL) 
  
-        query_embedding = await product_service.generate_embedding(embedding_model=embedding_model, query=query_str)
+        query_embedding = await product_service.generate_embedding(embedding_model=embedding_model, query=data)
    
         search_requests = {
             'searches': [
@@ -283,4 +284,62 @@ class ProductController(Controller):
         filtered_hits.sort(key=lambda x: float(x['vector_distance']))
 
         return filtered_hits
+  
+    @get(path=urls.PRODUCT_ADVANCED_SEARCH, guards=[requires_superuser])
+    def search_products(self, 
+        name:str|None = None,
+        category: str|None = None, 
+        tags: str|None = None,
+        page: int = 1,
+        limit: int = 10,
+        brand: str|None = None,
+        price_range: str|None = None
+    )-> Response:
+        try:
+            filters = []
+            if name:
+                filters.append(f"name: {name}")
+
+            if price_range:
+                min_price, max_price = price_range.split(":")
+                filters.append(f"price:>{min_price} && price:<{max_price}")
+
+            if category:
+                filters.append(f"category_name:={category}")
  
+            if brand:
+                filters.append(f"brand:={brand}")
+ 
+            if tags:
+                filters.append(f"tags:=[{tags}]")
+ 
+            filter_by = " && ".join(filters) if filters else ""
+            logger.info("Filter by")
+            logger.info(filter_by)
+            search_param = {
+                "q": "*",  
+                "query_by": "name, description, brand, category_name", 
+                "filter_by": filter_by,  
+                "sort_by": "product_rating:desc",  
+                "page": page,
+                "per_page": limit,
+                "exclude_fields": "embedding"  
+            }
+ 
+            response = typesense_client.collections[
+                os.environ["TYPESENSE_PRODUCT_COLLECTION_NAME"]
+            ].documents.search(search_param)
+
+     
+            return Response(
+                status_code=200,
+                content={
+                    "Items": response.get("hits"),
+                    "Total": response.get("found"),
+                    "Page": response.get("page"),
+                    "Per_Page": response.get("per_page")
+                },
+            )
+        except Exception as e:
+            logger.error(f"Error occurred: {e}")
+            return Response(status_code=500, content={"error": f"Internal Server Error: {e}"})

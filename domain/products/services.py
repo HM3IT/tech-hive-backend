@@ -32,7 +32,7 @@ class ProductService(SQLAlchemyAsyncRepositoryService[Product]):
     async def generate_embedding(self, embedding_model:SentenceTransformer, product: Product|None = None, query:str="") -> list[float]:
         text = query
         if product:
-            text = f"Product Name: {product.name}, Price:{product.price}, Description: {product.description}"
+            text = f"Product Name: {product.name}, Brand: {product.brand}, Price:{product.price}, Description: {product.description}"
         
         return embedding_model.encode(text).tolist()
 

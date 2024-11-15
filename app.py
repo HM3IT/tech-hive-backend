@@ -41,8 +41,6 @@ dependencies = {
 dependencies.update(create_collection_dependencies())
 
 cors_config = CORSConfig(allow_origins=["*"])
-logger.info("OATH")
-logger.info(oauth2_auth)
 
 app = Litestar(
     debug=True,
@@ -51,7 +49,7 @@ app = Litestar(
     on_startup=[on_startup],
     cors_config=cors_config,
     plugins=[SQLAlchemyInitPlugin(config=sqlalchemy_config)],
-    on_app_init=[oauth2_auth.on_app_init],
     middleware=[AuthMiddleware],
+    on_app_init=[oauth2_auth.on_app_init],
     openapi_config=openapi_config,
 )
