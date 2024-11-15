@@ -29,10 +29,7 @@ class Product(CamelizedBaseStruct):
     sub_image_url:dict ={}
     discount_percent:float = 0.0
 
-
-class imageFilePath(BaseModel):
-    img_file_path:str
-    
+ 
 class TypesenseProductSchema(BaseModel):
     id: str
     name: str

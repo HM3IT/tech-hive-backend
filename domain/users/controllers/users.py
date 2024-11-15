@@ -27,9 +27,9 @@ class UserController(Controller):
     """User Account Controller."""
 
     tags = ["User Accounts"]
-    # guards = [requires_superuser]
     dto = None
     return_dto = None
+    guards = [requires_active_user]
 
     @get(
         operation_id="ListUsers",
@@ -37,11 +37,13 @@ class UserController(Controller):
         summary="List Users",
         description="Retrieve the users.",
         path=urls.ACCOUNT_LIST,
+        guards = [requires_superuser],
         cache=60,
     )
     async def list_users(
         self,
         user_service: UserService,
+       
         filters: Annotated[CollectionFilter, Dependency(skip_validation=True)] = None,
     ) -> OffsetPagination[User]:
         filters = filters or []
@@ -53,6 +55,7 @@ class UserController(Controller):
         name="users:get",
         path=urls.ACCOUNT_DETAIL,
         summary="Retrieve the details of a user.",
+        
     )
     async def get_user(
         self,
@@ -73,7 +76,6 @@ class UserController(Controller):
         operation_id="AccountProfile",
         name="account:profile",
         path=urls.ACCOUNT_PROFILE,
-        guards=[requires_active_user],
         summary="User Profile",
         description="User profile information.",
     )
@@ -89,6 +91,7 @@ class UserController(Controller):
         cache_control=None,
         description="A user who can login and use the system.",
         path=urls.ACCOUNT_CREATE,
+        guards = [requires_superuser]
     )
     async def create_user(
         self,
@@ -134,6 +137,7 @@ class UserController(Controller):
         path=urls.ACCOUNT_DELETE,
         summary="Remove User",
         description="Removes a user and all associated data from the system.",
+        guards = [requires_superuser]
     )
     async def delete_user(
         self,

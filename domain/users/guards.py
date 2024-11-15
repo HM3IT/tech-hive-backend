@@ -6,14 +6,10 @@ from typing import Any
 
 from litestar.exceptions import PermissionDeniedException
 from litestar.security.jwt import OAuth2PasswordBearerAuth
-
-from db.base import sqlalchemy_config
-
 from db.models import User
-from domain.users import urls
-from domain.products import urls as product_urls
+from db.base import sqlalchemy_config, AUTH_EXCLUDE_API_ROUTE
 from domain.users.dependencies import provide_user_service
- 
+from domain.users import urls
 from litestar.connection import ASGIConnection
 from litestar.handlers.base import BaseRouteHandler
 from litestar.security.jwt import Token
@@ -82,7 +78,7 @@ def requires_verified_user(connection: ASGIConnection, _: BaseRouteHandler) -> N
     raise PermissionDeniedException(detail="User account is not verified.")
 
 
-async def current_user_from_token(token: Token, connection: ASGIConnection[Any, Any, Any, Any]) -> User | None:
+async def current_user_from_token(token: "Token", connection: ASGIConnection[Any, Any, Any, Any]) -> User | None:
     """Lookup current user from local JWT token.
 
     Fetches the user information from the database
@@ -99,19 +95,10 @@ async def current_user_from_token(token: Token, connection: ASGIConnection[Any, 
     user_service = await anext(provide_user_service(sqlalchemy_config.provide_session(connection.app.state, connection.scope)))
     user = await user_service.get_one_or_none(email=token.sub)
     return user if user and user.is_active else None
-
-
+ 
 oauth2_auth = OAuth2PasswordBearerAuth[User](
     retrieve_user_handler=current_user_from_token,
     token_secret=SECRET_KEY,
     token_url=urls.ACCOUNT_AUTH,
-    exclude=[
-        urls.ACCOUNT_LOGIN,
-        urls.ACCOUNT_REGISTER,
-        urls.ACCOUNT_CREATE,
-        product_urls.PRODUCT_LIST,
-        product_urls.PRODUCT_DETAIL,
-        "/schema",
-        "/tests"
-    ],
+    exclude=AUTH_EXCLUDE_API_ROUTE,
 )

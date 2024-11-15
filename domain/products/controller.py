@@ -19,29 +19,28 @@ from litestar.repository.filters import LimitOffset
 from domain.products.depedencies import provide_product_service
 from domain.products.services import ProductService
 from domain.products import urls
-from domain.products.schemas import ProductCreate, Product, imageFilePath
+from domain.products.schemas import ProductCreate, Product
 from domain.users.guards import requires_active_user, requires_superuser
 from dotenv import load_dotenv 
 from uuid import uuid4, UUID
 from litestar.response import File
 from logging import getLogger
 from urllib.parse import unquote
-from logging import getLogger
 
-logger = getLogger()
 load_dotenv()
 
 IMG_FILE_PATH = os.environ["IMG_FILE_PATH"]
 ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/jpg",]
 
 
-DISTANCE_THRESHOLD = os.environ["DISTANCE_THRESHOLD"]
+DISTANCE_THRESHOLD = os.environ.get("DISTANCE_THRESHOLD", 0.43)
 EMBEDDING_MODEL = os.environ["EMBEDDING_MODEL"]
 TYPESENSE_HOST = os.environ["TYPESENSE_HOST"]
 TYPESENSE_PORT = os.environ["TYPESENSE_PORT"]
 TYPESENSE_PROTOCOL = os.environ["TYPESENSE_PROTOCOL"]
 TYPESENSE_API_KEY = os.environ["TYPESENSE_API_KEY"]
 
+logger = getLogger()
 typesense_client = typesense.Client({
     "nodes": [{
         "host": TYPESENSE_HOST,
@@ -51,8 +50,6 @@ typesense_client = typesense.Client({
     "api_key": TYPESENSE_API_KEY,
     "connection_timeout_seconds": 180
 })
-
-
 
 class ProductController(Controller):
     """Product CRUD"""
@@ -89,7 +86,7 @@ class ProductController(Controller):
         #     raise HTTPException(detail="Failed to add product to typesene", status_code=500)
         return product_service.to_schema(data=project_obj, schema_type=Product)
 
-    @post(path=urls.PRODUCT_IMG_UPLOAD)
+    @post(path=urls.PRODUCT_IMG_UPLOAD, guards=[requires_superuser, requires_active_user])
     async def upload_img_file(
         self,
         product_service: ProductService,
@@ -109,7 +106,7 @@ class ProductController(Controller):
  
         return Response(content={"file_path":file_path}, status_code=201)
 
-    @get(path="/api/products/images/{image_name:str}")
+    @get(path=urls.GET_IMG)
     async def get_image(self, image_name:str ) -> File| None:
         image_name = unquote(image_name.strip())
         logger.info(f"image name {image_name}")
@@ -255,13 +252,13 @@ class ProductController(Controller):
         embedding_model = SentenceTransformer(EMBEDDING_MODEL) 
  
         query_embedding = await product_service.generate_embedding(embedding_model=embedding_model, query=query_str)
-        logger.info("vector_query")
+   
         search_requests = {
             'searches': [
                 {
                     'collection': 'products-collection', 
                     'q': '*',  
-                    'vector_query': f"embedding:({query_embedding}, k:10)",  
+                    'vector_query': f"embedding:({query_embedding}, k:3)",  
                     'include_fields': 'id, name', 
                     'limit': 10 
                 }
@@ -274,13 +271,13 @@ class ProductController(Controller):
  
         search_results = typesense_client.multi_search.perform(search_requests, common_search_params)
         hits = search_results['results'][0]['hits'] 
+        logger.info(hits)
     
         getcontext().prec = 20  
-
-        DISTANCE_THRESHOLD = Decimal(float(DISTANCE_THRESHOLD))
-
+        
+        DISTANCE_THRESHOLD = Decimal(float(DISTANCE_THRESHOLD)) + Decimal(0.00001)
         filtered_hits = [
-            hit for hit in hits if Decimal(str(float(hit.get('vector_distance', float('inf'))))) <= (DISTANCE_THRESHOLD + Decimal('0.00001'))
+            hit for hit in hits if Decimal(str(float(hit.get('vector_distance', float('inf'))))) <= DISTANCE_THRESHOLD
         ]
 
         filtered_hits.sort(key=lambda x: float(x['vector_distance']))

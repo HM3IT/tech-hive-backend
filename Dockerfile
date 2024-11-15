@@ -10,4 +10,5 @@ COPY . /app
 
 EXPOSE 80
 
-CMD ["litestar", "run", "--host", "0.0.0.0", "--port", "8000"]
+# CMD ["litestar", "run", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]

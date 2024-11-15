@@ -91,7 +91,7 @@ class CategoryController(Controller):
         return category_service.to_schema(data=obj,  schema_type=Category)
 
     @patch(
-        path=urls.CATEGORY_UPDATE, guards=[requires_superuser, requires_active_user]
+        path=urls.CATEGORY_UPDATE, guards=[requires_active_user, requires_superuser]
     )
     async def update_category(
         self,
