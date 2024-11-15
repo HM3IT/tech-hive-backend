@@ -13,4 +13,4 @@ class SubCategory(UUIDBase):
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     category_id: Mapped[UUID] = mapped_column(ForeignKey("category.id"))
 
-    category: Mapped["Category"] = relationship(back_populates="subcategories", lazy="selectin")
+    # category: Mapped["Category"] = relationship(back_populates="subcategories", lazy="selectin")
