@@ -3,9 +3,9 @@ from __future__ import annotations
 import os
 import typesense
 from logging import getLogger
-from typing import Any, TYPE_CHECKING
+from typing import Any, TYPE_CHECKING, Type
 from db.models import Product
-from domain.products.schemas import TypesenseProductSchema
+from domain.products.schemas import TypesenseProductSchema, Product as ProductSchema
 from domain.repositories import ProductRepository
 from advanced_alchemy.service import SQLAlchemyAsyncRepositoryService
 from dotenv import load_dotenv

@@ -16,6 +16,9 @@ class ProductCreate(CamelizedBaseStruct):
     stock:int =0
     discount_percent:float = 0.0
 
+class Category(CamelizedBaseStruct):
+    name: str
+    related_context:str
 
 class Product(CamelizedBaseStruct):
     id:UUID
@@ -24,6 +27,7 @@ class Product(CamelizedBaseStruct):
     image_url:str
     brand:str
     category_id: UUID
+    category:Category
     price: float= 0.0
     stock:int =0
     sub_image_url:dict ={}

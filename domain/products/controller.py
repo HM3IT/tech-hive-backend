@@ -8,7 +8,7 @@ from decimal import Decimal, getcontext
 from typing import Annotated
 from litestar.params import Body
 from litestar.datastructures import UploadFile
-from litestar import get, post, delete, patch, Response, Request
+from litestar import get, post, delete, patch, Response, Request, MediaType
 from litestar.enums import RequestEncodingType
 from litestar.exceptions import HTTPException
 from litestar.controller import Controller
@@ -146,6 +146,7 @@ class ProductController(Controller):
     ) -> Product:
         """Get an existing Product."""
         obj = await product_service.get(item_id=id)
+              
         return product_service.to_schema(data=obj,  schema_type=Product)
 
     @patch(
