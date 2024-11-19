@@ -155,13 +155,17 @@ class ProductController(Controller):
         self,
         product_service: ProductService,
         data: ProductCreate,
+        id: UUID = Parameter(
+            title="Product ID",
+            description="The Product to be updated.",
+        ),
     ) -> Product:
         """Update an Product."""
         product = data.to_dict()
-        item_id = product.pop("id")
-        if item_id is None:
-            raise HTTPException(detail="Product Id must included", status_code = 400)
-        db_obj = await product_service.update(item_id=item_id, data=product)
+        db_obj = await product_service.get(item_id=id)
+        if not db_obj:
+            raise HTTPException(detail="Product id not found", status_code= 404 )
+        db_obj = await product_service.update(item_id=str(id), data=product)
         return product_service.to_schema(db_obj, schema_type=Product)
 
 

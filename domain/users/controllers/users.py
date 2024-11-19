@@ -91,7 +91,7 @@ class UserController(Controller):
         cache_control=None,
         description="A user who can login and use the system.",
         path=urls.ACCOUNT_CREATE,
-        guards = [requires_superuser]
+        # guards = [requires_superuser]
     )
     async def create_user(
         self,

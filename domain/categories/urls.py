@@ -1,6 +1,6 @@
 # categories URLS
 
-CATEGORY_LIST = "/api/categories"
+CATEGORY_LIST = "/api/categories/list"
 CATEGORY_ADD = "/api/categories/add"
 CATEGORY_UPDATE = "/api/categories/update"
 CATEGORY_REMOVE = "/api/categories/{id:uuid}"

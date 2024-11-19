@@ -2,7 +2,7 @@
 
 PRODUCT_LIST = "/api/products/list"
 PRODUCT_ADD = "/api/products/add"
-PRODUCT_UPDATE = "/api/products/update"
+PRODUCT_UPDATE = "/api/products/update/{id:uuid}"
 PRODUCT_IMG_UPDATE = "/api/products/images/update/{id:uuid}"
 PRODUCT_REMOVE = "/api/products/delete/{id:uuid}"
 PRODUCT_DETAIL = "/api/products/detail/{id:uuid}"

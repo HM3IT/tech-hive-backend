@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 from db.models.user import UUIDAuditBase 
 from domain.users import urls
 from domain.products import urls as product_urls
+from domain.categories import urls as category_urls
 
 __all__ = ["sqlalchemy_config","on_startup", "AUTH_EXCLUDE_API_ROUTE"]
 
@@ -17,6 +18,7 @@ DATABASE_URI = os.environ["DATABASE_URI"]
 AUTH_EXCLUDE_API_ROUTE:list[str] =[
     urls.ACCOUNT_LOGIN,
     urls.ACCOUNT_REGISTER,
+    category_urls.CATEGORY_LIST, 
     product_urls.PRODUCT_LIST,
     product_urls.PRODUCT_DETAIL,
     product_urls.GET_IMG,
