@@ -22,6 +22,7 @@ SET row_security = off;
 --
 
 COPY public.alembic_version (version_num) FROM stdin;
+fb7301f406c6
 4e388347a899
 9d39eebec588
 \.
@@ -41,9 +42,24 @@ Motherboard	da4be9a4-891d-439a-ade4-aa719f92fe69	\N	Motherboard, also known as t
 -- Data for Name: user; Type: TABLE DATA; Schema: public; Owner: heinmin2maw
 --
 
+COPY public."user" (name, email, address, hashed_password, image_url, user_type, user_level, total_spent, is_active, is_superuser, is_verified, verified_at, id, sa_orm_sentinel, created_at, updated_at) FROM stdin;
+admin	admin@gmail.com	\N	$argon2id$v=19$m=65536,t=3,p=4$eg9BSIlRilHKGSMkpPQ+Zw$a+WmIOx+9xyZ4A1a9PAytdzXVXkvH6i4NSgyDFqJPJ8	\N	ADMIN	CLASSIC	0.00	t	t	f	\N	1954fe2f-53ec-402e-b707-8f1097fd29b9	\N	2024-11-12 08:15:10.864226+00	2024-11-12 08:15:10.864229+00
+customer	customer@gmail.com	\N	$argon2id$v=19$m=65536,t=3,p=4$EcI4h1CK8Z6zttY6x7jX+g$seI4M8hMHhf3X7oLaARQd1uMygyFiHOUAcrPFZakc4g	\N	CUSTOMER	CLASSIC	0.00	t	f	f	\N	c24f9063-d7cd-4f42-a111-85796dd50637	\N	2024-11-12 12:27:14.705476+00	2024-11-12 12:27:14.705479+00
+swan	adminswan@gmail.com	\N	$argon2id$v=19$m=65536,t=3,p=4$NYZQ6t1bizFGiDEmZIzx3g$7PEJXTd+rR4vV42aGQGrcitmgQ/0yXXYfrli1rF2d8o	\N	ADMIN	CLASSIC	0.00	t	t	f	\N	bee49ca0-cb1d-4cb4-9f3b-a3eeb16258cb	\N	2024-11-12 08:58:14.2812+00	2024-11-12 08:58:14.281204+00
+hm3	heinmin2maw.it@gmail.com	\N	$argon2id$v=19$m=65536,t=3,p=4$HqOUck7p3VtrjbE2xljrPQ$LnBuhhcdqH/o1/fzAvx8d2FLXmNB4gk0oPO2NqrAu+c	\N	CUSTOMER	CLASSIC	0.00	t	f	f	\N	0909e867-b3a7-4a8f-a236-2f4efa8cb4ef	\N	2024-11-13 01:52:49.358841+00	2024-11-13 01:52:49.358843+00
+snow	last.it@gmail.com	\N	$argon2id$v=19$m=65536,t=3,p=4$mxNiDIGwVmothbA2RqgVYg$TJBgDt50bfEKRoFIL2kSMYTSuGpCLZDJ+JX5eYjSrLo	\N	CUSTOMER	CLASSIC	0.00	t	f	f	\N	9b149d0a-162c-4b57-92a7-2dba9af57bb5	\N	2024-11-13 01:57:05.273036+00	2024-11-13 01:57:05.27304+00
+test	test@gmail.com	\N	$argon2id$v=19$m=65536,t=3,p=4$3/ufU8pZa60VIqSUshbiXA$tMpBu/w0Yrs9kU/NtU4D+2TrNBWxlq2AIUvAzvVx0J4	\N	CUSTOMER	CLASSIC	0.00	t	f	f	\N	b828b343-8525-4564-b22d-b6994b3e27a0	\N	2024-11-13 07:37:36.199956+00	2024-11-13 07:37:36.19996+00
+new	new@gmail.com	\N	$argon2id$v=19$m=65536,t=3,p=4$hVBqzbm39h5DiDHmnHOOkQ$TNQmcXz896fzPGY3viIANCegLhtDtIrI56LmEPN0Xq8	\N	CUSTOMER	CLASSIC	0.00	t	f	f	\N	1eed1bc3-bbaa-40e8-a0e4-c839ba82d27f	\N	2024-11-13 17:40:12.168513+00	2024-11-13 17:40:12.168517+00
+newuser	newuser@gmail.com	\N	$argon2id$v=19$m=65536,t=3,p=4$MGbM2Vur9f7/P+dcKwWgVA$+iBfn9YRAZVbyleMWs//K8813cvjwOIOt1ENMS+Kmag	\N	CUSTOMER	CLASSIC	0.00	t	f	f	\N	d96934fd-fb49-443e-83ff-76e8e6f64bf5	\N	2024-11-14 04:54:41.339801+00	2024-11-14 04:54:41.339805+00
+\.
+
+
 --
 -- Data for Name: order; Type: TABLE DATA; Schema: public; Owner: heinmin2maw
 --
+
+COPY public."order" (user_id, address, total_price, status, id, sa_orm_sentinel, created_at, updated_at) FROM stdin;
+\.
 
 
 --
@@ -52,27 +68,27 @@ Motherboard	da4be9a4-891d-439a-ade4-aa719f92fe69	\N	Motherboard, also known as t
 
 COPY public.product (name, description, price, discount_percent, image_url, sub_image_url, brand, stock, category_id, id, sa_orm_sentinel, sold) FROM stdin;
 Intel Pentium Gold G7400	Budget-friendly, entry-level CPUs with 2 cores, suitable for basic tasks like web browsing and office applications.	80.00	0.00	images/f07f9df0-8262-44fc-a75a-6ba6c462ba3c_Screenshot 2024-08-02 114819.png	{}	Intel	50	ef296e7a-7f6d-4b97-bd1f-ab881ba98ce4	64cf37af-00fa-47a6-9293-c159c429728a	\N	\N
-Intel Pentium Gold G7400	Budget-friendly, entry-level CPUs with 2 cores, suitable for basic tasks like web browsing and office applications.	80.00	0.00	images/f07f9df0-8262-44fc-a75a-6ba6c462ba3c_Screenshot 2024-08-02 114819.png	{}	Intel	50	ef296e7a-7f6d-4b97-bd1f-ab881ba98ce4	349f3012-faf3-485a-b785-041e33876042	\N	\N
-ASUS ROG Strix Z790-E	High-end motherboard for Intel's 13th and 14th Gen CPUs, supports overclocking, PCIe 5.0, and DDR5 RAM.	550.00	20.00	08e3d69d-44b7-428c-99cb-c0b0077a58c0_ROG-Strix-Z790-E-Gaming_motherboard_intel.jpg	{}	Intel	10	da4be9a4-891d-439a-ade4-aa719f92fe69	4399e73f-3a21-41a7-8b9e-18e0ba250337	\N	\N
-AMD Ryzen 5	A mid-range processor with up to 6 cores and 12 threads, built on the Zen architecture. Ryzen 5 processors are considered to be some of the fastest available, and are good for gaming and other intense workloads.	540.00	4.00	d87953d2-9499-4126-82f3-d51942744728_cpu_ryzen.jpg	{}	AMD	20	ef296e7a-7f6d-4b97-bd1f-ab881ba98ce4	2e2a77d5-2681-47b4-b483-bf9b11a81997	\N	\N
-Ryzen 7 7800X3D	Mid-to-high performance for gaming and productivity. Ideal for gamers and streamers who need strong multi-core performance.	550.00	0.00	20afec4c-0c93-4efb-8a1a-957cd5de78f4_cpu_ryzen7.jpg	{}	AMD	52	ef296e7a-7f6d-4b97-bd1f-ab881ba98ce4	fff9f15f-c93c-4fee-8572-bf8398e1bd94	\N	\N
-Ryzen Threadripper PRO 5995WX	High-performance CPUs for professional workloads like 3D rendering, simulations, video editing, and data analysis. Designed for workstations and high-performance desktops (HEDT).	6550.00	30.00	e2602253-47bf-4ec6-b595-a4a8f0ebe5a9_cpu_threadripper.jpg	{}	AMD	25	ef296e7a-7f6d-4b97-bd1f-ab881ba98ce4	14bba65a-51a9-4d14-9f6f-bfdbb60bd95e	\N	\N
-Athlon 3000G	Budget-friendly processors for basic computing needs such as web browsing, office work, and light multimedia usage. Ideal for entry-level desktop systems or home office PCs	70.00	0.00	50b25575-1f20-49f4-8254-5ec543f0d5ab_amd_cpu_athlon.jpg	{}	AMD	90	ef296e7a-7f6d-4b97-bd1f-ab881ba98ce4	b233aa7e-a661-4a43-94d1-a19f3f105ab4	\N	\N
-Intel Core i9-13900K	High-end CPUs with up to 24 cores (8 Performance + 16 Efficiency), ideal for gaming, content creation, and multitasking.	690.00	10.00	b8b8ca5a-2ddf-4dd5-864e-de893c681a88_cpu_i9.jpg	{}	Intel	45	ef296e7a-7f6d-4b97-bd1f-ab881ba98ce4	2953a7d5-29a2-43d5-8819-1b66e6d93229	\N	\N
-Intel Core i7-13700K	Mid-range CPUs with up to 16 cores (8P + 8E), providing excellent performance for gaming and productivity tasks.	430.00	10.00	91617124-8979-4e64-abe1-37b97ca0e003_cpu_i7.jpg	{}	Intel	52	ef296e7a-7f6d-4b97-bd1f-ab881ba98ce4	f8ed57bc-0d3f-42bd-8d45-dee92879c1ea	\N	\N
-Intel Core i5-13600K	Balanced CPUs with up to 14 cores (6P + 8E), offering great performance for gaming and everyday use at an affordable price.	300.00	0.00	95ae3129-46b8-4e18-8599-670d35722677_cpu_i5-13600k.jpg	{}	Intel	99	ef296e7a-7f6d-4b97-bd1f-ab881ba98ce4	0019496a-4f66-4b95-a6fb-4313f7bddc58	\N	\N
-Intel Xeon W-3400	Workstation and server CPUs with high core counts, designed for professional workloads like 3D rendering and data processing.	1000.00	0.00	0725dc78-a871-41c1-9702-c2dc9d77a3a8_intel_xeon_cpu.jpg	{}	Intel	20	ef296e7a-7f6d-4b97-bd1f-ab881ba98ce4	b016cb69-f9d8-4cdd-9f36-dd2bae9bfd2d	\N	\N
-Intel Pentium Gold G7400	Budget-friendly, entry-level CPUs with 2 cores, suitable for basic tasks like web browsing and office applications.	80.00	0.00	64f8fb62-ac63-43a7-bfda-7f043c3c1301_intel_cpu_pen_gold.jpg	{}	Intel	50	ef296e7a-7f6d-4b97-bd1f-ab881ba98ce4	222256e1-51ee-47dc-8371-dfdcd6bbd4ae	\N	\N
-GIGABYTE A520M S2H	Budget-friendly motherboard for Ryzen 3000 and 5000 series (AM4), lacks PCIe 4.0 but offers good basic features for everyday use.	60.00	0.00	4996d285-10d1-41a4-9cc7-8f815419019a_motherboard_gigA5.jpg	{}	AMD	10	da4be9a4-891d-439a-ade4-aa719f92fe69	33394290-6d7b-444b-9aa8-589847c22977	\N	\N
-ASRock X570 Phantom Gaming X	High-performance motherboard for Ryzen 3000 and 5000 series (AM4), supports PCIe 4.0 and advanced cooling features, ideal for enthusiasts.	400.00	5.00	852bf6be-8958-4568-a685-c7c76832a404_ASRock X570 Phantom Gaming X_motherboard_AMD.jpg	{}	AMD	10	da4be9a4-891d-439a-ade4-aa719f92fe69	e184a2a3-7fec-4234-ba40-f2553dc34d3a	\N	\N
-Ryzen 9 7950X	High-end performance for gaming, content creation, and multitasking. Suitable for enthusiasts, professional video editors, and software developers who require high computing power.	750.00	20.00	90f7118e-db93-41b0-8a91-0e9bff37d890_ryzen9_cpu.jpg	{}	AMD	34	ef296e7a-7f6d-4b97-bd1f-ab881ba98ce4	c6a69c77-e7a0-4b4f-9e64-cb28243d4a38	\N	\N
-MSI PRO B760M-A WiFi	Mid-range board for 13th/12th Gen CPUs, supports PCIe 4.0, great for gaming and productivity without overclocking.	220.00	0.00	01c3da94-8016-4600-9e01-de0dffb390f2_pro-b760m-a-wifi-msi_intel_motherboard.jpg	{}	Intel	2	da4be9a4-891d-439a-ade4-aa719f92fe69	ddc0dade-0582-434d-91f6-675600c075c7	\N	\N
-GIGABYTE H610M S2H	Entry-level motherboard for 12th/13th Gen CPUs, supports basic features like DDR4 RAM, good for budget builds.	80.00	0.00	1a98c5d7-eb61-4ff9-84b6-a0494622fb0a_intel_motherboard_gigh6.jpg	{}	Intel	5	da4be9a4-891d-439a-ade4-aa719f92fe69	dd30fc2d-23da-4bd1-b969-ef69b7af7bd1	\N	\N
-H570 Motherboard	Mid-range board for 11th/10th Gen CPUs, supports PCIe 4.0 and Intel Optane Memory, suitable for light gaming and general use.	200.00	5.00	205f1d9a-71b3-4f84-9788-4f823141aa13_H570 Steel Legend(M1)_intel_motherboard.jpg	{}	Asus	10	da4be9a4-891d-439a-ade4-aa719f92fe69	1aa2097a-25b2-4c29-9513-6677f5af9bb5	\N	\N
-X299 Motherboard	High-performance motherboard for Intel Core X-series (HEDT) processors, ideal for workstations and content creators.	300.00	4.00	67f47ebd-130e-4a1a-9403-78cc5e484e08_prime_x299_intel_motherboard.jpg	{}	Asus	5	da4be9a4-891d-439a-ade4-aa719f92fe69	1a9eb66d-78aa-43d9-99cf-b1631327754a	\N	\N
-ASUS ROG Crosshair X670E Hero	High-end motherboard for Ryzen 7000 series (AM5), supports PCIe 5.0, DDR5 RAM, designed for overclocking and gaming enthusiasts.	650.00	5.00	da9113ae-207b-4e45-94a6-b8309b3d2c87_ASUS ROG Crosshair X670E Hero_amd_motherboard.jpg	{}	AMD	45	da4be9a4-891d-439a-ade4-aa719f92fe69	4cf36231-34a3-4a22-a12d-6f9a860379e1	\N	\N
-MSI MPG B650 TOMAHAWK WiFi	Mid-range board for Ryzen 7000 series (AM5), offers PCIe 4.0 support, good for gaming and productivity builds.	300.00	0.00	13828f55-f081-4a6c-b706-b72c96b8413f_mag-b650-tomahawk-wifi_amd_motherboard.jpg	{}	AMD	5	da4be9a4-891d-439a-ade4-aa719f92fe69	7aa72cdc-b32e-4284-a8a8-54d1afe4126b	\N	\N
-ASUS TUF Gaming B550-PLUS	Popular mid-range motherboard for Ryzen 3000 and 5000 series (AM4), supports PCIe 4.0, suitable for mainstream gaming builds.	150.00	7.00	04bf6b31-5a4d-4804-b5cd-192a4d579683_ASUS TUF Gaming B550-PLUS_motherboard_AMD.jpg	{}	AMD	10	da4be9a4-891d-439a-ade4-aa719f92fe69	eaf36102-519d-4558-844f-b0b565cf4215	\N	\N
+AMD Ryzen 5	A mid-range processor with up to 6 cores and 12 threads, built on the Zen architecture. Ryzen 5 processors are considered to be some of the fastest available, and are good for gaming and other intense workloads.	540.00	4.00	images/d87953d2-9499-4126-82f3-d51942744728_cpu_ryzen.jpg	{}	AMD	20	ef296e7a-7f6d-4b97-bd1f-ab881ba98ce4	2e2a77d5-2681-47b4-b483-bf9b11a81997	\N	\N
+ASRock X570 Phantom Gaming X	High-performance motherboard for Ryzen 3000 and 5000 series (AM4), supports PCIe 4.0 and advanced cooling features, ideal for enthusiasts.	400.00	5.00	images/852bf6be-8958-4568-a685-c7c76832a404_ASRock X570 Phantom Gaming X_motherboard_AMD.jpg	{}	AMD	10	da4be9a4-891d-439a-ade4-aa719f92fe69	e184a2a3-7fec-4234-ba40-f2553dc34d3a	\N	\N
+ASUS ROG Crosshair X670E Hero	High-end motherboard for Ryzen 7000 series (AM5), supports PCIe 5.0, DDR5 RAM, designed for overclocking and gaming enthusiasts.	650.00	5.00	images/da9113ae-207b-4e45-94a6-b8309b3d2c87_ASUS ROG Crosshair X670E Hero_amd_motherboard.jpg	{}	AMD	45	da4be9a4-891d-439a-ade4-aa719f92fe69	4cf36231-34a3-4a22-a12d-6f9a860379e1	\N	\N
+ASUS ROG Strix Z790-E	High-end motherboard for Intel's 13th and 14th Gen CPUs, supports overclocking, PCIe 5.0, and DDR5 RAM.	550.00	20.00	images/08e3d69d-44b7-428c-99cb-c0b0077a58c0_ROG-Strix-Z790-E-Gaming_motherboard_intel.jpg	{}	Intel	10	da4be9a4-891d-439a-ade4-aa719f92fe69	4399e73f-3a21-41a7-8b9e-18e0ba250337	\N	\N
+ASUS TUF Gaming B550-PLUS	Popular mid-range motherboard for Ryzen 3000 and 5000 series (AM4), supports PCIe 4.0, suitable for mainstream gaming builds.	150.00	7.00	images/04bf6b31-5a4d-4804-b5cd-192a4d579683_ASUS TUF Gaming B550-PLUS_motherboard_AMD.jpg	{}	AMD	10	da4be9a4-891d-439a-ade4-aa719f92fe69	eaf36102-519d-4558-844f-b0b565cf4215	\N	\N
+Athlon 3000G	Budget-friendly processors for basic computing needs such as web browsing, office work, and light multimedia usage. Ideal for entry-level desktop systems or home office PCs	70.00	0.00	images/50b25575-1f20-49f4-8254-5ec543f0d5ab_amd_cpu_athlon.jpg	{}	AMD	90	ef296e7a-7f6d-4b97-bd1f-ab881ba98ce4	b233aa7e-a661-4a43-94d1-a19f3f105ab4	\N	\N
+GIGABYTE A520M S2H	Budget-friendly motherboard for Ryzen 3000 and 5000 series (AM4), lacks PCIe 4.0 but offers good basic features for everyday use.	60.00	0.00	images/4996d285-10d1-41a4-9cc7-8f815419019a_motherboard_gigA5.jpg	{}	AMD	10	da4be9a4-891d-439a-ade4-aa719f92fe69	33394290-6d7b-444b-9aa8-589847c22977	\N	\N
+GIGABYTE H610M S2H	Entry-level motherboard for 12th/13th Gen CPUs, supports basic features like DDR4 RAM, good for budget builds.	80.00	0.00	images/1a98c5d7-eb61-4ff9-84b6-a0494622fb0a_intel_motherboard_gigh6.jpg	{}	Intel	5	da4be9a4-891d-439a-ade4-aa719f92fe69	dd30fc2d-23da-4bd1-b969-ef69b7af7bd1	\N	\N
+H570 Motherboard	Mid-range board for 11th/10th Gen CPUs, supports PCIe 4.0 and Intel Optane Memory, suitable for light gaming and general use.	200.00	5.00	images/205f1d9a-71b3-4f84-9788-4f823141aa13_H570 Steel Legend(M1)_intel_motherboard.jpg	{}	Asus	10	da4be9a4-891d-439a-ade4-aa719f92fe69	1aa2097a-25b2-4c29-9513-6677f5af9bb5	\N	\N
+Intel Core i5-13600K	Balanced CPUs with up to 14 cores (6P + 8E), offering great performance for gaming and everyday use at an affordable price.	300.00	0.00	images/95ae3129-46b8-4e18-8599-670d35722677_cpu_i5-13600k.jpg	{}	Intel	99	ef296e7a-7f6d-4b97-bd1f-ab881ba98ce4	0019496a-4f66-4b95-a6fb-4313f7bddc58	\N	\N
+Intel Core i7-13700K	Mid-range CPUs with up to 16 cores (8P + 8E), providing excellent performance for gaming and productivity tasks.	430.00	10.00	images/91617124-8979-4e64-abe1-37b97ca0e003_cpu_i7.jpg	{}	Intel	52	ef296e7a-7f6d-4b97-bd1f-ab881ba98ce4	f8ed57bc-0d3f-42bd-8d45-dee92879c1ea	\N	\N
+Intel Core i9-13900K	High-end CPUs with up to 24 cores (8 Performance + 16 Efficiency), ideal for gaming, content creation, and multitasking.	690.00	10.00	images/b8b8ca5a-2ddf-4dd5-864e-de893c681a88_cpu_i9.jpg	{}	Intel	45	ef296e7a-7f6d-4b97-bd1f-ab881ba98ce4	2953a7d5-29a2-43d5-8819-1b66e6d93229	\N	\N
+Intel Pentium Gold G7400	Budget-friendly, entry-level CPUs with 2 cores, suitable for basic tasks like web browsing and office applications.	80.00	0.00	images/64f8fb62-ac63-43a7-bfda-7f043c3c1301_intel_cpu_pen_gold.jpg	{}	Intel	50	ef296e7a-7f6d-4b97-bd1f-ab881ba98ce4	222256e1-51ee-47dc-8371-dfdcd6bbd4ae	\N	\N
+Intel Pentium Gold G7400	Budget-friendly, entry-level CPUs with 2 cores, suitable for basic tasks like web browsing and office applications.	80.00	0.00	images/images/f07f9df0-8262-44fc-a75a-6ba6c462ba3c_Screenshot 2024-08-02 114819.png	{}	Intel	50	ef296e7a-7f6d-4b97-bd1f-ab881ba98ce4	349f3012-faf3-485a-b785-041e33876042	\N	\N
+Intel Xeon W-3400	Workstation and server CPUs with high core counts, designed for professional workloads like 3D rendering and data processing.	1000.00	0.00	images/0725dc78-a871-41c1-9702-c2dc9d77a3a8_intel_xeon_cpu.jpg	{}	Intel	20	ef296e7a-7f6d-4b97-bd1f-ab881ba98ce4	b016cb69-f9d8-4cdd-9f36-dd2bae9bfd2d	\N	\N
+MSI MPG B650 TOMAHAWK WiFi	Mid-range board for Ryzen 7000 series (AM5), offers PCIe 4.0 support, good for gaming and productivity builds.	300.00	0.00	images/13828f55-f081-4a6c-b706-b72c96b8413f_mag-b650-tomahawk-wifi_amd_motherboard.jpg	{}	AMD	5	da4be9a4-891d-439a-ade4-aa719f92fe69	7aa72cdc-b32e-4284-a8a8-54d1afe4126b	\N	\N
+MSI PRO B760M-A WiFi	Mid-range board for 13th/12th Gen CPUs, supports PCIe 4.0, great for gaming and productivity without overclocking.	220.00	0.00	images/01c3da94-8016-4600-9e01-de0dffb390f2_pro-b760m-a-wifi-msi_intel_motherboard.jpg	{}	Intel	2	da4be9a4-891d-439a-ade4-aa719f92fe69	ddc0dade-0582-434d-91f6-675600c075c7	\N	\N
+Ryzen 7 7800X3D	Mid-to-high performance for gaming and productivity. Ideal for gamers and streamers who need strong multi-core performance.	550.00	0.00	images/20afec4c-0c93-4efb-8a1a-957cd5de78f4_cpu_ryzen7.jpg	{}	AMD	52	ef296e7a-7f6d-4b97-bd1f-ab881ba98ce4	fff9f15f-c93c-4fee-8572-bf8398e1bd94	\N	\N
+Ryzen 9 7950X	High-end performance for gaming, content creation, and multitasking. Suitable for enthusiasts, professional video editors, and software developers who require high computing power.	750.00	20.00	images/90f7118e-db93-41b0-8a91-0e9bff37d890_ryzen9_cpu.jpg	{}	AMD	34	ef296e7a-7f6d-4b97-bd1f-ab881ba98ce4	c6a69c77-e7a0-4b4f-9e64-cb28243d4a38	\N	\N
+Ryzen Threadripper PRO 5995WX	High-performance CPUs for professional workloads like 3D rendering, simulations, video editing, and data analysis. Designed for workstations and high-performance desktops (HEDT).	6550.00	30.00	images/e2602253-47bf-4ec6-b595-a4a8f0ebe5a9_cpu_threadripper.jpg	{}	AMD	25	ef296e7a-7f6d-4b97-bd1f-ab881ba98ce4	14bba65a-51a9-4d14-9f6f-bfdbb60bd95e	\N	\N
+X299 Motherboard	High-performance motherboard for Intel Core X-series (HEDT) processors, ideal for workstations and content creators.	300.00	4.00	images/67f47ebd-130e-4a1a-9403-78cc5e484e08_prime_x299_intel_motherboard.jpg	{}	Asus	5	da4be9a4-891d-439a-ade4-aa719f92fe69	1a9eb66d-78aa-43d9-99cf-b1631327754a	\N	\N
 \.
 
 
@@ -80,7 +96,7 @@ ASUS TUF Gaming B550-PLUS	Popular mid-range motherboard for Ryzen 3000 and 5000 
 -- Data for Name: order_product; Type: TABLE DATA; Schema: public; Owner: heinmin2maw
 --
 
-COPY public.order_product (product_id, order_id, quantity, price_at_order, id, sa_orm_sentinel, created_at, updated_at) FROM stdin;
+COPY public.order_product (product_id, order_id, quantity, price_at_order, id, sa_orm_sentinel, created_at, updated_at, discount_percent_at_order) FROM stdin;
 \.
 
 

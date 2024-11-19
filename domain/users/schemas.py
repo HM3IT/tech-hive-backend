@@ -3,9 +3,8 @@ from __future__ import annotations
 
 from domain.lib.schema import CamelizedBaseStruct
 from typing import TYPE_CHECKING
-if TYPE_CHECKING:
-    from uuid import UUID 
-    from domain.orders.schemas import Order
+from uuid import UUID 
+
 
 __all__ = (
     "AccountLogin",
@@ -27,7 +26,6 @@ class User(CamelizedBaseStruct):
     is_superuser: bool = False
     is_active: bool = False
     is_verified: bool = False
-    orders: list[Order] = []
  
 
 class UserCreate(CamelizedBaseStruct):

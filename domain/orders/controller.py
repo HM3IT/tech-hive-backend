@@ -18,7 +18,7 @@ from domain.users.guards import requires_active_user, requires_superuser
 from litestar.repository.filters import CollectionFilter
 
 from db.models import User, Order as OrderModel, OrderStatus, OrderProduct as OrderProductModel
-from domain.orders.schemas import Order, OrderCreate, OrderProduct, OrderUpdate
+from domain.orders.schemas import Order, OrderCreate, OrderProduct, OrderUpdate, OrderProductCreate
 
 from uuid import uuid4, UUID
 from litestar.response import File
@@ -40,13 +40,34 @@ class OrderController(Controller):
     async def create_order(
         self,
         order_service: OrderService,
+        order_product_service:OrderProductService,
         data: OrderCreate,
+        current_user:User
     ) -> Order:
    
         """Create a new Order."""
         order = data.to_dict()
-        project_obj = await order_service.create(order)
-        return order_service.to_schema(data=project_obj, schema_type=Order)
+        order_products = order["orderProducts"]
+ 
+        order_dict ={
+            "address":order["address"],
+            "total_price":order["totalPrice"],
+            "user_id":current_user.id ,
+            "status":OrderStatus.PENDING
+        }
+
+        order_obj:OrderModel = await order_service.create(data = order_dict )
+        order_products = [order_product.update({"order_id":order_obj.id}) for order_product in order_products]
+        order_product_objs = await order_product_service.create_many(data=order_products)
+        order_products = order_product_service.to_schema(data=order_product_objs, total= len(order_product_objs), schema_type=OrderProduct)
+
+        return Order(
+            user_id= current_user.id,
+            address= order_obj.address,
+            total_price= order_obj.total_price,
+            status = order_obj.status,
+            products = order_products
+        )
  
     @get(path=urls.ORDER_LIST)
     async def list_order(

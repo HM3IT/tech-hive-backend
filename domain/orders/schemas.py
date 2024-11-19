@@ -17,26 +17,41 @@ __all__ = (
 
 
 class Order(CamelizedBaseStruct):
- 
     user_id: UUID
     address:str
     total_price: float
     status: OrderStatus
-    user: User
     products: list[OrderProduct]
 
 
+class OrderProductCreate(CamelizedBaseStruct):
+    order_id:UUID
+    product_id:UUID
+    quantity: int
+    price_at_order:float
+    discount_percent_at_order:float
+    
+class CartProduct(CamelizedBaseStruct):
+    product_id:UUID
+    price_at_order:float
+    discount_percent_at_order:float
+    quantity:int
+
 class OrderCreate(CamelizedBaseStruct):
-    pass
+    order_products: list[CartProduct]
+    address:str
+    total_price: float
+    
 
 class OrderUpdate(CamelizedBaseStruct):
     id:UUID
     order_status:OrderStatus
 
 class OrderProduct(CamelizedBaseStruct):
-    product:Product
     order_id: UUID
     quantity: int
     price_at_order:float
-    discount_at_order:float
-    
+    discount_percent_at_order:float
+    product:Product
+
+
