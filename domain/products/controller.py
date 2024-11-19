@@ -348,8 +348,7 @@ class ProductController(Controller):
                     filters =  f"discountPrice:[{min_price}..{max_price}]"
             if query_str in ("None","null"):
                 query_str = "*"
-            logger.info("FILTER_BY")
-            logger.info(filters)
+
             search_param = {
                 "q": query_str,  
                 "query_by": "name, brand, categoryName", 
