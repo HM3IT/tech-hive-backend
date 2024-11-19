@@ -2,11 +2,10 @@ from __future__ import annotations
 
 from domain.lib.schema import CamelizedBaseStruct
 from typing import TYPE_CHECKING
-if TYPE_CHECKING:
-    from uuid import UUID
-    from db.models import OrderStatus
-    from domain.users.schemas import User
-    from domain.products.schemas import Product
+from uuid import UUID
+
+from db.models import OrderStatus
+from domain.products.schemas import Product
 
 __all__ = (
     "Order",
