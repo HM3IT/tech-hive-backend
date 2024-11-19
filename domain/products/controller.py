@@ -347,7 +347,7 @@ class ProductController(Controller):
                 query_str = "*"
             search_param = {
                 "q": query_str,  
-                "query_by": "name,brand, categoryName, description", 
+                "query_by": "name, brand, categoryName", 
                 "filter_by": filters, 
                 "sort_by": "productRating:desc",  
                 "page": page,
