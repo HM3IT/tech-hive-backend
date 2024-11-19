@@ -1,8 +1,11 @@
 from __future__ import annotations
 
-from uuid import UUID 
+
 from domain.lib.schema import CamelizedBaseStruct
-from domain.orders.schema import Order
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from uuid import UUID 
+    from domain.orders.schemas import Order
 
 __all__ = (
     "AccountLogin",

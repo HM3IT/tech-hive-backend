@@ -14,4 +14,5 @@ class OrderProduct(UUIDAuditBase):
     order_id: Mapped[UUID] = mapped_column(ForeignKey("order.id"), nullable=False)
     quantity: Mapped[int] = mapped_column(Integer, nullable=False)
     price_at_order: Mapped[float] = mapped_column(DECIMAL(10, 2), nullable=False)
-    product: Mapped[Product] = relationship(back_populates="order_products")
+    discount_percent_at_order: Mapped[float] = mapped_column(DECIMAL(5, 2), default=0.0)
+    product: Mapped["Product"] = relationship(back_populates="order_products")
