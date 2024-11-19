@@ -340,11 +340,16 @@ class ProductController(Controller):
         try:
          
             filters = ""
-            if price_range:
+            if price_range and price_range != "null":
                 min_price, max_price = price_range.split(":")
-                filters = f"discountPrice:>{min_price} && discountPrice:<{max_price}"
+                if not min_price:
+                    filters =  f"discountPrice:=>{max_price}"
+                else:
+                    filters =  f"discountPrice:[{min_price}..{max_price}]"
             if query_str in ("None","null"):
                 query_str = "*"
+            logger.info("FILTER_BY")
+            logger.info(filters)
             search_param = {
                 "q": query_str,  
                 "query_by": "name, brand, categoryName", 
