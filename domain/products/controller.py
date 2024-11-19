@@ -354,7 +354,7 @@ class ProductController(Controller):
                 "q": query_str,  
                 "query_by": "name, brand, categoryName", 
                 "filter_by": filters, 
-                "sort_by": "productRating:desc",  
+                "sort_by": "productRating:desc, sold:desc",  
                 "page": page,
                 "per_page": limit,
                 "exclude_fields": "embedding"  
