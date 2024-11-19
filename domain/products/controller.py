@@ -80,7 +80,6 @@ class ProductController(Controller):
         product.update({"sold":0})
         project_obj = await product_service.create(product)
         # typesense_product = await product_service.get_products_for_typesense(embedding_model, [project_obj])
- 
         # isSuccess = await product_service.add_product_into_typesense(typesense_client=typesense_client, product=typesense_product[0])
         # if not isSuccess:
         #     raise HTTPException(detail="Failed to add product to typesene", status_code=500)
@@ -331,59 +330,43 @@ class ProductController(Controller):
 
         return filtered_hits
   
-    @get(path=urls.PRODUCT_ADVANCED_SEARCH, guards=[requires_superuser])
+    @get(path=urls.PRODUCT_ADVANCED_SEARCH)
     async def search_products(self, 
-        name:str|None = None,
-        category: str|None = None, 
-        tags: str|None = None,
+        query_str: str|None,
         page: int = 1,
         limit: int = 10,
-        brand: str|None = None,
-        price_range: str|None = None
-    )-> Response:
+        price_range: str | None = None
+    ) -> Response:
         try:
-            filters = []
-            if name:
-                filters.append(f"name: {name}")
-
+         
+            filters = ""
             if price_range:
                 min_price, max_price = price_range.split(":")
-                filters.append(f"price:>{min_price} && price:<{max_price}")
-
-            if category:
-                filters.append(f"category_name:={category}")
- 
-            if brand:
-                filters.append(f"brand:={brand}")
- 
-            if tags:
-                filters.append(f"tags:=[{tags}]")
- 
-            filter_by = " && ".join(filters) if filters else ""
-            logger.info("Filter by")
-            logger.info(filter_by)
+                filters = f"discountPrice:>{min_price} && discountPrice:<{max_price}"
+            if query_str in ("None","null"):
+                query_str = "*"
             search_param = {
-                "q": "*",  
-                "query_by": "name, description, brand, category_name", 
-                "filter_by": filter_by,  
-                "sort_by": "product_rating:desc",  
+                "q": query_str,  
+                "query_by": "name,brand, categoryName, description", 
+                "filter_by": filters, 
+                "sort_by": "productRating:desc",  
                 "page": page,
                 "per_page": limit,
                 "exclude_fields": "embedding"  
             }
- 
+
             response = typesense_client.collections[
                 os.environ["TYPESENSE_PRODUCT_COLLECTION_NAME"]
             ].documents.search(search_param)
 
-     
+            logger.info(response)
             return Response(
                 status_code=200,
                 content={
-                    "Items": response.get("hits"),
-                    "Total": response.get("found"),
-                    "Page": response.get("page"),
-                    "Per_Page": response.get("per_page")
+                    "items": response.get("hits"),
+                    "total": response.get("found"),
+                    "page": response.get("page"),
+                    "per_page": limit
                 },
             )
         except Exception as e:

@@ -39,13 +39,15 @@ class TypesenseProductSchema(BaseModel):
     name: str
     description:str
     price: float
-    discount_percent: float
+    discountPercent: float
+    discountPrice:float
     brand: str
     stock: int
     sold: int
-    category_name: str 
+    categoryName: str 
+    imageUrl:str 
     embedding: list[float]
-    product_rating: float = 0.0 
+    productRating: float = 0.0 
 
 
 class SemanticSearch(BaseModel):
