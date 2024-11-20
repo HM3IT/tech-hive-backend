@@ -52,6 +52,7 @@ class OrderCreate(CamelizedBaseStruct):
     order_products: list[CartProduct]
     address:str
     total_price: float
+    phone:str
     
 
 class OrderUpdate(CamelizedBaseStruct):

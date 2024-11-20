@@ -42,11 +42,26 @@ Motherboard	da4be9a4-891d-439a-ade4-aa719f92fe69	\N	Motherboard, also known as t
 -- Data for Name: user; Type: TABLE DATA; Schema: public; Owner: heinmin2maw
 --
 
+COPY public."user" (name, email, address, hashed_password, image_url, user_type, user_level, total_spent, is_active, is_superuser, is_verified, verified_at, id, sa_orm_sentinel, created_at, updated_at) FROM stdin;
+admin	admin@gmail.com	\N	$argon2id$v=19$m=65536,t=3,p=4$eg9BSIlRilHKGSMkpPQ+Zw$a+WmIOx+9xyZ4A1a9PAytdzXVXkvH6i4NSgyDFqJPJ8	\N	ADMIN	CLASSIC	0.00	t	t	f	\N	1954fe2f-53ec-402e-b707-8f1097fd29b9	\N	2024-11-12 08:15:10.864226+00	2024-11-12 08:15:10.864229+00
+customer	customer@gmail.com	\N	$argon2id$v=19$m=65536,t=3,p=4$EcI4h1CK8Z6zttY6x7jX+g$seI4M8hMHhf3X7oLaARQd1uMygyFiHOUAcrPFZakc4g	\N	CUSTOMER	CLASSIC	0.00	t	f	f	\N	c24f9063-d7cd-4f42-a111-85796dd50637	\N	2024-11-12 12:27:14.705476+00	2024-11-12 12:27:14.705479+00
+swan	adminswan@gmail.com	\N	$argon2id$v=19$m=65536,t=3,p=4$NYZQ6t1bizFGiDEmZIzx3g$7PEJXTd+rR4vV42aGQGrcitmgQ/0yXXYfrli1rF2d8o	\N	ADMIN	CLASSIC	0.00	t	t	f	\N	bee49ca0-cb1d-4cb4-9f3b-a3eeb16258cb	\N	2024-11-12 08:58:14.2812+00	2024-11-12 08:58:14.281204+00
+hm3	heinmin2maw.it@gmail.com	\N	$argon2id$v=19$m=65536,t=3,p=4$HqOUck7p3VtrjbE2xljrPQ$LnBuhhcdqH/o1/fzAvx8d2FLXmNB4gk0oPO2NqrAu+c	\N	CUSTOMER	CLASSIC	0.00	t	f	f	\N	0909e867-b3a7-4a8f-a236-2f4efa8cb4ef	\N	2024-11-13 01:52:49.358841+00	2024-11-13 01:52:49.358843+00
+snow	last.it@gmail.com	\N	$argon2id$v=19$m=65536,t=3,p=4$mxNiDIGwVmothbA2RqgVYg$TJBgDt50bfEKRoFIL2kSMYTSuGpCLZDJ+JX5eYjSrLo	\N	CUSTOMER	CLASSIC	0.00	t	f	f	\N	9b149d0a-162c-4b57-92a7-2dba9af57bb5	\N	2024-11-13 01:57:05.273036+00	2024-11-13 01:57:05.27304+00
+test	test@gmail.com	\N	$argon2id$v=19$m=65536,t=3,p=4$3/ufU8pZa60VIqSUshbiXA$tMpBu/w0Yrs9kU/NtU4D+2TrNBWxlq2AIUvAzvVx0J4	\N	CUSTOMER	CLASSIC	0.00	t	f	f	\N	b828b343-8525-4564-b22d-b6994b3e27a0	\N	2024-11-13 07:37:36.199956+00	2024-11-13 07:37:36.19996+00
+new	new@gmail.com	\N	$argon2id$v=19$m=65536,t=3,p=4$hVBqzbm39h5DiDHmnHOOkQ$TNQmcXz896fzPGY3viIANCegLhtDtIrI56LmEPN0Xq8	\N	CUSTOMER	CLASSIC	0.00	t	f	f	\N	1eed1bc3-bbaa-40e8-a0e4-c839ba82d27f	\N	2024-11-13 17:40:12.168513+00	2024-11-13 17:40:12.168517+00
+newuser	newuser@gmail.com	\N	$argon2id$v=19$m=65536,t=3,p=4$MGbM2Vur9f7/P+dcKwWgVA$+iBfn9YRAZVbyleMWs//K8813cvjwOIOt1ENMS+Kmag	\N	CUSTOMER	CLASSIC	0.00	t	f	f	\N	d96934fd-fb49-443e-83ff-76e8e6f64bf5	\N	2024-11-14 04:54:41.339801+00	2024-11-14 04:54:41.339805+00
+\.
+
+
 --
 -- Data for Name: order; Type: TABLE DATA; Schema: public; Owner: heinmin2maw
 --
 
- 
+COPY public."order" (user_id, address, total_price, status, id, sa_orm_sentinel, created_at, updated_at) FROM stdin;
+\.
+
+
 --
 -- Data for Name: product; Type: TABLE DATA; Schema: public; Owner: heinmin2maw
 --
@@ -77,4 +92,34 @@ X299 Motherboard	High-performance motherboard for Intel Core X-series (HEDT) pro
 \.
 
 
- 
+--
+-- Data for Name: order_product; Type: TABLE DATA; Schema: public; Owner: heinmin2maw
+--
+
+COPY public.order_product (product_id, order_id, quantity, price_at_order, id, sa_orm_sentinel, created_at, updated_at, discount_percent_at_order) FROM stdin;
+\.
+
+
+--
+-- Data for Name: product_review; Type: TABLE DATA; Schema: public; Owner: heinmin2maw
+--
+
+COPY public.product_review (user_id, product_id, rating, review_text, id, sa_orm_sentinel, created_at, updated_at) FROM stdin;
+\.
+
+
+--
+-- Data for Name: subcategory; Type: TABLE DATA; Schema: public; Owner: heinmin2maw
+--
+
+COPY public.subcategory (name, category_id, id, sa_orm_sentinel) FROM stdin;
+Intel	ef296e7a-7f6d-4b97-bd1f-ab881ba98ce4	333fc789-2534-4040-b669-98ec9d65c183	\N
+AMD	ef296e7a-7f6d-4b97-bd1f-ab881ba98ce4	8af6f52a-52dd-4724-842a-1f27a62a1488	\N
+string	da4be9a4-891d-439a-ade4-aa719f92fe69	7429bf60-d1f6-4e83-aec8-740a14ec4366	\N
+\.
+
+
+--
+-- PostgreSQL database dump complete
+--
+

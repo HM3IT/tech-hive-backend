@@ -1,6 +1,6 @@
 from sqlalchemy.orm import relationship, Mapped, mapped_column
 from litestar.contrib.sqlalchemy.base import UUIDAuditBase
-from sqlalchemy import ForeignKey, DECIMAL, TEXT
+from sqlalchemy import ForeignKey, DECIMAL, TEXT, String
 from typing import TYPE_CHECKING
 
 from .enums import OrderStatus
@@ -14,6 +14,7 @@ class Order(UUIDAuditBase):
     
     user_id: Mapped[UUID] = mapped_column(ForeignKey("user.id"), nullable=False)
     address: Mapped[str] = mapped_column(TEXT, nullable=False)
+    phone: Mapped[str] = mapped_column(String(100), nullable=False)
     total_price: Mapped[float] = mapped_column(DECIMAL(10, 2), default=0.0)
     status: Mapped[OrderStatus] = mapped_column(default=OrderStatus.PENDING)
 

@@ -55,6 +55,7 @@ class OrderController(Controller):
  
         order_dict ={
             "address":order["address"],
+            "phone": order["phone"],
             "total_price":order["total_price"],
             "user_id":current_user.id ,
             "status":OrderStatus.PENDING
