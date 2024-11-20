@@ -10,7 +10,10 @@ async def provide_order_service(db_session: AsyncSession) -> AsyncGenerator[Orde
 
     async with OrderService.new(
         session=db_session,
-        load=[selectinload(Order.user)],
+        load=[
+            selectinload(Order.user), 
+            selectinload(Order.order_products)
+        ],
         error_messages={"duplicate_key": "This order already exists.", "integrity": "Order operation failed."},
     ) as service:
         yield service

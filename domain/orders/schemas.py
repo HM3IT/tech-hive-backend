@@ -25,7 +25,15 @@ class Order(CamelizedBaseStruct):
     created_at: datetime
     updated_at: datetime
 
-
+class OrderDetail(CamelizedBaseStruct):
+    id:UUID
+    user_id: UUID
+    address:str
+    total_price: float
+    status: OrderStatus
+    created_at: datetime
+    updated_at: datetime
+    order_products:list[OrderProduct]
 
 class OrderProductCreate(CamelizedBaseStruct):
     order_id:UUID
@@ -51,10 +59,10 @@ class OrderUpdate(CamelizedBaseStruct):
     order_status:OrderStatus
 
 class OrderProduct(CamelizedBaseStruct):
-    order_id: UUID
+    product_id:UUID
     quantity: int
     price_at_order:float
     discount_percent_at_order:float
-    product:Product
+ 
 
 

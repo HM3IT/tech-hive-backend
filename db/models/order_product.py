@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from db.models import Product
+    from .order import Order
 
 class OrderProduct(UUIDAuditBase):
     __tablename__ = "order_product"
@@ -16,4 +17,6 @@ class OrderProduct(UUIDAuditBase):
     price_at_order: Mapped[float] = mapped_column(DECIMAL(10, 2), nullable=False)
     discount_percent_at_order: Mapped[float] = mapped_column(DECIMAL(5, 2), default=0.0)
     product: Mapped["Product"] = relationship(back_populates="order_products")
-
+    
+    order: Mapped["Order"] = relationship("Order", back_populates="order_products")
+ 

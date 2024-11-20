@@ -7,6 +7,7 @@ from .enums import OrderStatus
 from uuid import UUID
 if TYPE_CHECKING:
     from .user import User
+    from .order_product import OrderProduct
 
 class Order(UUIDAuditBase):
     __tablename__ = "order"
@@ -15,5 +16,7 @@ class Order(UUIDAuditBase):
     address: Mapped[str] = mapped_column(TEXT, nullable=False)
     total_price: Mapped[float] = mapped_column(DECIMAL(10, 2), default=0.0)
     status: Mapped[OrderStatus] = mapped_column(default=OrderStatus.PENDING)
+
+    order_products: Mapped[list["OrderProduct"]] = relationship(back_populates="order", lazy="selectin")
   
     user: Mapped["User"] = relationship(back_populates="orders", lazy="selectin")

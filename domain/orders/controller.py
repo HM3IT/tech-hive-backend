@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import os
  
-from typing import Annotated
+from typing import Annotated, Any
 from litestar.params import Body
 from litestar import get, post, delete, patch, Response, Request, MediaType
 from litestar.exceptions import HTTPException
@@ -18,7 +18,7 @@ from domain.users.guards import requires_active_user, requires_superuser
 from litestar.repository.filters import CollectionFilter
 
 from db.models import User, Order as OrderModel, OrderStatus, OrderProduct as OrderProductModel
-from domain.orders.schemas import Order, OrderCreate, OrderProduct, OrderUpdate, OrderProductCreate
+from domain.orders.schemas import Order, OrderCreate, OrderProduct, OrderUpdate, OrderProductCreate, OrderDetail
 
 from uuid import uuid4, UUID
 from litestar.response import File
@@ -45,7 +45,7 @@ class OrderController(Controller):
         order_product_service:OrderProductService,
         data: OrderCreate,
         current_user:User
-    ) -> Order:
+    ) -> dict[str, Any]:
    
         """Create a new Order."""
         order = data.to_dict()
@@ -74,25 +74,24 @@ class OrderController(Controller):
                 )
                 order_products.append(new_order_product)
             
-    
-    
             order_product_objs = await order_product_service.create_many(data=order_products)
+            order_obj.order_products = order_product_objs
+
+ 
+            order_products = order_product_service.to_schema(data=order_product_objs, total=len(order_product_objs), schema_type=OrderProduct)
+                
+            order = order_service.to_schema(data=order_obj,  schema_type=Order)
+            order = order.to_dict()
+            order.update({"order_products":order_products.items})
+
+            return order
+
         except Exception as e:
             logger.error(e)
             await order_service.delete(item_id=order_obj.id)
             raise HTTPException(detail="Failed to create order", status_code=500)
-        logger.info("CReated order product")
-        logger.info(order_product_objs)
-        return order_service.to_schema(data=order_obj, schema_type=Order)
-        # order_products = order_product_service.to_schema(data=order_product_objs, total= len(order_product_objs), schema_type=OrderProduct)
-
-        # return Order(
-        #     user_id= current_user.id,
-        #     address= order_obj.address,
-        #     total_price= order_obj.total_price,
-        #     status = order_obj.status,
-        #     products = order_products
-        # )
+    
+       
  
     @get(path=urls.ORDER_LIST)
     async def list_order(
@@ -109,28 +108,29 @@ class OrderController(Controller):
         ]
         results, total = await order_service.list_and_count(*filters)
 
-        # for order in results:
-        #     ordered_products, total = await order_product_service.list_and_count(order_id=order.id)
-        #     order_product_service.to_schema(data=ordered_products, total= total, schema_type=OrderProduct)
-             
-
         return order_service.to_schema(data=results, total=total, schema_type=Order, filters=filters)
 
 
-
     @get(path=urls.ORDER_DETAIL)
-    async def get_order(
+    async def get_order_detail(
         self,
         order_service: OrderService,
+        order_product_service:OrderProductService,
         id: UUID = Parameter(
             title="Order ID",
             description="The Order to retrieve.",
         ),
-    ) -> Order:
+    ) -> dict[str, Any]:
         """Get an existing Order."""
-        obj = await order_service.get(item_id=id)
+        order_obj = await order_service.get(item_id=id)
+        order_product_objs = order_obj.order_products
+        order_products = order_product_service.to_schema(data=order_product_objs, total=len(order_product_objs), schema_type=OrderProduct)
               
-        return order_service.to_schema(data=obj,  schema_type=Order)
+        order = order_service.to_schema(data=order_obj,  schema_type=Order)
+        order = order.to_dict()
+        order.update({"order_products":order_products.items})
+
+        return order
 
     @patch(
         path=urls.ORDER_STATUS_UPDATE, guards=[requires_superuser, requires_active_user]
