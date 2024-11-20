@@ -26,6 +26,8 @@ from urllib.parse import unquote
 
 from logging import getLogger
 
+logger = getLogger()
+
 class OrderController(Controller):
     """Order CRUD"""
     tags = ["Order"]
@@ -47,27 +49,50 @@ class OrderController(Controller):
    
         """Create a new Order."""
         order = data.to_dict()
-        order_products = order["orderProducts"]
+        logger.info("ORDER data")
+        logger.info(order)
+        cart_products = order["order_products"]
  
         order_dict ={
             "address":order["address"],
-            "total_price":order["totalPrice"],
+            "total_price":order["total_price"],
             "user_id":current_user.id ,
             "status":OrderStatus.PENDING
         }
 
-        order_obj:OrderModel = await order_service.create(data = order_dict )
-        order_products = [order_product.update({"order_id":order_obj.id}) for order_product in order_products]
-        order_product_objs = await order_product_service.create_many(data=order_products)
-        order_products = order_product_service.to_schema(data=order_product_objs, total= len(order_product_objs), schema_type=OrderProduct)
+        order_obj:OrderModel = await order_service.create(data = order_dict)
 
-        return Order(
-            user_id= current_user.id,
-            address= order_obj.address,
-            total_price= order_obj.total_price,
-            status = order_obj.status,
-            products = order_products
-        )
+        order_products:list[OrderProductCreate] = []
+        try:
+            for cart_product in cart_products:
+                new_order_product = OrderProductCreate(
+                order_id = order_obj.id,
+                product_id= cart_product.product_id,
+                quantity= cart_product.quantity,
+                price_at_order=cart_product.price_at_order,
+                discount_percent_at_order=cart_product.discount_percent_at_order
+                )
+                order_products.append(new_order_product)
+            
+    
+    
+            order_product_objs = await order_product_service.create_many(data=order_products)
+        except Exception as e:
+            logger.error(e)
+            await order_service.delete(item_id=order_obj.id)
+            raise HTTPException(detail="Failed to create order", status_code=500)
+        logger.info("CReated order product")
+        logger.info(order_product_objs)
+        return order_service.to_schema(data=order_obj, schema_type=Order)
+        # order_products = order_product_service.to_schema(data=order_product_objs, total= len(order_product_objs), schema_type=OrderProduct)
+
+        # return Order(
+        #     user_id= current_user.id,
+        #     address= order_obj.address,
+        #     total_price= order_obj.total_price,
+        #     status = order_obj.status,
+        #     products = order_products
+        # )
  
     @get(path=urls.ORDER_LIST)
     async def list_order(
@@ -84,9 +109,9 @@ class OrderController(Controller):
         ]
         results, total = await order_service.list_and_count(*filters)
 
-        for order in results:
-            ordered_products, total = await order_product_service.list_and_count(order_id=order.id)
-            order_product_service.to_schema(data=ordered_products, total= total, schema_type=OrderProduct)
+        # for order in results:
+        #     ordered_products, total = await order_product_service.list_and_count(order_id=order.id)
+        #     order_product_service.to_schema(data=ordered_products, total= total, schema_type=OrderProduct)
              
 
         return order_service.to_schema(data=results, total=total, schema_type=Order, filters=filters)

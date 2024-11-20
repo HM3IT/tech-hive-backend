@@ -1,11 +1,12 @@
 from __future__ import annotations
 
 from domain.lib.schema import CamelizedBaseStruct
-from typing import TYPE_CHECKING
+ 
 from uuid import UUID
 
 from db.models import OrderStatus
 from domain.products.schemas import Product
+from datetime import datetime
 
 __all__ = (
     "Order",
@@ -16,11 +17,14 @@ __all__ = (
 
 
 class Order(CamelizedBaseStruct):
+    id:UUID
     user_id: UUID
     address:str
     total_price: float
     status: OrderStatus
-    products: list[OrderProduct]
+    created_at: datetime
+    updated_at: datetime
+
 
 
 class OrderProductCreate(CamelizedBaseStruct):
