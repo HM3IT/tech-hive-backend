@@ -29,7 +29,7 @@ class UserController(Controller):
     tags = ["User Accounts"]
     dto = None
     return_dto = None
-    guards = [requires_active_user]
+    # guards = [requires_active_user]
 
     @get(
         operation_id="ListUsers",
