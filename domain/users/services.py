@@ -83,7 +83,7 @@ class UserService(SQLAlchemyAsyncRepositoryService[User]):
             raise PermissionDeniedException(detail=msg)
         return db_obj
 
-    async def update_password(self, data: dict[str, Any], db_obj: User) -> None:
+    async def update_password(self, data: dict[str, Any], db_obj: User) -> User:
         """Update stored user password.
 
         This is only used when not used IAP authentication.

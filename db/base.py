@@ -23,7 +23,7 @@ AUTH_EXCLUDE_API_ROUTE:list[str] =[
     product_urls.PRODUCT_LIST,
     product_urls.PRODUCT_DETAIL,
     product_urls.PRODUCT_ADVANCED_SEARCH,
-    r"^/api/files/[^/]+$",
+    r"^/api/files/(?!upload$|update/)[^/]+$",
     "^/schema",
     "^/tests"
 ]

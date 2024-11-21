@@ -2,7 +2,6 @@ from __future__ import annotations
 
 
 from domain.lib.schema import CamelizedBaseStruct
-from typing import TYPE_CHECKING
 from uuid import UUID 
 
 
@@ -37,12 +36,13 @@ class UserCreate(CamelizedBaseStruct):
     is_verified: bool = False
 
 
-class UserUpdate(CamelizedBaseStruct, omit_defaults=True):
-    email: str 
-    name: str
-    is_superuser: bool | None 
-    is_active: bool | None 
-    is_verified: bool | None 
+class UserUpdate(CamelizedBaseStruct):
+    old_password:str
+    new_name: str|None = None
+    new_password: str|None = None
+    new_address:str|None = None
+    new_image_url:str|None = None
+    is_superuser: bool = False
 
 
 class AccountLogin(CamelizedBaseStruct):

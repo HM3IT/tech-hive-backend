@@ -85,7 +85,7 @@ class ProductController(Controller):
         #     raise HTTPException(detail="Failed to add product to typesene", status_code=500)
         return product_service.to_schema(data=project_obj, schema_type=Product)
 
-    @post(path=urls.PRODUCT_IMG_UPLOAD, guards=[requires_superuser, requires_active_user])
+    @post(path=urls.PRODUCT_IMG_UPLOAD, guards=[requires_active_user])
     async def upload_img_file(
         self,
         product_service: ProductService,
