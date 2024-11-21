@@ -50,7 +50,7 @@ app = Litestar(
     on_startup=[on_startup],
     cors_config=cors_config,
     plugins=[SQLAlchemyInitPlugin(config=sqlalchemy_config)],
-    middleware=[AuthMiddleware],
+    # middleware=[AuthMiddleware],
     on_app_init=[oauth2_auth.on_app_init],
     openapi_config=openapi_config,
 )
