@@ -17,7 +17,7 @@ class Order(UUIDAuditBase):
     phone: Mapped[str] = mapped_column(String(100), nullable=False)
     total_price: Mapped[float] = mapped_column(DECIMAL(10, 2), default=0.0)
     status: Mapped[OrderStatus] = mapped_column(default=OrderStatus.PENDING)
-
+    expected_arrived_date:Mapped["str"] = mapped_column(String, nullable=True, default=None)
     order_products: Mapped[list["OrderProduct"]] = relationship(back_populates="order", lazy="selectin")
   
     user: Mapped["User"] = relationship(back_populates="orders", lazy="selectin")

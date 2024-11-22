@@ -58,7 +58,8 @@ class OrderController(Controller):
             "phone": order["phone"],
             "total_price":order["total_price"],
             "user_id":current_user.id ,
-            "status":OrderStatus.PENDING
+            "status":OrderStatus.PENDING,
+            "expected_arrived_date":""
         }
 
         order_obj:OrderModel = await order_service.create(data = order_dict)
@@ -127,7 +128,7 @@ class OrderController(Controller):
         order_product_objs = order_obj.order_products
         order_products = order_product_service.to_schema(data=order_product_objs, total=len(order_product_objs), schema_type=OrderProduct)
               
-        order = order_service.to_schema(data=order_obj,  schema_type=Order)
+        order = order_service.to_schema(data=order_obj,  schema_type=OrderDetail)
         order = order.to_dict()
         order.update({"order_products":order_products.items})
 

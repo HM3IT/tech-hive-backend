@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 17.1 (Debian 17.1-1.pgdg120+1)
--- Dumped by pg_dump version 17.1 (Debian 17.1-1.pgdg120+1)
+-- Dumped from database version 17.0 (Debian 17.0-1.pgdg120+1)
+-- Dumped by pg_dump version 17.0 (Debian 17.0-1.pgdg120+1)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -18,6 +18,15 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
+-- Data for Name: alembic_version; Type: TABLE DATA; Schema: public; Owner: heinmin2maw
+--
+
+COPY public.alembic_version (version_num) FROM stdin;
+50d208a010f8
+\.
+
+
+--
 -- Data for Name: category; Type: TABLE DATA; Schema: public; Owner: heinmin2maw
 --
 
@@ -28,44 +37,91 @@ RAM	RAM	\N	d2bbfc43-29c5-44c0-84f2-25a2edc4b1e5	\N
 \.
 
 
- 
+--
+-- Data for Name: user; Type: TABLE DATA; Schema: public; Owner: heinmin2maw
+--
+
+COPY public."user" (name, email, address, hashed_password, image_url, user_type, user_level, total_spent, is_active, is_superuser, is_verified, verified_at, id, sa_orm_sentinel, created_at, updated_at) FROM stdin;
+Hein Min Min Maw Test	admin@gmail.com	Bangkok	$argon2id$v=19$m=65536,t=3,p=4$wLjXem9t7T1n7J2z9v4/Bw$yUU9Lk/usOnK07Rn7Z/1D55v48/+CTU1ptxdZGYor7g	images/7b6b319d-f27f-485f-8016-c2e759fd4cf5_profile.jpg	ADMIN	CLASSIC	0.00	t	t	f	\N	1954fe2f-53ec-402e-b707-8f1097fd29b9	\N	2024-11-12 08:15:10.864226+00	2024-11-21 09:54:30.300144+00
+\.
+
+
+--
+-- Data for Name: order; Type: TABLE DATA; Schema: public; Owner: heinmin2maw
+--
+
+COPY public."order" (user_id, address, total_price, status, id, sa_orm_sentinel, created_at, updated_at, phone, expected_arrived_date) FROM stdin;
+1954fe2f-53ec-402e-b707-8f1097fd29b9		338.55	PENDING	c60aad6e-977c-4802-850d-c3f8218a5c7e	\N	2024-11-22 14:13:38.156163+00	2024-11-22 14:13:38.17367+00		
+\.
+
 
 --
 -- Data for Name: product; Type: TABLE DATA; Schema: public; Owner: heinmin2maw
 --
 
--- COPY public.product (name, description, price, discount_percent, image_url, sub_image_url, brand, stock, sold, category_id, id, sa_orm_sentinel) FROM stdin;
--- Intel Pentium Gold G7400	Budget-friendly, entry-level CPUs with 2 cores, suitable for basic tasks like web browsing and office applications.	80.00	0.00	images/64f8fb62-ac63-43a7-bfda-7f043c3c1301_intel_cpu_pen_gold.jpg	{}	Intel	50	\N	ef296e7a-7f6d-4b97-bd1f-ab881ba98ce4	222256e1-51ee-47dc-8371-dfdcd6bbd4ae	\N
--- AMD Ryzen 5	A mid-range processor with up to 6 cores and 12 threads, built on the Zen architecture. Ryzen 5 processors are considered to be some of the fastest available, and are good for gaming and other intense workloads.	540.00	4.00	images/d87953d2-9499-4126-82f3-d51942744728_cpu_ryzen.jpg	{}	AMD	20	\N	ef296e7a-7f6d-4b97-bd1f-ab881ba98ce4	2e2a77d5-2681-47b4-b483-bf9b11a81997	\N
--- ASRock X570 Phantom Gaming X	High-performance motherboard for Ryzen 3000 and 5000 series (AM4), supports PCIe 4.0 and advanced cooling features, ideal for enthusiasts.	400.00	5.00	images/852bf6be-8958-4568-a685-c7c76832a404_ASRock X570 Phantom Gaming X_motherboard_AMD.jpg	{}	AMD	10	\N	da4be9a4-891d-439a-ade4-aa719f92fe69	e184a2a3-7fec-4234-ba40-f2553dc34d3a	\N
--- ASUS ROG Crosshair X670E Hero	High-end motherboard for Ryzen 7000 series (AM5), supports PCIe 5.0, DDR5 RAM, designed for overclocking and gaming enthusiasts.	650.00	5.00	images/da9113ae-207b-4e45-94a6-b8309b3d2c87_ASUS ROG Crosshair X670E Hero_amd_motherboard.jpg	{}	AMD	45	\N	da4be9a4-891d-439a-ade4-aa719f92fe69	4cf36231-34a3-4a22-a12d-6f9a860379e1	\N
--- ASUS ROG Strix Z790-E	High-end motherboard for Intel's 13th and 14th Gen CPUs, supports overclocking, PCIe 5.0, and DDR5 RAM.	550.00	20.00	images/08e3d69d-44b7-428c-99cb-c0b0077a58c0_ROG-Strix-Z790-E-Gaming_motherboard_intel.jpg	{}	Intel	10	\N	da4be9a4-891d-439a-ade4-aa719f92fe69	4399e73f-3a21-41a7-8b9e-18e0ba250337	\N
--- ASUS TUF Gaming B550-PLUS	Popular mid-range motherboard for Ryzen 3000 and 5000 series (AM4), supports PCIe 4.0, suitable for mainstream gaming builds.	150.00	7.00	images/04bf6b31-5a4d-4804-b5cd-192a4d579683_ASUS TUF Gaming B550-PLUS_motherboard_AMD.jpg	{}	AMD	10	\N	da4be9a4-891d-439a-ade4-aa719f92fe69	eaf36102-519d-4558-844f-b0b565cf4215	\N
--- Athlon 3000G	Budget-friendly processors for basic computing needs such as web browsing, office work, and light multimedia usage. Ideal for entry-level desktop systems or home office PCs	70.00	0.00	images/50b25575-1f20-49f4-8254-5ec543f0d5ab_amd_cpu_athlon.jpg	{}	AMD	90	\N	ef296e7a-7f6d-4b97-bd1f-ab881ba98ce4	b233aa7e-a661-4a43-94d1-a19f3f105ab4	\N
--- GIGABYTE A520M S2H	Budget-friendly motherboard for Ryzen 3000 and 5000 series (AM4), lacks PCIe 4.0 but offers good basic features for everyday use.	60.00	0.00	images/4996d285-10d1-41a4-9cc7-8f815419019a_motherboard_gigA5.jpg	{}	AMD	10	\N	da4be9a4-891d-439a-ade4-aa719f92fe69	33394290-6d7b-444b-9aa8-589847c22977	\N
--- GIGABYTE H610M S2H	Entry-level motherboard for 12th/13th Gen CPUs, supports basic features like DDR4 RAM, good for budget builds.	80.00	0.00	images/1a98c5d7-eb61-4ff9-84b6-a0494622fb0a_intel_motherboard_gigh6.jpg	{}	Intel	5	\N	da4be9a4-891d-439a-ade4-aa719f92fe69	dd30fc2d-23da-4bd1-b969-ef69b7af7bd1	\N
--- H570 Motherboard	Mid-range board for 11th/10th Gen CPUs, supports PCIe 4.0 and Intel Optane Memory, suitable for light gaming and general use.	200.00	5.00	images/205f1d9a-71b3-4f84-9788-4f823141aa13_H570 Steel Legend(M1)_intel_motherboard.jpg	{}	Asus	10	\N	da4be9a4-891d-439a-ade4-aa719f92fe69	1aa2097a-25b2-4c29-9513-6677f5af9bb5	\N
--- Intel Core i7-13700K	Mid-range CPUs with up to 16 cores (8P + 8E), providing excellent performance for gaming and productivity tasks.	430.00	10.00	images/91617124-8979-4e64-abe1-37b97ca0e003_cpu_i7.jpg	{}	Intel	52	\N	ef296e7a-7f6d-4b97-bd1f-ab881ba98ce4	f8ed57bc-0d3f-42bd-8d45-dee92879c1ea	\N
--- Intel Core i9-13900K	High-end CPUs with up to 24 cores (8 Performance + 16 Efficiency), ideal for gaming, content creation, and multitasking.	690.00	10.00	images/b8b8ca5a-2ddf-4dd5-864e-de893c681a88_cpu_i9.jpg	{}	Intel	45	\N	ef296e7a-7f6d-4b97-bd1f-ab881ba98ce4	2953a7d5-29a2-43d5-8819-1b66e6d93229	\N
--- Intel Pentium Gold G7400	Budget-friendly, entry-level CPUs with 2 cores, suitable for basic tasks like web browsing and office applications.	80.00	0.00	images/images/f07f9df0-8262-44fc-a75a-6ba6c462ba3c_Screenshot 2024-08-02 114819.png	{}	Intel	50	\N	ef296e7a-7f6d-4b97-bd1f-ab881ba98ce4	349f3012-faf3-485a-b785-041e33876042	\N
--- Intel Xeon W-3400	Workstation and server CPUs with high core counts, designed for professional workloads like 3D rendering and data processing.	1000.00	0.00	images/0725dc78-a871-41c1-9702-c2dc9d77a3a8_intel_xeon_cpu.jpg	{}	Intel	20	\N	ef296e7a-7f6d-4b97-bd1f-ab881ba98ce4	b016cb69-f9d8-4cdd-9f36-dd2bae9bfd2d	\N
--- MSI MPG B650 TOMAHAWK WiFi	Mid-range board for Ryzen 7000 series (AM5), offers PCIe 4.0 support, good for gaming and productivity builds.	300.00	0.00	images/13828f55-f081-4a6c-b706-b72c96b8413f_mag-b650-tomahawk-wifi_amd_motherboard.jpg	{}	AMD	5	\N	da4be9a4-891d-439a-ade4-aa719f92fe69	7aa72cdc-b32e-4284-a8a8-54d1afe4126b	\N
--- MSI PRO B760M-A WiFi	Mid-range board for 13th/12th Gen CPUs, supports PCIe 4.0, great for gaming and productivity without overclocking.	220.00	0.00	images/01c3da94-8016-4600-9e01-de0dffb390f2_pro-b760m-a-wifi-msi_intel_motherboard.jpg	{}	Intel	2	\N	da4be9a4-891d-439a-ade4-aa719f92fe69	ddc0dade-0582-434d-91f6-675600c075c7	\N
--- Ryzen 7 7800X3D	Mid-to-high performance for gaming and productivity. Ideal for gamers and streamers who need strong multi-core performance.	550.00	0.00	images/20afec4c-0c93-4efb-8a1a-957cd5de78f4_cpu_ryzen7.jpg	{}	AMD	52	\N	ef296e7a-7f6d-4b97-bd1f-ab881ba98ce4	fff9f15f-c93c-4fee-8572-bf8398e1bd94	\N
--- Ryzen 9 7950X	High-end performance for gaming, content creation, and multitasking. Suitable for enthusiasts, professional video editors, and software developers who require high computing power.	750.00	20.00	images/90f7118e-db93-41b0-8a91-0e9bff37d890_ryzen9_cpu.jpg	{}	AMD	34	\N	ef296e7a-7f6d-4b97-bd1f-ab881ba98ce4	c6a69c77-e7a0-4b4f-9e64-cb28243d4a38	\N
--- Ryzen Threadripper PRO 5995WX	High-performance CPUs for professional workloads like 3D rendering, simulations, video editing, and data analysis. Designed for workstations and high-performance desktops (HEDT).	6550.00	30.00	images/e2602253-47bf-4ec6-b595-a4a8f0ebe5a9_cpu_threadripper.jpg	{}	AMD	25	\N	ef296e7a-7f6d-4b97-bd1f-ab881ba98ce4	14bba65a-51a9-4d14-9f6f-bfdbb60bd95e	\N
--- X299 Motherboard	High-performance motherboard for Intel Core X-series (HEDT) processors, ideal for workstations and content creators.	300.00	4.00	images/67f47ebd-130e-4a1a-9403-78cc5e484e08_prime_x299_intel_motherboard.jpg	{}	Asus	5	\N	da4be9a4-891d-439a-ade4-aa719f92fe69	1a9eb66d-78aa-43d9-99cf-b1631327754a	\N
--- Vengeance LPX	High-performance RAM with heat spreaders, optimized for gaming, overclocking, and heavy multitasking.	60.00	12.00	images/c7ced6c9-4df1-4199-823b-373fe503f2ce_Vengeance LPX_RAM_main1(DDR4).jpg	{"first": "images/e81e7f8d-cfe3-4d8f-a145-bcc2432222ce_Corsair-VengeanceRAM(DDR4_sub2).jpg", "third": "images/f7a98d27-8b1a-4303-893a-17965e019c05_ven_RAM_DDR4_sub3.jpg", "fourth": "images/cd1c2c86-3950-43ff-982b-9954b6f9f94d_VENG_LPX_BLK_02(DDR4_sub1).jpg", "second": "images/3bcd05d0-ae1f-4d9c-ad10-bded122c356b_RAM-DDR4-sub4.jpg"}	Corsair	12	0	d2bbfc43-29c5-44c0-84f2-25a2edc4b1e5	c0ba1f66-d3a3-45d8-ac47-a88c40386841	\N
--- Trident Z RGB	Premium RGB-lit RAM designed for gaming and creative builds, offering high speeds and sleek aesthetics.	129.00	10.00	images/f20195aa-43c0-4988-8364-26579de21e82_gskill-DDR4-RAM-main.jpg	{"first": "images/e1cfe776-bdc7-4f6a-867d-6aea4407d28e_gskill-DDR4_RAM-sub1.jpg", "third": "images/11ffbdba-da27-4958-9e24-f08f438ed313_gskill-DDR4-RAM-sub4.jpg", "fourth": "images/bbed6acf-a9a9-48f7-b450-0a79e79a9c59_gskill-RAM-DDR4-sub2.jpg", "second": "images/fe18ffcb-b177-4857-a514-fe63436735b6_gskill-DDR4-RAM-sub3.jpg"}	G.Skill	1	0	d2bbfc43-29c5-44c0-84f2-25a2edc4b1e5	289d67ed-8c1f-43fd-924d-6355a100e543	\N
--- HyperX Fury\t	Reliable and affordable RAM for general use, gaming, and multitasking, with basic overclocking support.	64.00	0.00	images/95d9e0d1-a68f-4317-9bfb-401ec4b0a7ce_kingston_RAM_DDR4_main.jpg	{"first": "images/30419188-e6a3-4412-966d-db3afab86c05_hyperx-DDR4-RAM-sub2.jpg", "third": "images/4577e1df-5b92-42c5-8553-cd8ea18f217a_kingston-DDR4-RAM-sub1.jpg", "second": "images/06c6c0c7-ff29-4bc1-b0fc-47a93b55ab00_hyperx-DDR4-RAM-sub3.jpg"}	Kingston\t	10	0	d2bbfc43-29c5-44c0-84f2-25a2edc4b1e5	d84ed9d3-c685-4ac2-8ef8-3027e449c49f	\N
--- Ballistix	Gaming-focused RAM with low latency and great performance for gaming and productivity tasks.	88.00	2.00	images/6eb17946-dd75-48b2-88e0-52a440571731_Ballistix-Memoria-RAM-DDR4-main.jpg	{"first": "images/cc99ec9a-9f4b-4dc0-baa9-fc1b3d705736_balli-DDR4-RAM-sub1.jpg", "third": "images/3e0d8193-a172-49b2-865e-6c7b1e302296_ballis-DDR4-RAM-sub2.jpg", "second": "images/c2b5ad28-3560-4d33-a521-a0b829889bf4_balli-DDR4-RAM-sub3.jpg"}	Crucial	20	0	d2bbfc43-29c5-44c0-84f2-25a2edc4b1e5	207f63f4-99f8-4096-b0a2-861199fcdcf2	\N
--- T-Force Delta RGB	Stylish RAM with vibrant RGB lighting and overclocking capabilities, ideal for gaming setups.	120.00	15.00	images/fa2acc3f-a216-461e-bf58-324cad8f1858_T-force-DDR4-RAM-main.jpg	{"first": "images/3be035d6-16b4-492b-9c82-6c043dfead5e_t-force-DDR4-RAM-sub2.jpg", "third": "images/324dbf08-5012-4143-b7be-8bcd9796fc97_t-force-RAM-DDR4-sub3.jpg", "second": "images/070233cd-aa0c-4272-a318-1d6d6cb45f9a_t-force-RAM-DDR4-sub1.jpg"}	TEAMGROUP	15	0	d2bbfc43-29c5-44c0-84f2-25a2edc4b1e5	8e75f1c6-4eeb-498a-a997-2d503627c4f0	\N
--- XPG Lancer DDR5	High-speed DDR5 RAM designed for gaming and overclocking, featuring a sleek design and excellent performance.	145.00	12.00	images/e1f94684-c731-4e92-b8d0-edcdc273d4c5_xpg-RAM-DDR5-main.jpg	{"first": "images/2c07ba69-5a26-4a76-99eb-5126cad96a67_xpg-DDR5-RAM-sub1.jpg", "third": "images/97893811-dd04-4ee2-a935-6f0cfe2ed0fa_xpg-DDR5-RAM-sub3.jpg", "second": "images/2c0e6474-810a-4f5a-bc72-89ce54345230_xpg-DDR5-RAM-sub2.jpg"}	ADATA	29	0	d2bbfc43-29c5-44c0-84f2-25a2edc4b1e5	239cfa8a-a8e5-436c-bf30-51973d25faac	\N
--- Viper Venom DDR5	Performance-focused DDR5 RAM for gaming and productivity, with support for overclocking and enhanced cooling.	150.00	12.00	images/9ddf2d52-e84d-48b7-9877-9204e46ea3b8_viper-DDR5-RAM-sub2.jpg	{"first": "images/5dc60d76-b40f-48d5-9f15-8518c65e68a9_viper-DDR5-RAM-main.jpg", "third": "images/f2fadf57-b2a6-40fd-8da2-0b030b31d4b5_viper-DDR5-RAM-sub3.jpg", "second": "images/4466dcf9-e48c-435f-87f8-9e60902ac9ca_viper-DDR5-RAM-sub1.jpg"}	Patriot	23	0	d2bbfc43-29c5-44c0-84f2-25a2edc4b1e5	f0cf2859-a712-499a-83bd-a947d6b7d6c1	\N
--- Samsung DDR5	Standard, reliable DDR5 RAM known for stability and energy efficiency, ideal for general and enterprise use.	90.00	15.00	images/7e5fb42c-d4e5-4607-a874-4bac8ce95e8e_samsung-DDR5-RAM-sub3.jpg	{"first": "images/46416bb7-a63e-423a-9e53-119e4af4b505_samsung-DDR5-RAM-main.jpg", "third": "images/4b05d520-6517-4d15-a1a9-23435d84a437_samsung-ddr5-RAM-sub2.jpg", "second": "images/64a07a7b-0de5-45b0-b9d4-58d9d73e2271_samsung-DDR5-RAM-sub1.jpg"}	Samsung	33	0	d2bbfc43-29c5-44c0-84f2-25a2edc4b1e5	aeeeac67-d6a2-4b15-8437-e88123722d7b	\N
--- EVO V DDR5 RGB	Eye-catching DDR5 RAM with unique RGB lighting and advanced overclocking capabilities, great for gaming builds.	155.00	10.00	images/8431cb95-6191-4a7b-8820-800aac798887_evo-DDR5-RAM-main.jpg	{"first": "images/bd3389da-6f78-4793-b9d9-f48834fbf5d9_evo-DDR5-RAM-sub1.jpg", "third": "images/d7e9340a-16ea-4b35-99a5-8c5c057568ee_evo-DDR5-RAM-sub3.jpg", "second": "images/00fa4306-7150-4871-b5f5-bb090ee18c97_evo-DDR5-RAM-sub2.jpg"}	GeIL	69	0	d2bbfc43-29c5-44c0-84f2-25a2edc4b1e5	4507caf7-83d7-47b1-99c2-654fca04ea94	\N
--- Zenith DDR5	Affordable DDR5 RAM offering solid performance and low power consumption, suitable for budget-conscious users.	129.00	5.00	images/76ae2b2b-b40e-478c-9384-a09afd155b33_zenith-DDR5-RAM-main.jpg	{"first": "images/a3ab3036-4302-46a4-a630-b34578c1c41c_zeith-RAM-DDR5-sub2.jpg", "third": "images/3dc1af9f-fe6b-4cd6-a682-7f403598f39a_zenith-RAM-DDR5-sub1.jpg", "second": "images/33e0daea-3a0a-4477-b712-e65221bbd5b4_zen-DDR5-RAM-sub3.jpg"}	Silicon Power	30	0	d2bbfc43-29c5-44c0-84f2-25a2edc4b1e5	b0a07d18-151a-4a9f-852d-feaaf2546d4c	\N
--- \.
+COPY public.product (name, description, price, discount_percent, image_url, sub_image_url, brand, stock, category_id, id, sa_orm_sentinel, sold) FROM stdin;
+Intel Pentium Gold G7400	Budget-friendly, entry-level CPUs with 2 cores, suitable for basic tasks like web browsing and office applications.	80.00	0.00	images/64f8fb62-ac63-43a7-bfda-7f043c3c1301_intel_cpu_pen_gold.jpg	{}	Intel	50	ef296e7a-7f6d-4b97-bd1f-ab881ba98ce4	222256e1-51ee-47dc-8371-dfdcd6bbd4ae	\N	\N
+ASRock X570 Phantom Gaming X	High-performance motherboard for Ryzen 3000 and 5000 series (AM4), supports PCIe 4.0 and advanced cooling features, ideal for enthusiasts.	400.00	5.00	images/852bf6be-8958-4568-a685-c7c76832a404_ASRock X570 Phantom Gaming X_motherboard_AMD.jpg	{}	AMD	10	da4be9a4-891d-439a-ade4-aa719f92fe69	e184a2a3-7fec-4234-ba40-f2553dc34d3a	\N	\N
+ASUS ROG Crosshair X670E Hero	High-end motherboard for Ryzen 7000 series (AM5), supports PCIe 5.0, DDR5 RAM, designed for overclocking and gaming enthusiasts.	650.00	5.00	images/da9113ae-207b-4e45-94a6-b8309b3d2c87_ASUS ROG Crosshair X670E Hero_amd_motherboard.jpg	{}	AMD	45	da4be9a4-891d-439a-ade4-aa719f92fe69	4cf36231-34a3-4a22-a12d-6f9a860379e1	\N	\N
+ASUS ROG Strix Z790-E	High-end motherboard for Intel's 13th and 14th Gen CPUs, supports overclocking, PCIe 5.0, and DDR5 RAM.	550.00	20.00	images/08e3d69d-44b7-428c-99cb-c0b0077a58c0_ROG-Strix-Z790-E-Gaming_motherboard_intel.jpg	{}	Intel	10	da4be9a4-891d-439a-ade4-aa719f92fe69	4399e73f-3a21-41a7-8b9e-18e0ba250337	\N	\N
+ASUS TUF Gaming B550-PLUS	Popular mid-range motherboard for Ryzen 3000 and 5000 series (AM4), supports PCIe 4.0, suitable for mainstream gaming builds.	150.00	7.00	images/04bf6b31-5a4d-4804-b5cd-192a4d579683_ASUS TUF Gaming B550-PLUS_motherboard_AMD.jpg	{}	AMD	10	da4be9a4-891d-439a-ade4-aa719f92fe69	eaf36102-519d-4558-844f-b0b565cf4215	\N	\N
+Athlon 3000G	Budget-friendly processors for basic computing needs such as web browsing, office work, and light multimedia usage. Ideal for entry-level desktop systems or home office PCs	70.00	0.00	images/50b25575-1f20-49f4-8254-5ec543f0d5ab_amd_cpu_athlon.jpg	{}	AMD	90	ef296e7a-7f6d-4b97-bd1f-ab881ba98ce4	b233aa7e-a661-4a43-94d1-a19f3f105ab4	\N	\N
+GIGABYTE A520M S2H	Budget-friendly motherboard for Ryzen 3000 and 5000 series (AM4), lacks PCIe 4.0 but offers good basic features for everyday use.	60.00	0.00	images/4996d285-10d1-41a4-9cc7-8f815419019a_motherboard_gigA5.jpg	{}	AMD	10	da4be9a4-891d-439a-ade4-aa719f92fe69	33394290-6d7b-444b-9aa8-589847c22977	\N	\N
+GIGABYTE H610M S2H	Entry-level motherboard for 12th/13th Gen CPUs, supports basic features like DDR4 RAM, good for budget builds.	80.00	0.00	images/1a98c5d7-eb61-4ff9-84b6-a0494622fb0a_intel_motherboard_gigh6.jpg	{}	Intel	5	da4be9a4-891d-439a-ade4-aa719f92fe69	dd30fc2d-23da-4bd1-b969-ef69b7af7bd1	\N	\N
+H570 Motherboard	Mid-range board for 11th/10th Gen CPUs, supports PCIe 4.0 and Intel Optane Memory, suitable for light gaming and general use.	200.00	5.00	images/205f1d9a-71b3-4f84-9788-4f823141aa13_H570 Steel Legend(M1)_intel_motherboard.jpg	{}	Asus	10	da4be9a4-891d-439a-ade4-aa719f92fe69	1aa2097a-25b2-4c29-9513-6677f5af9bb5	\N	\N
+Intel Core i7-13700K	Mid-range CPUs with up to 16 cores (8P + 8E), providing excellent performance for gaming and productivity tasks.	430.00	10.00	images/91617124-8979-4e64-abe1-37b97ca0e003_cpu_i7.jpg	{}	Intel	52	ef296e7a-7f6d-4b97-bd1f-ab881ba98ce4	f8ed57bc-0d3f-42bd-8d45-dee92879c1ea	\N	\N
+Intel Core i9-13900K	High-end CPUs with up to 24 cores (8 Performance + 16 Efficiency), ideal for gaming, content creation, and multitasking.	690.00	10.00	images/b8b8ca5a-2ddf-4dd5-864e-de893c681a88_cpu_i9.jpg	{}	Intel	45	ef296e7a-7f6d-4b97-bd1f-ab881ba98ce4	2953a7d5-29a2-43d5-8819-1b66e6d93229	\N	\N
+Intel Pentium Gold G7400	Budget-friendly, entry-level CPUs with 2 cores, suitable for basic tasks like web browsing and office applications.	80.00	0.00	images/images/f07f9df0-8262-44fc-a75a-6ba6c462ba3c_Screenshot 2024-08-02 114819.png	{}	Intel	50	ef296e7a-7f6d-4b97-bd1f-ab881ba98ce4	349f3012-faf3-485a-b785-041e33876042	\N	\N
+Intel Xeon W-3400	Workstation and server CPUs with high core counts, designed for professional workloads like 3D rendering and data processing.	1000.00	0.00	images/0725dc78-a871-41c1-9702-c2dc9d77a3a8_intel_xeon_cpu.jpg	{}	Intel	20	ef296e7a-7f6d-4b97-bd1f-ab881ba98ce4	b016cb69-f9d8-4cdd-9f36-dd2bae9bfd2d	\N	\N
+MSI MPG B650 TOMAHAWK WiFi	Mid-range board for Ryzen 7000 series (AM5), offers PCIe 4.0 support, good for gaming and productivity builds.	300.00	0.00	images/13828f55-f081-4a6c-b706-b72c96b8413f_mag-b650-tomahawk-wifi_amd_motherboard.jpg	{}	AMD	5	da4be9a4-891d-439a-ade4-aa719f92fe69	7aa72cdc-b32e-4284-a8a8-54d1afe4126b	\N	\N
+MSI PRO B760M-A WiFi	Mid-range board for 13th/12th Gen CPUs, supports PCIe 4.0, great for gaming and productivity without overclocking.	220.00	0.00	images/01c3da94-8016-4600-9e01-de0dffb390f2_pro-b760m-a-wifi-msi_intel_motherboard.jpg	{}	Intel	2	da4be9a4-891d-439a-ade4-aa719f92fe69	ddc0dade-0582-434d-91f6-675600c075c7	\N	\N
+Ryzen 7 7800X3D	Mid-to-high performance for gaming and productivity. Ideal for gamers and streamers who need strong multi-core performance.	550.00	0.00	images/20afec4c-0c93-4efb-8a1a-957cd5de78f4_cpu_ryzen7.jpg	{}	AMD	52	ef296e7a-7f6d-4b97-bd1f-ab881ba98ce4	fff9f15f-c93c-4fee-8572-bf8398e1bd94	\N	\N
+Ryzen 9 7950X	High-end performance for gaming, content creation, and multitasking. Suitable for enthusiasts, professional video editors, and software developers who require high computing power.	750.00	20.00	images/90f7118e-db93-41b0-8a91-0e9bff37d890_ryzen9_cpu.jpg	{}	AMD	34	ef296e7a-7f6d-4b97-bd1f-ab881ba98ce4	c6a69c77-e7a0-4b4f-9e64-cb28243d4a38	\N	\N
+Ryzen Threadripper PRO 5995WX	High-performance CPUs for professional workloads like 3D rendering, simulations, video editing, and data analysis. Designed for workstations and high-performance desktops (HEDT).	6550.00	30.00	images/e2602253-47bf-4ec6-b595-a4a8f0ebe5a9_cpu_threadripper.jpg	{}	AMD	25	ef296e7a-7f6d-4b97-bd1f-ab881ba98ce4	14bba65a-51a9-4d14-9f6f-bfdbb60bd95e	\N	\N
+X299 Motherboard	High-performance motherboard for Intel Core X-series (HEDT) processors, ideal for workstations and content creators.	300.00	4.00	images/67f47ebd-130e-4a1a-9403-78cc5e484e08_prime_x299_intel_motherboard.jpg	{}	Asus	5	da4be9a4-891d-439a-ade4-aa719f92fe69	1a9eb66d-78aa-43d9-99cf-b1631327754a	\N	\N
+Vengeance LPX	High-performance RAM with heat spreaders, optimized for gaming, overclocking, and heavy multitasking.	60.00	12.00	images/c7ced6c9-4df1-4199-823b-373fe503f2ce_Vengeance LPX_RAM_main1(DDR4).jpg	{"first": "images/e81e7f8d-cfe3-4d8f-a145-bcc2432222ce_Corsair-VengeanceRAM(DDR4_sub2).jpg", "third": "images/f7a98d27-8b1a-4303-893a-17965e019c05_ven_RAM_DDR4_sub3.jpg", "fourth": "images/cd1c2c86-3950-43ff-982b-9954b6f9f94d_VENG_LPX_BLK_02(DDR4_sub1).jpg", "second": "images/3bcd05d0-ae1f-4d9c-ad10-bded122c356b_RAM-DDR4-sub4.jpg"}	Corsair	12	d2bbfc43-29c5-44c0-84f2-25a2edc4b1e5	c0ba1f66-d3a3-45d8-ac47-a88c40386841	\N	\N
+Trident Z RGB	Premium RGB-lit RAM designed for gaming and creative builds, offering high speeds and sleek aesthetics.	129.00	10.00	images/f20195aa-43c0-4988-8364-26579de21e82_gskill-DDR4-RAM-main.jpg	{"first": "images/e1cfe776-bdc7-4f6a-867d-6aea4407d28e_gskill-DDR4_RAM-sub1.jpg", "third": "images/11ffbdba-da27-4958-9e24-f08f438ed313_gskill-DDR4-RAM-sub4.jpg", "fourth": "images/bbed6acf-a9a9-48f7-b450-0a79e79a9c59_gskill-RAM-DDR4-sub2.jpg", "second": "images/fe18ffcb-b177-4857-a514-fe63436735b6_gskill-DDR4-RAM-sub3.jpg"}	G.Skill	1	d2bbfc43-29c5-44c0-84f2-25a2edc4b1e5	289d67ed-8c1f-43fd-924d-6355a100e543	\N	\N
+AMD Ryzen 7	A mid-range processor with up to 6 cores and 12 threads, built on the Zen architecture. Ryzen 5 processors are considered to be some of the fastest available, and are good for gaming and other intense workloads.	540.00	4.00	images/d87953d2-9499-4126-82f3-d51942744728_cpu_ryzen.jpg	{}	AMD	20	ef296e7a-7f6d-4b97-bd1f-ab881ba98ce4	2e2a77d5-2681-47b4-b483-bf9b11a81997	\N	\N
+HyperX Fury\t	Reliable and affordable RAM for general use, gaming, and multitasking, with basic overclocking support.	64.00	0.00	images/95d9e0d1-a68f-4317-9bfb-401ec4b0a7ce_kingston_RAM_DDR4_main.jpg	{"first": "images/30419188-e6a3-4412-966d-db3afab86c05_hyperx-DDR4-RAM-sub2.jpg", "third": "images/4577e1df-5b92-42c5-8553-cd8ea18f217a_kingston-DDR4-RAM-sub1.jpg", "second": "images/06c6c0c7-ff29-4bc1-b0fc-47a93b55ab00_hyperx-DDR4-RAM-sub3.jpg"}	Kingston\t	10	d2bbfc43-29c5-44c0-84f2-25a2edc4b1e5	d84ed9d3-c685-4ac2-8ef8-3027e449c49f	\N	\N
+Ballistix	Gaming-focused RAM with low latency and great performance for gaming and productivity tasks.	88.00	2.00	images/6eb17946-dd75-48b2-88e0-52a440571731_Ballistix-Memoria-RAM-DDR4-main.jpg	{"first": "images/cc99ec9a-9f4b-4dc0-baa9-fc1b3d705736_balli-DDR4-RAM-sub1.jpg", "third": "images/3e0d8193-a172-49b2-865e-6c7b1e302296_ballis-DDR4-RAM-sub2.jpg", "second": "images/c2b5ad28-3560-4d33-a521-a0b829889bf4_balli-DDR4-RAM-sub3.jpg"}	Crucial	20	d2bbfc43-29c5-44c0-84f2-25a2edc4b1e5	207f63f4-99f8-4096-b0a2-861199fcdcf2	\N	\N
+T-Force Delta RGB	Stylish RAM with vibrant RGB lighting and overclocking capabilities, ideal for gaming setups.	120.00	15.00	images/fa2acc3f-a216-461e-bf58-324cad8f1858_T-force-DDR4-RAM-main.jpg	{"first": "images/3be035d6-16b4-492b-9c82-6c043dfead5e_t-force-DDR4-RAM-sub2.jpg", "third": "images/324dbf08-5012-4143-b7be-8bcd9796fc97_t-force-RAM-DDR4-sub3.jpg", "second": "images/070233cd-aa0c-4272-a318-1d6d6cb45f9a_t-force-RAM-DDR4-sub1.jpg"}	TEAMGROUP	15	d2bbfc43-29c5-44c0-84f2-25a2edc4b1e5	8e75f1c6-4eeb-498a-a997-2d503627c4f0	\N	\N
+XPG Lancer DDR5	High-speed DDR5 RAM designed for gaming and overclocking, featuring a sleek design and excellent performance.	145.00	12.00	images/e1f94684-c731-4e92-b8d0-edcdc273d4c5_xpg-RAM-DDR5-main.jpg	{"first": "images/2c07ba69-5a26-4a76-99eb-5126cad96a67_xpg-DDR5-RAM-sub1.jpg", "third": "images/97893811-dd04-4ee2-a935-6f0cfe2ed0fa_xpg-DDR5-RAM-sub3.jpg", "second": "images/2c0e6474-810a-4f5a-bc72-89ce54345230_xpg-DDR5-RAM-sub2.jpg"}	ADATA	29	d2bbfc43-29c5-44c0-84f2-25a2edc4b1e5	239cfa8a-a8e5-436c-bf30-51973d25faac	\N	\N
+Viper Venom DDR5	Performance-focused DDR5 RAM for gaming and productivity, with support for overclocking and enhanced cooling.	150.00	12.00	images/9ddf2d52-e84d-48b7-9877-9204e46ea3b8_viper-DDR5-RAM-sub2.jpg	{"first": "images/5dc60d76-b40f-48d5-9f15-8518c65e68a9_viper-DDR5-RAM-main.jpg", "third": "images/f2fadf57-b2a6-40fd-8da2-0b030b31d4b5_viper-DDR5-RAM-sub3.jpg", "second": "images/4466dcf9-e48c-435f-87f8-9e60902ac9ca_viper-DDR5-RAM-sub1.jpg"}	Patriot	23	d2bbfc43-29c5-44c0-84f2-25a2edc4b1e5	f0cf2859-a712-499a-83bd-a947d6b7d6c1	\N	\N
+Samsung DDR5	Standard, reliable DDR5 RAM known for stability and energy efficiency, ideal for general and enterprise use.	90.00	15.00	images/7e5fb42c-d4e5-4607-a874-4bac8ce95e8e_samsung-DDR5-RAM-sub3.jpg	{"first": "images/46416bb7-a63e-423a-9e53-119e4af4b505_samsung-DDR5-RAM-main.jpg", "third": "images/4b05d520-6517-4d15-a1a9-23435d84a437_samsung-ddr5-RAM-sub2.jpg", "second": "images/64a07a7b-0de5-45b0-b9d4-58d9d73e2271_samsung-DDR5-RAM-sub1.jpg"}	Samsung	33	d2bbfc43-29c5-44c0-84f2-25a2edc4b1e5	aeeeac67-d6a2-4b15-8437-e88123722d7b	\N	\N
+EVO V DDR5 RGB	Eye-catching DDR5 RAM with unique RGB lighting and advanced overclocking capabilities, great for gaming builds.	155.00	10.00	images/8431cb95-6191-4a7b-8820-800aac798887_evo-DDR5-RAM-main.jpg	{"first": "images/bd3389da-6f78-4793-b9d9-f48834fbf5d9_evo-DDR5-RAM-sub1.jpg", "third": "images/d7e9340a-16ea-4b35-99a5-8c5c057568ee_evo-DDR5-RAM-sub3.jpg", "second": "images/00fa4306-7150-4871-b5f5-bb090ee18c97_evo-DDR5-RAM-sub2.jpg"}	GeIL	69	d2bbfc43-29c5-44c0-84f2-25a2edc4b1e5	4507caf7-83d7-47b1-99c2-654fca04ea94	\N	\N
+Zenith DDR5	Affordable DDR5 RAM offering solid performance and low power consumption, suitable for budget-conscious users.	129.00	5.00	images/76ae2b2b-b40e-478c-9384-a09afd155b33_zenith-DDR5-RAM-main.jpg	{"first": "images/a3ab3036-4302-46a4-a630-b34578c1c41c_zeith-RAM-DDR5-sub2.jpg", "third": "images/3dc1af9f-fe6b-4cd6-a682-7f403598f39a_zenith-RAM-DDR5-sub1.jpg", "second": "images/33e0daea-3a0a-4477-b712-e65221bbd5b4_zen-DDR5-RAM-sub3.jpg"}	Silicon Power	30	d2bbfc43-29c5-44c0-84f2-25a2edc4b1e5	b0a07d18-151a-4a9f-852d-feaaf2546d4c	\N	\N
+Intel Core Ultra 7 Desktop Processor 265K - 20 cores up to 5.5 GHz 	 About this item\n\nGet ultra-efficient with Intel Core Ultra desktop processors that improve both performance and efficiency so your PC can run cooler, quieter, and quicker.\nCore & Threads 20 cores (8 P-cores + 12 E-cores) and 20 threads.\nPerformance Hybrid Architecture Integrates two core microarchitectures, prioritizing and distributing workloads to optimize performance.\nPerformance Unlocked Up to 5.5 GHz unlocked. 36MB Cache.\nCompatibility Compatible with Intel 800 series chipset-based motherboards.\nPCIe Express Version Turbo Boost Max Technology 3.0, and PCIe 5.0 & 4.0 support. Intel Optane Memory support. No thermal solution included.\n	389.00	10.00	images/84bc7290-ccc5-4e05-bd7a-07a6a6846ce4_51gf0NAUHkL._AC_SL1000_.jpg	{"first": "images/3abc349b-658e-4b3e-8a74-671ab3424557_51CzdMdSowL._AC_SL1080_.jpg", "third": "images/d129acbf-a2e8-43ce-90be-b856d52df5c3_61fKUj+x5GL._AC_SL1080_.jpg", "second": "images/59f66d47-2db5-41c7-ae3f-caa491d124da_61aH6Abr0zL._AC_SL1080_.jpg"}	Intel	20	ef296e7a-7f6d-4b97-bd1f-ab881ba98ce4	11c5952d-42d8-4b5f-aa41-0e056d7ab67b	\N	\N
+\.
 
- 
- 
+
+--
+-- Data for Name: order_product; Type: TABLE DATA; Schema: public; Owner: heinmin2maw
+--
+
+COPY public.order_product (product_id, order_id, quantity, price_at_order, id, sa_orm_sentinel, created_at, updated_at, discount_percent_at_order) FROM stdin;
+b0a07d18-151a-4a9f-852d-feaaf2546d4c	c60aad6e-977c-4802-850d-c3f8218a5c7e	1	129.00	03464a1e-93b6-490d-b982-b8dc0ea67ab0	0	2024-11-22 14:13:38.168216+00	2024-11-22 14:13:38.173705+00	5.00
+aeeeac67-d6a2-4b15-8437-e88123722d7b	c60aad6e-977c-4802-850d-c3f8218a5c7e	1	90.00	858b539c-55bf-4df2-b0b3-62777ac9f2df	2	2024-11-22 14:13:38.168237+00	2024-11-22 14:13:38.173695+00	15.00
+4507caf7-83d7-47b1-99c2-654fca04ea94	c60aad6e-977c-4802-850d-c3f8218a5c7e	1	155.00	92dcad4d-3f2f-442d-b25f-70d6b1f5afe8	1	2024-11-22 14:13:38.168232+00	2024-11-22 14:13:38.173701+00	10.00
+\.
+
+
+--
+-- Data for Name: product_review; Type: TABLE DATA; Schema: public; Owner: heinmin2maw
+--
+
+COPY public.product_review (user_id, product_id, rating, review_text, id, sa_orm_sentinel, created_at, updated_at) FROM stdin;
+\.
+
+
+--
+-- Data for Name: subcategory; Type: TABLE DATA; Schema: public; Owner: heinmin2maw
+--
+
+COPY public.subcategory (name, category_id, id, sa_orm_sentinel) FROM stdin;
+\.
+
+
+--
+-- PostgreSQL database dump complete
+--
+

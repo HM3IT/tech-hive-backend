@@ -24,16 +24,19 @@ class Order(CamelizedBaseStruct):
     status: OrderStatus
     created_at: datetime
     updated_at: datetime
+    expected_arrived_date:str # ISO format saved for order expected arrived date
 
 class OrderDetail(CamelizedBaseStruct):
     id:UUID
     user_id: UUID
     address:str
     total_price: float
+    phone:str
     status: OrderStatus
     created_at: datetime
     updated_at: datetime
     order_products:list[OrderProduct]
+    expected_arrived_date:str # ISO format saved for order expected arrived date
 
 class OrderProductCreate(CamelizedBaseStruct):
     order_id:UUID

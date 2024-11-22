@@ -83,13 +83,13 @@ class ProductController(Controller):
         product = data.to_dict()
         product.update({"sold":0})
         project_obj = await product_service.create(product)
-        try:
-            # Typesense synchronization upon product creation
-            typesense_product = await product_service.get_products_for_typesense(embedding_model, [project_obj])
-            await product_service.add_product_into_typesense(typesense_client=typesense_client, product=typesense_product[0])
+        # try:
+        #     # Typesense synchronization upon product creation
+        #     typesense_product = await product_service.get_products_for_typesense(embedding_model, [project_obj])
+        #     await product_service.add_product_into_typesense(typesense_client=typesense_client, product=typesense_product[0])
             
-        except Exception as e:
-            logger.error(f"Sync failed at product creation, Error: {e}")
+        # except Exception as e:
+        #     logger.error(f"Sync failed at product creation, Error: {e}")
         return product_service.to_schema(data=project_obj, schema_type=Product)
 
     @post(path=urls.PRODUCT_IMG_UPLOAD, guards=[requires_active_user])
