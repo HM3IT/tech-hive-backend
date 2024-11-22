@@ -74,15 +74,22 @@ class ProductController(Controller):
         product_service: ProductService,
         data: ProductCreate,
     ) -> Product:
+        from sentence_transformers import SentenceTransformer # loading sentence transformer inside for optimization
+        
+        EMBEDDING_MODEL = os.environ["EMBEDDING_MODEL"]
+        embedding_model = SentenceTransformer(EMBEDDING_MODEL) 
    
         """Create a new Product."""
         product = data.to_dict()
         product.update({"sold":0})
         project_obj = await product_service.create(product)
-        # typesense_product = await product_service.get_products_for_typesense(embedding_model, [project_obj])
-        # isSuccess = await product_service.add_product_into_typesense(typesense_client=typesense_client, product=typesense_product[0])
-        # if not isSuccess:
-        #     raise HTTPException(detail="Failed to add product to typesene", status_code=500)
+        try:
+            # Typesense synchronization upon product creation
+            typesense_product = await product_service.get_products_for_typesense(embedding_model, [project_obj])
+            await product_service.add_product_into_typesense(typesense_client=typesense_client, product=typesense_product[0])
+            
+        except Exception as e:
+            logger.error(f"Sync failed at product creation, Error: {e}")
         return product_service.to_schema(data=project_obj, schema_type=Product)
 
     @post(path=urls.PRODUCT_IMG_UPLOAD, guards=[requires_active_user])
@@ -161,11 +168,23 @@ class ProductController(Controller):
         ),
     ) -> Product:
         """Update an Product."""
+        from sentence_transformers import SentenceTransformer # loading sentence transformer inside for optimization
+        
+        EMBEDDING_MODEL = os.environ["EMBEDDING_MODEL"]
+        embedding_model = SentenceTransformer(EMBEDDING_MODEL) 
         product = data.to_dict()
         db_obj = await product_service.get(item_id=id)
         if not db_obj:
             raise HTTPException(detail="Product id not found", status_code= 404 )
         db_obj = await product_service.update(item_id=str(id), data=product)
+        try:
+            isSuccess = await product_service.delete_product_from_typesense(typesense_client=typesense_client, document_id=str(id))
+            if isSuccess:
+                product_typesense = await product_service.get_products_for_typesense(embedding_model, [product])
+                await product_service.add_product_into_typesense(typesense_client=typesense_client, product=product_typesense[0])
+        except Exception as e:
+            logger.error(f"Update product sync failed: {e}")
+
         return product_service.to_schema(db_obj, schema_type=Product)
 
 
@@ -251,6 +270,11 @@ class ProductController(Controller):
         ),
     ) -> None:
         """Delete a Product from the system."""
+         
+        isSuccess = await product_service.delete_product_from_typesense(typesense_client=typesense_client, document_id=str(id))
+        if not isSuccess:
+            logger.error(f"Failed to delete document {id} from Typesense")
+    
         await product_service.delete(item_id=id)
 
     #  ======================

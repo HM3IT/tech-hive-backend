@@ -53,14 +53,26 @@ class ProductService(SQLAlchemyAsyncRepositoryService[Product]):
             return [{"success":False, "error": "Failed to import in the bulk insert"}]
 
 
-    async def add_product_into_typesense(self, typesense_client: typesense.Client, product: dict[str, Any]) -> bool:
+    async def add_product_into_typesense(self, typesense_client: typesense.Client, product: TypesenseProductSchema) -> bool:
         try:
-            TypesenseProductSchema(**product)
+            product = product.dict()
             res = typesense_client.collections[COLLECTION_NAME].documents.import_([product], {'action': 'upsert'})
             return res[0]['success']
         except typesense.exceptions.RequestMalformed as e:
             logger.error(f"Failed to add product into Typesense: {e}")
         return False
+
+    async def delete_product_from_typesense(self, typesense_client: typesense.Client, document_id: str) -> bool:
+        try:
+            typesense_client.collections[COLLECTION_NAME].documents[document_id].delete()
+            logger.info(f"Successfully deleted document with ID: {document_id}")
+            return True
+        except typesense.exceptions.ObjectNotFound as e:
+            logger.warning(f"Document with ID {document_id} not found: {e}")
+        except typesense.exceptions.TypesenseClientError as e:
+            logger.error(f"Error occurred while deleting document with ID {document_id}: {e}")
+        return False
+
 
     async def get_products_for_typesense(self,  embedding_model:SentenceTransformer, products:list[Product]) -> list[TypesenseProductSchema]:
  
