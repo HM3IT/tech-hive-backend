@@ -13,6 +13,8 @@ from litestar.params import Parameter
 from litestar.repository.filters import LimitOffset
 from domain.orders.dependencies  import provide_order_service, provide_ordered_product_service
 from domain.orders.services import OrderService, OrderProductService
+from domain.products.depedencies  import provide_product_service
+from domain.products.services import ProductService
 from domain.orders import urls
 from domain.users.guards import requires_active_user, requires_superuser
 from litestar.repository.filters import CollectionFilter
@@ -33,7 +35,8 @@ class OrderController(Controller):
     tags = ["Order"]
     dependencies = {
         "order_service": Provide(provide_order_service),
-        "order_product_service":Provide(provide_ordered_product_service)
+        "order_product_service":Provide(provide_ordered_product_service),
+        "product_service":Provide(provide_product_service)
         }
     guards=[requires_active_user]
 
@@ -71,7 +74,8 @@ class OrderController(Controller):
                 product_id= cart_product.product_id,
                 quantity= cart_product.quantity,
                 price_at_order=cart_product.price_at_order,
-                discount_percent_at_order=cart_product.discount_percent_at_order
+                discount_percent_at_order=cart_product.discount_percent_at_order,
+                image_url = cart_product.image_url
                 )
                 order_products.append(new_order_product)
             
@@ -116,6 +120,7 @@ class OrderController(Controller):
     async def get_order_detail(
         self,
         order_service: OrderService,
+        product_service: ProductService,
         order_product_service:OrderProductService,
         id: UUID = Parameter(
             title="Order ID",
@@ -125,7 +130,16 @@ class OrderController(Controller):
         """Get an existing Order."""
         order_obj = await order_service.get(item_id=id)
         order_product_objs = order_obj.order_products
+
         order_products = order_product_service.to_schema(data=order_product_objs, total=len(order_product_objs), schema_type=OrderProduct)
+
+        for order_product in order_products:
+            product = await product_service.get(item_id=order_product["productId"])
+            detailed_fields = {
+                "name":product.name,
+                "image_url": product.image_url
+            }
+            
               
         order = order_service.to_schema(data=order_obj,  schema_type=Order)
         order = order.to_dict()

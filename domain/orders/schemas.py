@@ -41,10 +41,12 @@ class OrderProductCreate(CamelizedBaseStruct):
     quantity: int
     price_at_order:float
     discount_percent_at_order:float
+    image_url:str
     
 class CartProduct(CamelizedBaseStruct):
     product_id:UUID
     price_at_order:float
+    image_url:str
     discount_percent_at_order:float
     quantity:int
 

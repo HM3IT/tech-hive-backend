@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from litestar.contrib.sqlalchemy.base import UUIDAuditBase
-from sqlalchemy import Integer, ForeignKey, DECIMAL
+from sqlalchemy import Integer, ForeignKey, DECIMAL, String
 from uuid import UUID
 from typing import TYPE_CHECKING
 
@@ -17,6 +17,8 @@ class OrderProduct(UUIDAuditBase):
     price_at_order: Mapped[float] = mapped_column(DECIMAL(10, 2), nullable=False)
     discount_percent_at_order: Mapped[float] = mapped_column(DECIMAL(5, 2), default=0.0)
     product: Mapped["Product"] = relationship(back_populates="order_products")
+    expected_arrived_date: Mapped["str"] = mapped_column(String(150),  nullable=True)
+    image_Url: Mapped[str] = mapped_column(String, nullable=True)
     
     order: Mapped["Order"] = relationship("Order", back_populates="order_products")
  
