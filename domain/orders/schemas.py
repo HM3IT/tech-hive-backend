@@ -66,6 +66,8 @@ class OrderProduct(CamelizedBaseStruct):
     quantity: int
     price_at_order:float
     discount_percent_at_order:float
+    image_url:str|None
+    expected_arrived_date:str|None
  
 
 

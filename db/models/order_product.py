@@ -18,7 +18,8 @@ class OrderProduct(UUIDAuditBase):
     discount_percent_at_order: Mapped[float] = mapped_column(DECIMAL(5, 2), default=0.0)
     product: Mapped["Product"] = relationship(back_populates="order_products")
     expected_arrived_date: Mapped["str"] = mapped_column(String(150),  nullable=True)
-    image_Url: Mapped[str] = mapped_column(String, nullable=True)
-    
     order: Mapped["Order"] = relationship("Order", back_populates="order_products")
- 
+     
+    @property
+    def product_name(self) -> str|None:
+        return self.product.name if self.product else None

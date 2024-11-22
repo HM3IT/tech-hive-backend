@@ -132,20 +132,12 @@ class OrderController(Controller):
         order_product_objs = order_obj.order_products
 
         order_products = order_product_service.to_schema(data=order_product_objs, total=len(order_product_objs), schema_type=OrderProduct)
-
-        for order_product in order_products:
-            product = await product_service.get(item_id=order_product["productId"])
-            detailed_fields = {
-                "name":product.name,
-                "image_url": product.image_url
-            }
-            
               
         order = order_service.to_schema(data=order_obj,  schema_type=Order)
-        order = order.to_dict()
-        order.update({"order_products":order_products.items})
+        order_dict = order.to_dict()
+        order_dict.update({"order_products":order_products.items})
 
-        return order
+        return order_dict
 
     @patch(
         path=urls.ORDER_STATUS_UPDATE, guards=[requires_superuser, requires_active_user]
