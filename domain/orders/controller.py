@@ -38,7 +38,7 @@ class OrderController(Controller):
     guards=[requires_active_user]
 
 
-    @post(path=urls.ORDER_ADD, guards=[requires_superuser, requires_active_user])
+    @post(path=urls.ORDER_ADD)
     async def create_order(
         self,
         order_service: OrderService,
@@ -95,8 +95,24 @@ class OrderController(Controller):
     
        
  
-    @get(path=urls.ORDER_LIST)
+    @get(path=urls.ORDER_ADMIN_LIST, guards=[requires_superuser])
     async def list_order(
+        self,
+        order_service: OrderService,
+        order_product_service:OrderProductService,
+        limit_offset: LimitOffset,
+    ) -> OffsetPagination[Order]:
+        """List orders."""
+        filters = [
+            limit_offset
+        ]
+        results, total = await order_service.list_and_count(*filters)
+
+        return order_service.to_schema(data=results, total=total, schema_type=Order, filters=filters)
+
+
+    @get(path=urls.ORDER_LIST)
+    async def list_my_order(
         self,
         order_service: OrderService,
         order_product_service:OrderProductService,
@@ -111,6 +127,7 @@ class OrderController(Controller):
         results, total = await order_service.list_and_count(*filters)
 
         return order_service.to_schema(data=results, total=total, schema_type=Order, filters=filters)
+
 
 
     @get(path=urls.ORDER_DETAIL)
