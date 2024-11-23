@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from domain.lib.schema import CamelizedBaseStruct
 from uuid import UUID 
-
+from datetime import datetime
 
 __all__ = (
     "AccountLogin",
@@ -20,6 +20,8 @@ class User(CamelizedBaseStruct):
     email: str
     name: str
     user_level:str
+    created_at:datetime
+    updated_at:datetime
     address: str|None = ""
     image_url: str|None = None
     is_superuser: bool = False

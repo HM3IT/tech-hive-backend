@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING
 
 from .enums import OrderStatus
 from uuid import UUID
+ 
 if TYPE_CHECKING:
     from .user import User
     from .order_product import OrderProduct
@@ -19,5 +20,6 @@ class Order(UUIDAuditBase):
     status: Mapped[OrderStatus] = mapped_column(default=OrderStatus.PENDING)
     expected_arrived_date:Mapped["str"] = mapped_column(String, nullable=True, default=None)
     order_products: Mapped[list["OrderProduct"]] = relationship(back_populates="order", lazy="selectin")
-  
+    handler_id: Mapped[str] = mapped_column(String(150),nullable=True)
+
     user: Mapped["User"] = relationship(back_populates="orders", lazy="selectin")

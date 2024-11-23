@@ -8,7 +8,6 @@ import logging
 from litestar import Controller, Request, Response, delete, get, patch, post
  
 from litestar.params import Dependency, Parameter, Body
-from litestar.enums import RequestEncodingType
 
 from db.models import User as UserModel
 from domain.users  import urls
@@ -27,9 +26,7 @@ class UserController(Controller):
     """User Account Controller."""
 
     tags = ["User Accounts"]
-    dto = None
-    return_dto = None
-
+    
     @get(
         operation_id="ListUsers",
         name="users:list",
@@ -42,7 +39,6 @@ class UserController(Controller):
     async def list_users(
         self,
         user_service: UserService,
-       
         filters: Annotated[CollectionFilter, Dependency(skip_validation=True)] = None,
     ) -> OffsetPagination[User]:
         filters = filters or []

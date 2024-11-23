@@ -7,9 +7,11 @@ class UserType(str, Enum):
 class OrderStatus(str , Enum):
     PENDING = "pending"
     CONFIRM = "confirm"
-    CANCEL = "cancel"
-    REJECT = "reject"
+    CANCELLED = "cancelled"
+    SHIPPED = "shipped"
     DELIVERED = "delivered"
+
+ 
 
 class CustomerLevel(str , Enum):
     CLASSIC = "classic"

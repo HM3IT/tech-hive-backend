@@ -35,6 +35,7 @@ class OrderDetail(CamelizedBaseStruct):
     status: OrderStatus
     created_at: datetime
     updated_at: datetime
+    handler_id: str|None
     order_products:list[OrderProduct]
     expected_arrived_date:str # ISO format saved for order expected arrived date
 
@@ -61,6 +62,8 @@ class OrderCreate(CamelizedBaseStruct):
 class OrderUpdate(CamelizedBaseStruct):
     id:UUID
     order_status:OrderStatus
+    handler_id:str
+    expected_arrived_date:datetime
 
 class OrderProduct(CamelizedBaseStruct):
     product_id:UUID

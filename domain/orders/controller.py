@@ -1,28 +1,26 @@
 from __future__ import annotations
 
-import os
- 
+from datetime import datetime
 from typing import Annotated, Any
-from litestar.params import Body
-from litestar import get, post, delete, patch, Response, Request, MediaType
+from litestar.params import Dependency, Parameter
+from litestar import get, post, patch
 from litestar.exceptions import HTTPException
 from litestar.controller import Controller
 from litestar.di import Provide
 from litestar.pagination import OffsetPagination
-from litestar.params import Parameter
 from litestar.repository.filters import LimitOffset
 from domain.orders.dependencies  import provide_order_service, provide_ordered_product_service
+# from domain.users.dependencies import provide_user_service
 from domain.orders.services import OrderService, OrderProductService
+# from domain.users.services import UserService
 from domain.orders import urls
 from domain.users.guards import requires_active_user, requires_superuser
 from litestar.repository.filters import CollectionFilter
-
 from db.models import User, Order as OrderModel, OrderStatus, OrderProduct as OrderProductModel
 from domain.orders.schemas import Order, OrderCreate, OrderProduct, OrderUpdate, OrderProductCreate, OrderDetail
 
-from uuid import uuid4, UUID
-from litestar.response import File
-from urllib.parse import unquote
+from uuid import UUID
+
 
 from logging import getLogger
 
@@ -61,7 +59,8 @@ class OrderController(Controller):
             "status":OrderStatus.PENDING,
             "expected_arrived_date":""
         }
-
+        logger.info("order info")
+        logger.info(order_dict)
         order_obj:OrderModel = await order_service.create(data = order_dict)
 
         order_products:list[OrderProductCreate] = []
@@ -95,17 +94,16 @@ class OrderController(Controller):
     
        
  
-    @get(path=urls.ORDER_ADMIN_LIST, guards=[requires_superuser])
+    @get(path=urls.ORDER_ADMIN_LIST, guards=[requires_superuser],  cache=60)
     async def list_order(
         self,
         order_service: OrderService,
         order_product_service:OrderProductService,
-        limit_offset: LimitOffset,
+        # limit_offset: LimitOffset,
+        filters: Annotated[CollectionFilter, Dependency(skip_validation=True)] = None,
     ) -> OffsetPagination[Order]:
         """List orders."""
-        filters = [
-            limit_offset
-        ]
+        filters = filters or []
         results, total = await order_service.list_and_count(*filters)
 
         return order_service.to_schema(data=results, total=total, schema_type=Order, filters=filters)
@@ -141,15 +139,15 @@ class OrderController(Controller):
         ),
     ) -> dict[str, Any]:
         """Get an existing Order."""
-        order_obj = await order_service.get(item_id=id)
+        order_obj = await order_service.get(item_id=id)        
         order_product_objs = order_obj.order_products
         order_products = order_product_service.to_schema(data=order_product_objs, total=len(order_product_objs), schema_type=OrderProduct)
               
         order = order_service.to_schema(data=order_obj,  schema_type=OrderDetail)
-        order = order.to_dict()
-        order.update({"order_products":order_products.items})
+        order_dict = order.to_dict()
+        order_dict.update({"order_products":order_products.items})
 
-        return order
+        return order_dict
 
     @patch(
         path=urls.ORDER_STATUS_UPDATE, guards=[requires_superuser, requires_active_user]
@@ -161,10 +159,24 @@ class OrderController(Controller):
     ) -> Order:
         """Update an Order."""
         order = data.to_dict()
-        item_id = order["id"]
-        order_status:OrderStatus = order["orderStatus"]
-        if item_id is None:
-            raise HTTPException(detail="Order Id must be included", status_code = 400)
-        db_obj = await order_service.update(item_id=item_id, data={"order_status":order_status})
+        order_id = order["id"]
+        order_obj = order_service.get_one_or_none(id=order_id)
+        if order_obj is None:
+            raise HTTPException(detail="Order Not Found", status_code = 404)
+
+        expected_order_date = order["expected_arrived_date"]
+        iso_format_order = expected_order_date.isoformat()
+        order["expected_arrived_date"] = iso_format_order
+      
+      
+        status_enum = OrderStatus(order["order_status"])
+        update_order_data = {
+            "status":status_enum,
+            "expected_arrived_date":iso_format_order,
+            "handler_id":order["handler_id"]
+        }
+
+        db_obj = await order_service.update(item_id= order_id, data=update_order_data)
         return order_service.to_schema(db_obj, schema_type=Order)
+  
  
