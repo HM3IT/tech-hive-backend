@@ -13,3 +13,7 @@ PRODUCT_EMBEDDING = "/api/products/embedding"
 PRODUCT_IMG_UPLOAD = "/api/files/upload"
 PRODUCT_IMG_UPDATE = "/api/files/update/{id:uuid}"
 GET_IMG = "/api/files/{image_name:str}"
+
+
+
+STATISTICS_TOTAL ="/api/statistics/total"
