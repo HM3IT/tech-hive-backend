@@ -145,3 +145,62 @@ class CategoryController(Controller):
     #     """Delete a Category from the system."""
     #     await category_service.delete(item_id=id)
 
+
+class TagController(Controller):
+    
+    """Tag CRUD"""
+    tags = ["Tags"]
+    dependencies = {"tag_service": Provide(provide_tag_service)}
+
+    @get(path=urls.TAG_LIST)
+    async def list_tag(
+        self,
+        tag_service: TagService,
+        limit_offset: LimitOffset,
+    ) -> OffsetPagination[Tag]:
+        """List Tags."""
+        results, total = await tag_service.list_and_count(limit_offset)
+        filters = [limit_offset]
+        return tag_service.to_schema(data=results, total=total, schema_type=Tag, filters=filters)
+
+    @post(path=urls.TAG_ADD, guards=[requires_active_user, requires_superuser])
+    async def create_tag(
+        self,
+        tag_service: TagService,
+        data: TagCreate,
+    ) -> Tag:
+        """Create a new Tag."""
+        tag = data.to_dict()
+        tag_obj = await tag_service.create(tag)
+        return tag_service.to_schema(data=tag_obj, schema_type=Tag)
+
+
+    @get(path=urls.TAG_DETAIL)
+    async def get_tag(
+        self,
+        tag_service: TagService,
+        id: UUID = Parameter(
+            title="Tag ID",
+            description="The Tag to retrieve.",
+        ),
+    ) -> Tag:
+        """Get an existing Tag."""
+        tag_obj = await tag_service.get(item_id=id)
+        return tag_service.to_schema(data=tag_obj,  schema_type=Tag)
+
+    @patch(
+        path=urls.TAG_UPDATE, guards=[requires_superuser, requires_active_user]
+    )
+    async def update_tag(
+        self,
+        tag_service: TagService,
+        data: TagCreate,
+        id: UUID = Parameter(
+            title="Category ID",
+            description="The sub-category to update.",
+        ),
+    ) -> Tag:
+        """Update a Tag."""
+        category = data.to_dict()
+        tag_obj = await tag_service.update(item_id=id, data=category)
+        return tag_service.to_schema(tag_obj, schema_type=Tag)
