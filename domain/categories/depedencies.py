@@ -1,4 +1,4 @@
-from domain.categories.services import CategoryService, SubCategoryService
+from domain.categories.services import CategoryService, TagService
 
 from sqlalchemy.ext.asyncio import AsyncSession
 from collections.abc import AsyncGenerator
@@ -13,10 +13,10 @@ async def provide_category_service(db_session: AsyncSession) -> AsyncGenerator[C
     ) as service:
         yield service
 
-async def provide_subcategory_service(db_session: AsyncSession) -> AsyncGenerator[SubCategoryService, None]:
+async def provide_tag_service(db_session: AsyncSession) -> AsyncGenerator[TagService, None]:
 
-    async with SubCategoryService.new(
+    async with TagService.new(
         session=db_session,
-        error_messages={"duplicate_key": "This subcategory already exists.", "integrity": "Sub-Category operation failed."},
+        error_messages={"duplicate_key": "This Tag already exists.", "integrity": "Tag operation failed."},
     ) as service:
         yield service

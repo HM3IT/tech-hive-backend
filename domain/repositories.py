@@ -1,5 +1,5 @@
 from litestar.contrib.sqlalchemy.repository import SQLAlchemyAsyncRepository
-from db.models import Product, User, Order, OrderProduct, Category, SubCategory
+from db.models import Product, User, Order, OrderProduct, Category, Tags
  
 
 class UserRepository(SQLAlchemyAsyncRepository[User]):
@@ -30,7 +30,7 @@ class OrderProductRepository(SQLAlchemyAsyncRepository[OrderProduct]):
     model_type = OrderProduct
 
 
-class SubCategoryRepository(SQLAlchemyAsyncRepository[SubCategory]):
-    """SubCategory repository."""
+class TagRepository(SQLAlchemyAsyncRepository[Tags]):
+    """Tags repository."""
 
-    model_type = SubCategory
+    model_type = Tags

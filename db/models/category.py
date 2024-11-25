@@ -7,7 +7,6 @@ from sqlalchemy.dialects.postgresql import ARRAY
 
 if TYPE_CHECKING:
     from .product import Product
-    from .subcategory import SubCategory
 
 class Category(UUIDBase):
     __tablename__ = "category"

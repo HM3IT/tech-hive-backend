@@ -8,8 +8,8 @@ CATEGORY_DETAIL = "/api/categories/{id:uuid}"
 CATEGORY_EMBEDDING = "/api/categories/embedding"
 
 
-SUBCATEGORY_LIST = "/api/subcategories"
-SUBCATEGORY_ADD = "/api/subcategories/add"
-SUBCATEGORY_UPDATE = "/api/subcategories/update"
-SUBCATEGORY_REMOVE = "/api/subcategories/{id:uuid}"
-SUBCATEGORY_DETAIL = "/api/subcategories/{id:uuid}"
+TAG_LIST = "/api/tags"
+TAG_ADD = "/api/tags/add"
+TAG_UPDATE = "/api/tags/update/{id:uuid}"
+TAG_REMOVE = "/api/tags/delete/{id:uuid}"
+TAG_DETAIL = "/api/tags/detail/{id:uuid}"

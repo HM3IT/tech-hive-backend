@@ -8,7 +8,10 @@ if TYPE_CHECKING:
     from .category import Category
     from .product_review import ProductReview 
     from .order_product import OrderProduct
-
+    from .tags import Tags, ProductTags
+    
+ 
+ 
 class Product(UUIDBase):
     __tablename__ = "product"
     
@@ -27,6 +30,7 @@ class Product(UUIDBase):
 
     product_reviews: Mapped[list["ProductReview"]] = relationship(back_populates="product", lazy="selectin", cascade="delete, all")
 
+    product_tags:Mapped[list["ProductTags"]] = relationship(back_populates="product", lazy="selectin")
     order_products: Mapped[list["OrderProduct"]] = relationship(back_populates="product", lazy="selectin")
 
     

@@ -2,14 +2,14 @@ from uuid import UUID
 from domain.lib.schema import CamelizedBaseStruct
 
  
-class SubCategoryCreate(CamelizedBaseStruct):
-    category_id:UUID
+class TagCreate(CamelizedBaseStruct):
     name:str
- 
+    description:str
 
-class SubCategory(CamelizedBaseStruct):
+class Tag(CamelizedBaseStruct):
     id:UUID
     name:str
+    description:str
  
 class CategoryUpdate(CamelizedBaseStruct):
     name:str

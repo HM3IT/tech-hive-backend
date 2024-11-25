@@ -14,7 +14,7 @@ from domain.users.guards import oauth2_auth
 from domain.users.dependencies import provide_user_service
 from domain.users.controllers import UserController, AccessController
 from domain.products.controller import ProductController
-from domain.categories.controller import CategoryController, SubCategoryController
+from domain.categories.controller import CategoryController, TagController
 from domain.orders.controller import OrderController
 from domain.middleware import AuthMiddleware
 
@@ -45,7 +45,7 @@ cors_config = CORSConfig(allow_origins=["*"])
 
 app = Litestar(
     debug=True,
-    route_handlers=[UserController, AccessController, CategoryController, SubCategoryController, ProductController, OrderController],
+    route_handlers=[UserController, AccessController, CategoryController, TagController, ProductController, OrderController],
     dependencies=dependencies,
     on_startup=[on_startup],
     cors_config=cors_config,

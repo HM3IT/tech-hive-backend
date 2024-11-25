@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 from typing import Any, TYPE_CHECKING
-from db.models import Category, SubCategory
-from domain.repositories import CategoryRepository, SubCategoryRepository
+from db.models import Category, Tags
+from domain.repositories import CategoryRepository, TagRepository
 from advanced_alchemy.service import SQLAlchemyAsyncRepositoryService
 
 if TYPE_CHECKING:
@@ -24,11 +24,11 @@ class CategoryService(SQLAlchemyAsyncRepositoryService[Category]):
         return embedding_model.encode(text).tolist()
 
     
-class SubCategoryService(SQLAlchemyAsyncRepositoryService[SubCategory]):
-    """Handles database operations for products' subcategories."""
+class TagService(SQLAlchemyAsyncRepositoryService[Tags]):
+    """Handles database operations for products' Tags."""
 
-    repository_type = SubCategoryRepository
+    repository_type = TagRepository
 
     def __init__(self, **repo_kwargs: Any) -> None:
-        self.repository: SubCategoryRepository = self.repository_type(**repo_kwargs)
+        self.repository: TagRepository = self.repository_type(**repo_kwargs)
         self.model_type = self.repository.model_type

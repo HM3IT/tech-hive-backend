@@ -21,10 +21,6 @@ SET row_security = off;
 -- Data for Name: alembic_version; Type: TABLE DATA; Schema: public; Owner: heinmin2maw
 --
 
-COPY public.alembic_version (version_num) FROM stdin;
-50d208a010f8
-\.
-
 
 --
 -- Data for Name: category; Type: TABLE DATA; Schema: public; Owner: heinmin2maw
