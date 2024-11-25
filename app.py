@@ -14,7 +14,8 @@ from domain.users.guards import oauth2_auth
 from domain.users.dependencies import provide_user_service
 from domain.users.controllers import UserController, AccessController
 from domain.products.controller import ProductController
-from domain.categories.controller import CategoryController, TagController
+from domain.categories.controller import CategoryController
+from domain.tags.controller import TagController
 from domain.orders.controller import OrderController
 from domain.middleware import AuthMiddleware
 

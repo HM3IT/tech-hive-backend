@@ -23,12 +23,3 @@ class CategoryService(SQLAlchemyAsyncRepositoryService[Category]):
             return [0.00] 
         return embedding_model.encode(text).tolist()
 
-    
-class TagService(SQLAlchemyAsyncRepositoryService[Tags]):
-    """Handles database operations for products' Tags."""
-
-    repository_type = TagRepository
-
-    def __init__(self, **repo_kwargs: Any) -> None:
-        self.repository: TagRepository = self.repository_type(**repo_kwargs)
-        self.model_type = self.repository.model_type

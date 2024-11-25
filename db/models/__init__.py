@@ -4,7 +4,7 @@ from .order import Order
 from .product import Product
 from .order_product import OrderProduct
 from .product_review import ProductReview
-from .tags import Tags
+from .tags import Tags, ProductTags
 from .enums import CustomerLevel, OrderStatus, UserType
 
 __all__ = [
@@ -15,7 +15,8 @@ __all__ = [
     "OrderProduct",
     "ProductReview",
     "Tags",
+    "ProductTags",
     "CustomerLevel",
     "OrderStatus",
-    "UserType"
+    "UserType",
 ]

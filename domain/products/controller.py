@@ -16,11 +16,19 @@ from litestar.di import Provide
 from litestar.pagination import OffsetPagination
 from litestar.params import Parameter
 from litestar.repository.filters import LimitOffset
+
+from uuid import UUID
 from domain.products.depedencies import provide_product_service
+
+from domain.tags.depedencies import provide_tag_service, provide_product_tag_service
+from domain.tags.services import TagService, ProductTagService
+
 from domain.products.services import ProductService
 from domain.products import urls
-from domain.products.schemas import ProductCreate, Product, SemanticSearch
+from domain.products.schemas import ProductCreate, ProductUpdate, Product, ProductDetail, SemanticSearch
+from domain.tags.schemas import ProductTagCreate, ProductTag
 from domain.users.guards import requires_active_user, requires_superuser
+ 
 from dotenv import load_dotenv 
 from uuid import uuid4, UUID
 from litestar.response import File
@@ -54,7 +62,12 @@ typesense_client = typesense.Client({
 class ProductController(Controller):
     """Product CRUD"""
     tags = ["Product"]
-    dependencies = {"product_service": Provide(provide_product_service)}
+    dependencies = {
+        "product_service": Provide(provide_product_service),
+        "tag_service": Provide(provide_tag_service),
+        "product_tag_service": Provide(provide_product_tag_service)
+    }
+
     @get(path=urls.PRODUCT_LIST)
     async def list_products(
         self,
@@ -74,10 +87,10 @@ class ProductController(Controller):
         product_service: ProductService,
         data: ProductCreate,
     ) -> Product:
-        from sentence_transformers import SentenceTransformer # loading sentence transformer inside for optimization
+        # from sentence_transformers import SentenceTransformer # loading sentence transformer inside for optimization
         
-        EMBEDDING_MODEL = os.environ["EMBEDDING_MODEL"]
-        embedding_model = SentenceTransformer(EMBEDDING_MODEL) 
+        # EMBEDDING_MODEL = os.environ["EMBEDDING_MODEL"]
+        # embedding_model = SentenceTransformer(EMBEDDING_MODEL) 
    
         """Create a new Product."""
         product = data.to_dict()
@@ -145,15 +158,32 @@ class ProductController(Controller):
     async def get_product(
         self,
         product_service: ProductService,
+        product_tag_service:ProductTagService,
         id: UUID = Parameter(
             title="Product ID",
             description="The Product to retrieve.",
         ),
-    ) -> Product:
+    ) -> ProductDetail:
         """Get an existing Product."""
-        obj = await product_service.get(item_id=id)
-              
-        return product_service.to_schema(data=obj,  schema_type=Product)
+        db_obj = await product_service.get(item_id=id)
+        product_tags = []
+        if db_obj.product_tags:
+            product_tag_res = product_tag_service.to_schema(data=db_obj.product_tags, total=len(db_obj.product_tags), schema_type=ProductTag)
+            product_tags = product_tag_res.items
+
+        return ProductDetail(
+            id = db_obj.id,
+            name = db_obj.name,
+            description = db_obj.description,
+            image_url = db_obj.image_url,
+            brand = db_obj.brand,
+            category_id =db_obj.category_id,
+            price = db_obj.price,
+            stock = db_obj.stock,
+            sub_image_url = db_obj.sub_image_url,
+            product_tags = product_tags,
+            discount_percent = db_obj.discount_percent
+        )
 
     @patch(
         path=urls.PRODUCT_UPDATE, guards=[requires_superuser, requires_active_user]
@@ -161,31 +191,70 @@ class ProductController(Controller):
     async def update_product(
         self,
         product_service: ProductService,
-        data: ProductCreate,
+        tag_service: TagService,
+        product_tag_service:ProductTagService,
+        data: ProductUpdate,
         id: UUID = Parameter(
             title="Product ID",
             description="The Product to be updated.",
         ),
-    ) -> Product:
+    ) -> bool:
         """Update an Product."""
-        from sentence_transformers import SentenceTransformer # loading sentence transformer inside for optimization
+        # from sentence_transformers import SentenceTransformer # loading sentence transformer inside for optimization
         
-        EMBEDDING_MODEL = os.environ["EMBEDDING_MODEL"]
-        embedding_model = SentenceTransformer(EMBEDDING_MODEL) 
+        # EMBEDDING_MODEL = os.environ["EMBEDDING_MODEL"]
+        # embedding_model = SentenceTransformer(EMBEDDING_MODEL) 
         product = data.to_dict()
         db_obj = await product_service.get(item_id=id)
         if not db_obj:
-            raise HTTPException(detail="Product id not found", status_code= 404 )
+            raise HTTPException(detail="Product Id not found", status_code= 404 )
         db_obj = await product_service.update(item_id=str(id), data=product)
-        try:
-            isSuccess = await product_service.delete_product_from_typesense(typesense_client=typesense_client, document_id=str(id))
-            if isSuccess:
-                product_typesense = await product_service.get_products_for_typesense(embedding_model, [product])
-                await product_service.add_product_into_typesense(typesense_client=typesense_client, product=product_typesense[0])
-        except Exception as e:
-            logger.error(f"Update product sync failed: {e}")
+        update_tag_ids = product["tag_ids"]
+   
+        existing_tag_ids = {tag.tag_id for tag in db_obj.product_tags}
+        
+        for tag_id in update_tag_ids:
+            tag_obj = await tag_service.get_one_or_none(id=tag_id)
+            if not tag_obj:
+                raise HTTPException(detail="Tag Id not found", status_code= 404 )
 
-        return product_service.to_schema(db_obj, schema_type=Product)
+        new_tag_ids = set(update_tag_ids) - existing_tag_ids
+        logger.info("NEW TAG ID")
+        logger.info(new_tag_ids)
+     
+        product_tag_objs = []
+        for tag_id in new_tag_ids:
+       
+            product_tag_obj = await product_tag_service.create(data={"product_id": str(id), "tag_id": tag_id})
+
+            product_tag_objs.append(product_tag_obj)
+       
+ 
+        db_obj.product_tags = product_tag_objs 
+        
+        # try:
+        #     isSuccess = await product_service.delete_product_from_typesense(typesense_client=typesense_client, document_id=str(id))
+        #     if isSuccess:
+        #         product_typesense = await product_service.get_products_for_typesense(embedding_model, [product])
+        #         await product_service.add_product_into_typesense(typesense_client=typesense_client, product=product_typesense[0])
+        # except Exception as e:
+        #     logger.error(f"Update product sync failed: {e}")
+
+        return True
+
+        # return ProductDetail(
+        #     id = db_obj.id,
+        #     name = db_obj.name,
+        #     description = db_obj.description,
+        #     image_url = db_obj.image_url,
+        #     brand = db_obj.brand,
+        #     category_id =db_obj.category_id,
+        #     price = db_obj.price,
+        #     stock = db_obj.stock,
+        #     sub_image_url = db_obj.sub_image_url,
+        #     product_tags = product_tags,
+        #     discount_percent = db_obj.discount_percent
+        # )
 
 
     @patch(
