@@ -208,30 +208,37 @@ class ProductController(Controller):
         db_obj = await product_service.get(item_id=id)
         if not db_obj:
             raise HTTPException(detail="Product Id not found", status_code= 404 )
+        update_tag_ids = product.pop("tag_ids")
         db_obj = await product_service.update(item_id=str(id), data=product)
-        update_tag_ids = product["tag_ids"]
    
         existing_tag_ids = {tag.tag_id for tag in db_obj.product_tags}
         
+        if len(update_tag_ids) <= 0:
+            return True
+
         for tag_id in update_tag_ids:
             tag_obj = await tag_service.get_one_or_none(id=tag_id)
             if not tag_obj:
                 raise HTTPException(detail="Tag Id not found", status_code= 404 )
 
         new_tag_ids = set(update_tag_ids) - existing_tag_ids
-        logger.info("NEW TAG ID")
-        logger.info(new_tag_ids)
      
-        product_tag_objs = []
+        product_tag_objs = []  
         for tag_id in new_tag_ids:
        
             product_tag_obj = await product_tag_service.create(data={"product_id": str(id), "tag_id": tag_id})
 
             product_tag_objs.append(product_tag_obj)
-       
+
+        old_tag_ids = existing_tag_ids - set(update_tag_ids)
+
+        for deleted_tag_id in old_tag_ids:  
+            logger.info("Deleting tag with ID: %s", deleted_tag_id)
+            
+            for product_tag in db_obj.product_tags:
+                if product_tag.tag_id == deleted_tag_id:
+                    await product_tag_service.delete(item_id=product_tag.id)
  
-        db_obj.product_tags = product_tag_objs 
-        
         # try:
         #     isSuccess = await product_service.delete_product_from_typesense(typesense_client=typesense_client, document_id=str(id))
         #     if isSuccess:
@@ -241,20 +248,6 @@ class ProductController(Controller):
         #     logger.error(f"Update product sync failed: {e}")
 
         return True
-
-        # return ProductDetail(
-        #     id = db_obj.id,
-        #     name = db_obj.name,
-        #     description = db_obj.description,
-        #     image_url = db_obj.image_url,
-        #     brand = db_obj.brand,
-        #     category_id =db_obj.category_id,
-        #     price = db_obj.price,
-        #     stock = db_obj.stock,
-        #     sub_image_url = db_obj.sub_image_url,
-        #     product_tags = product_tags,
-        #     discount_percent = db_obj.discount_percent
-        # )
 
 
     @patch(
