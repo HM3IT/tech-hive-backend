@@ -82,6 +82,7 @@ class ProductService(SQLAlchemyAsyncRepositoryService[Product]):
             product_rating = sum(review.rating for review in product.product_reviews) / len(product.product_reviews) if product.product_reviews else 0
             embedding = await self.generate_embedding(embedding_model=embedding_model, product=product)
             
+            tags = [product_tag.tag.name for product_tag in product.product_tags]
             discountPrice = float(product.price)
             price = float(product.price)
             discountPercent = float(product.discount_percent)
@@ -101,7 +102,8 @@ class ProductService(SQLAlchemyAsyncRepositoryService[Product]):
                 categoryName=product.category.name,
                 productRating=product_rating,
                 embedding=embedding,
-                imageUrl = product.image_url
+                imageUrl = product.image_url,
+                tags = tags if len(tags)>0 != None else [""],
             )
             typesense_data.append(product_data)
         return typesense_data

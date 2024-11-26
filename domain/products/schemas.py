@@ -81,6 +81,7 @@ class TypesenseProductSchema(BaseModel):
     imageUrl:str 
     embedding: list[float]
     productRating: float = 0.0 
+    tags:list[str] = [""]
 
 
 class SemanticSearch(BaseModel):

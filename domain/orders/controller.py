@@ -74,6 +74,9 @@ class OrderController(Controller):
                 discount_percent_at_order=cart_product.discount_percent_at_order
                 )
                 order_products.append(new_order_product)
+
+            logger.info("order_products")
+            logger.info(order_products)
             
             order_product_objs = await order_product_service.create_many(data=order_products)
             order_obj.order_products = order_product_objs
