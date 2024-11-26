@@ -48,7 +48,6 @@ ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/jpg",]
 
 
 DISTANCE_THRESHOLD = os.environ.get("DISTANCE_THRESHOLD", 0.43)
-EMBEDDING_MODEL = os.environ["EMBEDDING_MODEL"]
 TYPESENSE_HOST = os.environ["TYPESENSE_HOST"]
 TYPESENSE_PORT = os.environ["TYPESENSE_PORT"]
 TYPESENSE_PROTOCOL = os.environ["TYPESENSE_PROTOCOL"]
@@ -93,18 +92,14 @@ class ProductController(Controller):
         product_service: ProductService,
         data: ProductCreate,
     ) -> Product:
-        # from sentence_transformers import SentenceTransformer # loading sentence transformer inside for optimization
-        
-        # EMBEDDING_MODEL = os.environ["EMBEDDING_MODEL"]
-        # embedding_model = SentenceTransformer(EMBEDDING_MODEL) 
-   
+  
         """Create a new Product."""
         product = data.to_dict()
         product.update({"sold":0})
         project_obj = await product_service.create(product)
         # try:
         #     # Typesense synchronization upon product creation
-        #     typesense_product = await product_service.get_products_for_typesense(embedding_model, [project_obj])
+        #     typesense_product = await product_service.convert_typesense_products(embedding_model, [project_obj])
         #     await product_service.add_product_into_typesense(typesense_client=typesense_client, product=typesense_product[0])
             
         # except Exception as e:
@@ -206,10 +201,7 @@ class ProductController(Controller):
         ),
     ) -> bool:
         """Update an Product."""
-        # from sentence_transformers import SentenceTransformer # loading sentence transformer inside for optimization
-        
-        # EMBEDDING_MODEL = os.environ["EMBEDDING_MODEL"]
-        # embedding_model = SentenceTransformer(EMBEDDING_MODEL) 
+
         product = data.to_dict()
         db_obj = await product_service.get(item_id=id)
         if not db_obj:
@@ -245,13 +237,13 @@ class ProductController(Controller):
                 if product_tag.tag_id == deleted_tag_id:
                     await product_tag_service.delete(item_id=product_tag.id)
  
-        # try:
-        #     isSuccess = await product_service.delete_product_from_typesense(typesense_client=typesense_client, document_id=str(id))
-        #     if isSuccess:
-        #         product_typesense = await product_service.get_products_for_typesense(embedding_model, [product])
-        #         await product_service.add_product_into_typesense(typesense_client=typesense_client, product=product_typesense[0])
-        # except Exception as e:
-        #     logger.error(f"Update product sync failed: {e}")
+        try:
+            product = await product_service.get(item_id=id)
+            isSuccess = await product_service.update_products_typesense(typesense_client, product)
+            if isSuccess:
+                logger.info(f"Typesense Sync Update operation successful {id}")
+        except Exception as e:
+            logger.error(f"Update product sync failed: {e}")
 
         return True
 
@@ -296,28 +288,19 @@ class ProductController(Controller):
         )
     ) -> Response:
         """Create a new Product."""
-        from sentence_transformers import SentenceTransformer # loading sentence transformer inside for optimization
-        
-        EMBEDDING_MODEL = os.environ["EMBEDDING_MODEL"]
-        embedding_model = SentenceTransformer(EMBEDDING_MODEL) 
         db_obj = await product_service.get(item_id=id)
         if not db_obj:
             raise HTTPException(detail="Product has not created", status_code=404)
 
-        typesense_products = await product_service.get_products_for_typesense(embedding_model=embedding_model, products = [db_obj])
+        await product_service.delete_product_from_typesense( typesense_client, str(db_obj.id),)
+        isSuccess = await product_service.add_new_products_typesense(typesense_client, products = [db_obj])
      
-        documents_status = await product_service.bulk_insert_into_typesense(typesense_client=typesense_client, products=typesense_products)
-        
-        failed_documents = [
-            doc.get("error", "Unknown error") for doc in documents_status if not doc.get("success", False)
-        ]
-
-        if failed_documents:
+        if isSuccess:
             return Response(
                 content={
                     "status": "Failure",
-                    "message": "Product failed to sync Typesense",
-                    "errors": failed_documents
+                    "message": f"Product {id} failed to sync Typesense",
+                  
                 },
                 status_code=500
             )
@@ -351,25 +334,19 @@ class ProductController(Controller):
 
     @post(path=urls.PRODUCT_SYNC_TYPESNSE, guards=[requires_superuser])
     async def sync_products_to_typesense(self, product_service: ProductService) -> Response:
-        from sentence_transformers import SentenceTransformer # loading sentence transformer inside for optimization
-
-        embedding_model = SentenceTransformer(EMBEDDING_MODEL) 
+  
         limit_offset = LimitOffset(limit=250, offset=0)
         results, total = await product_service.list_and_count(limit_offset)
-     
-        typesense_products = await product_service.get_products_for_typesense(embedding_model=embedding_model, products = list(results))
-        documents_status = await product_service.bulk_insert_into_typesense(typesense_client=typesense_client, products=typesense_products)
-        
-        failed_documents = [
-            doc.get("error", "Unknown error") for doc in documents_status if not doc.get("success", False)
-        ]
+             
+        isSuccess = await product_service.add_new_products_typesense(typesense_client, list(results))
 
-        if failed_documents:
+
+        if isSuccess:
             return Response(
                 content={
                     "status": "Failure",
                     "message": "Some products failed to sync to Typesense",
-                    "errors": failed_documents
+                    "errors": "Some products failed to sync to Typesense"
                 },
                 status_code=500
             )
