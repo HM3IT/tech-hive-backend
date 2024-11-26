@@ -103,7 +103,7 @@ class ProductService(SQLAlchemyAsyncRepositoryService[Product]):
                 productRating=product_rating,
                 embedding=embedding,
                 imageUrl = product.image_url,
-                tags = tags if len(tags)>0 != None else [""],
+                tags = tags if len(tags) > 0 != None else [""],
             )
             typesense_data.append(product_data)
         return typesense_data
