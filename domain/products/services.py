@@ -93,9 +93,12 @@ class ProductService(SQLAlchemyAsyncRepositoryService[Product]):
         try:
             embedding = await self.get_old_embedding(typesense_client, str(product.id))
 
-            update_typesense_product = self.convert_typesense_product(product, embedding)
+            update_typesense_product = await self.convert_typesense_product(product, embedding)
+  
             typesense_client.collections[COLLECTION_NAME].documents[str(product.id)].delete()
-            documents_status = typesense_client.collections[COLLECTION_NAME].documents.import_([update_typesense_product], {'action': 'upsert'})
+            documents_status = typesense_client.collections[COLLECTION_NAME].documents.import_([update_typesense_product.dict()], {'action': 'upsert'})
+            logger.error("Updated status")
+            logger.error(documents_status)
             failed_documents = [
                 doc.get("error", "Unknown error") for doc in documents_status if not doc.get("success", False)
             ]
@@ -119,7 +122,7 @@ class ProductService(SQLAlchemyAsyncRepositoryService[Product]):
       
             embedding = await self.generate_embedding(embedding_model=embedding_model, product=product)
  
-            product_data = await self.convert_typesense_product(product, embedding)
+            product_data =await self.convert_typesense_product(product, embedding)
             typesense_data.append(product_data)
 
         document_statuses = await self.bulk_insert_into_typesense(typesense_client, typesense_data)
@@ -134,7 +137,7 @@ class ProductService(SQLAlchemyAsyncRepositoryService[Product]):
     async def get_old_embedding(self, typesense_client: typesense.Client, document_id)-> list[float]:
         try:
             
-            old_document = await typesense_client.collections['products'].documents[document_id].retrieve()
+            old_document = typesense_client.collections[COLLECTION_NAME].documents[document_id].retrieve()
             return old_document["embedding"]
             
         except Exception as e:

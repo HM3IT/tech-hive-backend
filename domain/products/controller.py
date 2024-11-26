@@ -129,10 +129,8 @@ class ProductController(Controller):
     @get(path=urls.GET_IMG)
     async def get_image(self, image_name:str ) -> File| None:
         image_name = unquote(image_name.strip())
-        logger.info(f"image name {image_name}")
         image_name= image_name.strip()
         image_path = f"images/{image_name}"
-        logger.info(f'Image file path {image_path}')
         if os.path.exists(f"./{image_path}"):
           
             try:
@@ -388,7 +386,7 @@ class ProductController(Controller):
         search_results = typesense_client.multi_search.perform(search_requests, common_search_params)
   
         hits = search_results['results'][0]['hits'] 
-        logger.info(hits)
+
         if len(hits) <= 0:
             return []
     
@@ -424,7 +422,7 @@ class ProductController(Controller):
 
             search_param = {
                 "q": query_str,  
-                "query_by": "name, brand, categoryName", 
+                "query_by": "name, brand, categoryName, tags", 
                 "filter_by": filters, 
                 "sort_by": "productRating:desc, sold:desc",  
                 "page": page,
@@ -436,7 +434,7 @@ class ProductController(Controller):
                 os.environ["TYPESENSE_PRODUCT_COLLECTION_NAME"]
             ].documents.search(search_param)
 
-            logger.info(response)
+
             return Response(
                 status_code=200,
                 content={
