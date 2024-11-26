@@ -6,15 +6,10 @@ from typing import Any
 
 from litestar.exceptions import PermissionDeniedException
 from litestar.security.jwt import OAuth2PasswordBearerAuth
-
-from db.base import sqlalchemy_config
-
-from db.models import User
-from domain.users import urls
-from domain.categories import urls as category_urls
-from domain.products import urls as product_urls
 from domain.users.dependencies import provide_user_service
- 
+from db.models import User
+from db.base import sqlalchemy_config, AUTH_EXCLUDE_API_ROUTE
+from domain.users import urls
 from litestar.connection import ASGIConnection
 from litestar.handlers.base import BaseRouteHandler
 from litestar.security.jwt import Token
@@ -40,7 +35,7 @@ def requires_active_user(connection: ASGIConnection, _: BaseRouteHandler) -> Non
     Raises:
         PermissionDeniedException: Permission denied exception
     """
-    if connection.user.is_active:
+    if connection.user and connection.user.is_active:
         return
     msg = "Inactive account"
     raise PermissionDeniedException(msg)
@@ -60,10 +55,9 @@ def requires_superuser(connection: ASGIConnection, _: BaseRouteHandler) -> None:
         None: Returns None when successful
     """
    
-    # if connection.user.is_superuser:
-    #     return
-    return
-    # raise PermissionDeniedException(detail="Insufficient privileges")
+    if connection.user and connection.user.is_superuser:
+        return
+    raise PermissionDeniedException(detail="Insufficient privileges")
 
 
 def requires_verified_user(connection: ASGIConnection, _: BaseRouteHandler) -> None:
@@ -79,12 +73,12 @@ def requires_verified_user(connection: ASGIConnection, _: BaseRouteHandler) -> N
     Returns:
         None: Returns None when successful
     """
-    if connection.user.is_verified:
+    if connection.user and connection.user.is_verified:
         return
     raise PermissionDeniedException(detail="User account is not verified.")
 
 
-async def current_user_from_token(token: Token, connection: ASGIConnection[Any, Any, Any, Any]) -> User | None:
+async def current_user_from_token(token: "Token", connection: ASGIConnection[Any, Any, Any, Any]) -> User | None:
     """Lookup current user from local JWT token.
 
     Fetches the user information from the database
@@ -99,22 +93,13 @@ async def current_user_from_token(token: Token, connection: ASGIConnection[Any, 
         User: User record mapped to the JWT identifier
     """
     user_service = await anext(provide_user_service(sqlalchemy_config.provide_session(connection.app.state, connection.scope)))
-    user = await user_service.get_one_or_none(email=token.sub)
+    email = token.sub
+    user = await user_service.get_one_or_none(email=email)
     return user if user and user.is_active else None
-
-
+ 
 oauth2_auth = OAuth2PasswordBearerAuth[User](
     retrieve_user_handler=current_user_from_token,
     token_secret=SECRET_KEY,
     token_url=urls.ACCOUNT_AUTH,
-    exclude=[
-        urls.ACCOUNT_LOGIN,
-        urls.ACCOUNT_REGISTER,
-        urls.ACCOUNT_CREATE,
-        product_urls.PRODUCT_LIST,
-        product_urls.PRODUCT_DETAIL,
-        category_urls.CATEGORY_LIST, 
-        "/schema",
-        "/tests"
-    ],
+    exclude=AUTH_EXCLUDE_API_ROUTE,
 )

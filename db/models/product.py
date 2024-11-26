@@ -7,7 +7,11 @@ from sqlalchemy.dialects.postgresql import UUID
 if TYPE_CHECKING:
     from .category import Category
     from .product_review import ProductReview 
-
+    from .order_product import OrderProduct
+    from .tags import Tags, ProductTags
+    
+ 
+ 
 class Product(UUIDBase):
     __tablename__ = "product"
     
@@ -25,6 +29,10 @@ class Product(UUIDBase):
     category: Mapped["Category"] = relationship(back_populates="products", lazy="selectin")
 
     product_reviews: Mapped[list["ProductReview"]] = relationship(back_populates="product", lazy="selectin", cascade="delete, all")
+
+    product_tags:Mapped[list["ProductTags"]] = relationship(back_populates="product", lazy="selectin")
+    order_products: Mapped[list["OrderProduct"]] = relationship(back_populates="product", lazy="selectin")
+
     
     @property
     def category_name(self) -> str|None:

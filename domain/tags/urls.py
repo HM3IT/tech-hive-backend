@@ -1,0 +1,5 @@
+TAG_LIST = "/api/tags/list"
+TAG_ADD = "/api/tags/add"
+TAG_UPDATE = "/api/tags/update/{id:uuid}"
+TAG_REMOVE = "/api/tags/delete/{id:uuid}"
+TAG_DETAIL = "/api/tags/detail/{id:uuid}"

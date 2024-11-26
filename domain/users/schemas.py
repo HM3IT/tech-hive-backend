@@ -1,8 +1,9 @@
 from __future__ import annotations
 
-from uuid import UUID 
+
 from domain.lib.schema import CamelizedBaseStruct
-from domain.orders.schema import Order
+from uuid import UUID 
+from datetime import datetime
 
 __all__ = (
     "AccountLogin",
@@ -19,12 +20,13 @@ class User(CamelizedBaseStruct):
     email: str
     name: str
     user_level:str
+    created_at:datetime
+    updated_at:datetime
     address: str|None = ""
     image_url: str|None = None
     is_superuser: bool = False
     is_active: bool = False
     is_verified: bool = False
-    orders: list[Order] = []
  
 
 class UserCreate(CamelizedBaseStruct):
@@ -36,12 +38,13 @@ class UserCreate(CamelizedBaseStruct):
     is_verified: bool = False
 
 
-class UserUpdate(CamelizedBaseStruct, omit_defaults=True):
-    email: str 
-    name: str
-    is_superuser: bool | None 
-    is_active: bool | None 
-    is_verified: bool | None 
+class UserUpdate(CamelizedBaseStruct):
+    old_password:str
+    new_name: str|None = None
+    new_password: str|None = None
+    new_address:str|None = None
+    new_image_url:str|None = None
+    is_superuser: bool = False
 
 
 class AccountLogin(CamelizedBaseStruct):

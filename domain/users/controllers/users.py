@@ -5,10 +5,9 @@ from __future__ import annotations
 from typing import Annotated
 
 import logging
-from litestar import Controller, Request, delete, get, patch, post
+from litestar import Controller, Request, Response, delete, get, patch, post
  
-from litestar.params import Dependency, Parameter
-
+from litestar.params import Dependency, Parameter, Body
 
 from db.models import User as UserModel
 from domain.users  import urls
@@ -27,16 +26,14 @@ class UserController(Controller):
     """User Account Controller."""
 
     tags = ["User Accounts"]
-    # guards = [requires_superuser]
-    dto = None
-    return_dto = None
-
+    
     @get(
         operation_id="ListUsers",
         name="users:list",
         summary="List Users",
         description="Retrieve the users.",
         path=urls.ACCOUNT_LIST,
+        guards = [requires_active_user, requires_superuser],
         cache=60,
     )
     async def list_users(
@@ -53,6 +50,7 @@ class UserController(Controller):
         name="users:get",
         path=urls.ACCOUNT_DETAIL,
         summary="Retrieve the details of a user.",
+        guards = [requires_active_user, requires_superuser],
     )
     async def get_user(
         self,
@@ -73,9 +71,9 @@ class UserController(Controller):
         operation_id="AccountProfile",
         name="account:profile",
         path=urls.ACCOUNT_PROFILE,
-        guards=[requires_active_user],
         summary="User Profile",
         description="User profile information.",
+        guards = [requires_active_user],
     )
     async def profile(self, request: Request, current_user: UserModel, user_service: UserService) -> User:
         """User Profile."""
@@ -89,6 +87,8 @@ class UserController(Controller):
         cache_control=None,
         description="A user who can login and use the system.",
         path=urls.ACCOUNT_CREATE,
+        # temporarily disable guards
+        # guards = [requires_active_user, requires_superuser],
     )
     async def create_user(
         self,
@@ -111,22 +111,55 @@ class UserController(Controller):
         operation_id="UpdateUser",
         name="users:update",
         path=urls.ACCOUNT_UPDATE,
+        guards = [requires_active_user],
     )
     async def update_user(
         self,
         data: UserUpdate,
         user_service: UserService,
-        user_id: Annotated[
-            UUID,
-            Parameter(
-                title="User ID",
-                description="The user to retrieve.",
-            ),
-        ],
-    ) -> User:
+        current_user:UserModel
+    ) -> Response:
         """Create a new user."""
-        db_obj = await user_service.update(item_id=user_id, data=data.to_dict())
-        return user_service.to_schema(db_obj, schema_type=User)
+        user_info = data.to_dict()
+        logger.info("CATACH user data")
+        logger.info(user_info)
+        old_password = user_info.get("old_password")
+        if not old_password:
+            return Response(content={"message":"Original Password must be included"}, status_code=401)
+
+        
+        # Authentication check    
+        user_obj = await user_service.authenticate(email=current_user.email, password= old_password)
+        if not user_obj:
+             return Response(content={"message":"Wrong Password or email"}, status_code=401)
+            
+        # Update old password
+        new_password = user_info.get("new_password")
+        # optmization for password and must has legnth at least 8
+        if new_password and (new_password != old_password and len(new_password) > 8):
+            update_password_dict = {
+                "current_password": old_password,
+                "new_password": new_password
+            }
+            user_obj = await user_service.update_password(data=update_password_dict,db_obj=user_obj)
+ 
+        address = user_info.get("new_address")
+        image_url = user_info.get("new_image_url")
+        name = user_info.get("new_name")
+
+        if (address and len(address) > 0) or (image_url and len(image_url) > 0) or (name and len(name) >0):
+            user_dict = {}
+            if address:
+                user_dict.update({"address": address})
+            if image_url:
+                user_dict.update({"image_url": image_url})
+            if name:
+                user_dict.update({"name": name})
+
+            logger.info("UPDATE DICT")
+            logger.info(user_dict)
+            user_obj = await user_service.update(item_id= current_user.id, data=user_dict)
+        return Response(content={"message":"Successfully updated"}, status_code=200)
 
     @delete(
         operation_id="DeleteUser",
@@ -134,6 +167,7 @@ class UserController(Controller):
         path=urls.ACCOUNT_DELETE,
         summary="Remove User",
         description="Removes a user and all associated data from the system.",
+        guards = [requires_active_user, requires_superuser],
     )
     async def delete_user(
         self,
