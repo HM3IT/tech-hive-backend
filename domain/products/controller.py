@@ -4,43 +4,38 @@ import os
 import tempfile
 import mimetypes
 import typesense
-from decimal import Decimal, getcontext
-from litestar.params import Dependency, Parameter, Body
-from typing import Annotated
-from litestar.params import Body
-from litestar.datastructures import UploadFile
-from litestar import get, post, delete, patch, Response, Request, MediaType
-from litestar.enums import RequestEncodingType
-from litestar.exceptions import HTTPException
-from litestar.controller import Controller
-from litestar.di import Provide
-from litestar.pagination import OffsetPagination
-from litestar.params import Parameter
-from litestar.repository.filters import LimitOffset
-from datetime import datetime
-from uuid import UUID
-from domain.products.depedencies import provide_product_service
 
-from domain.orders.dependencies import provide_order_service
-from domain.orders.services import OrderService
-
-from domain.users.services import UserService
-from litestar.repository.filters import CollectionFilter
-from domain.tags.depedencies import provide_tag_service, provide_product_tag_service
-from domain.tags.services import TagService, ProductTagService
-
-from domain.products.services import ProductService
-from domain.products import urls
-from domain.products.schemas import ProductCreate, ProductUpdate, Product, ProductDetail, SemanticSearch
-from domain.tags.schemas import ProductTagCreate, ProductTag
-from domain.users.guards import requires_active_user, requires_superuser
- 
 from dotenv import load_dotenv 
 from uuid import uuid4, UUID
 from litestar.response import File
 from logging import getLogger
 from urllib.parse import unquote
+from typing import Annotated
+from decimal import Decimal, getcontext
 
+from litestar import get, post, delete, patch, Response
+from litestar.params import Parameter, Body
+from litestar.datastructures import UploadFile
+from litestar.enums import RequestEncodingType
+from litestar.exceptions import HTTPException
+from litestar.controller import Controller
+from litestar.di import Provide
+from litestar.pagination import OffsetPagination
+from litestar.repository.filters import LimitOffset
+
+from domain.products.depedencies import provide_product_service
+from domain.tags.depedencies import provide_tag_service, provide_product_tag_service
+
+from domain.tags.services import TagService, ProductTagService
+from domain.products.services import ProductService
+
+from domain.products import urls
+
+from domain.products.schemas import ProductCreate, ProductUpdate, Product, ProductDetail, SemanticSearch
+from domain.tags.schemas import ProductTag
+
+from domain.users.guards import requires_active_user, requires_superuser
+ 
 load_dotenv()
 
 IMG_FILE_PATH = os.environ["IMG_FILE_PATH"]
@@ -448,39 +443,3 @@ class ProductController(Controller):
             logger.error(f"Error occurred: {e}")
             return Response(status_code=500, content={"error": f"Internal Server Error: {e}"})
 
-
-class StatisticController(Controller):
-    """Statisitc API for admin dashbaord"""
-    tags = ["Statistics"]
-    dependencies = {
-        "product_service": Provide(provide_product_service),
-        "order_service": Provide(provide_order_service),
-    }
-    guards = [requires_active_user, requires_superuser]
-    @get(path=urls.STATISTICS_TOTAL)
-    async def get_total_statistics(
-        self,
-        product_service: ProductService,
-        order_service: OrderService,
-        user_service:UserService,
-        filters: Annotated[CollectionFilter, Dependency(skip_validation=True)] = None,
-        filter_date:datetime | None = None,
-    ) -> dict[str, float]:
-        """List Products."""
-        filters = filters or []
-        if filter_date is not None:
-            filters.append(lambda x: x.created_at > filter_time)
-        products, product_total = await product_service.list_and_count(*filters)
-        orders, order_total = await order_service.list_and_count(*filters)
-        users, user_total = await user_service.list_and_count(*filters)
-
-        sales = 0.00
-        for order in orders:
-            sales += float(order.total_price)
-  
-        return {
-            "products":product_total,
-            "orders":order_total,
-            "users": user_total,
-            "sales": sales
-        }

@@ -181,5 +181,3 @@ class OrderController(Controller):
 
         db_obj = await order_service.update(item_id= order_id, data=update_order_data)
         return order_service.to_schema(db_obj, schema_type=Order)
-  
- 

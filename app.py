@@ -13,7 +13,9 @@ from litestar.contrib.sqlalchemy.plugins import SQLAlchemyInitPlugin
 from domain.users.guards import oauth2_auth
 from domain.users.dependencies import provide_user_service
 from domain.users.controllers import UserController, AccessController
-from domain.products.controller import ProductController, StatisticController
+from domain.products.controller import ProductController
+from domain.statistics.controller import StatisticController
+ 
 from domain.categories.controller import CategoryController
 from domain.tags.controller import TagController
 from domain.orders.controller import OrderController
