@@ -11,9 +11,11 @@ from litestar.pagination import OffsetPagination
 from litestar.repository.filters import LimitOffset
 from domain.orders.dependencies  import provide_order_service, provide_ordered_product_service
 from domain.products.depedencies import provide_product_service
+from domain.categories.depedencies import provide_category_service
 from domain.orders.services import OrderService, OrderProductService
 from domain.products.services import ProductService
 from domain.users.services import UserService
+from domain.categories.services import CategoryService
 from domain.statistics import urls
 from domain.users.guards import requires_active_user, requires_superuser
 from litestar.repository.filters import CollectionFilter
@@ -30,7 +32,8 @@ class StatisticController(Controller):
     dependencies = {
         "product_service": Provide(provide_product_service),
         "order_service": Provide(provide_order_service),
-        "order_product_service":Provide(provide_ordered_product_service)
+        "order_product_service":Provide(provide_ordered_product_service),
+        "category_service":Provide(provide_category_service)
     }
     guards = [requires_active_user, requires_superuser]
 
@@ -124,4 +127,55 @@ class StatisticController(Controller):
             "trend": order_trend,
             "total_count": order_total,
             "date_range": {"start_date": start_date.isoformat(), "end_date": filter_date.isoformat()},
+        }
+
+
+
+    @get(path=urls.CATEGORY_WISE_REVENUE)
+    async def get_category_wise_revenue(
+        self,
+        product_service: ProductService,
+        category_service: CategoryService,
+        order_product_service: OrderProductService,
+        filter_date: datetime | None = None,
+    ) -> dict[str, Any]:
+        """Category-wise revenue"""
+
+        if filter_date is None:
+            filter_date = datetime.now(timezone.utc)
+
+        start_date = datetime(filter_date.year, filter_date.month, 1, tzinfo=timezone.utc)
+        next_month = filter_date.replace(month=(filter_date.month % 12) + 1, day=1)
+        end_date = next_month - timedelta(days=1)
+
+        logger.info(f"Filtered date range: {start_date} to {end_date}")
+ 
+        categories, category_total = await category_service.list_and_count()
+ 
+        category_trend = []
+        for category in categories:
+      
+            revenue = 0.0
+            quantity = 0
+            for product in category.products:
+                order_items, _ = await order_product_service.list_and_count(
+                    OrderProductModel.product_id == product.id,
+                    OrderProductModel.created_at >= start_date,
+                    OrderProductModel.created_at <= end_date,
+                )
+                # Calculate revenue for this product
+                for item in order_items:
+                    revenue += int(item.quantity) * float(product.price)
+                    quantity += int(item.quantity)
+ 
+            category_trend.append({
+                "name": category.name,
+                "revenue": revenue,
+                "sold":quantity
+            })
+ 
+        return {
+            "trend": category_trend,
+            "total_count": category_total,
+            "date_range": {"start_date": start_date.isoformat(), "end_date": end_date.isoformat()},
         }
