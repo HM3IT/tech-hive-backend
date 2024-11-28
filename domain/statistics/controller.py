@@ -163,9 +163,8 @@ class StatisticController(Controller):
                     OrderProductModel.created_at >= start_date,
                     OrderProductModel.created_at <= end_date,
                 )
-                # Calculate revenue for this product
                 for item in order_items:
-                    revenue += int(item.quantity) * float(product.price)
+                    revenue += int(item.quantity) * float(item.price_at_order)
                     quantity += int(item.quantity)
  
             category_trend.append({
@@ -179,3 +178,4 @@ class StatisticController(Controller):
             "total_count": category_total,
             "date_range": {"start_date": start_date.isoformat(), "end_date": end_date.isoformat()},
         }
+
