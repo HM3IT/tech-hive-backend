@@ -179,3 +179,55 @@ class StatisticController(Controller):
             "date_range": {"start_date": start_date.isoformat(), "end_date": end_date.isoformat()},
         }
 
+
+    @get(path=urls.TREND_PRODUCT_MONTHLY)
+    async def get_trending_products(
+        self,
+        product_service: ProductService,
+        order_product_service: OrderProductService,
+        filter_date: datetime | None = None,
+    ) -> dict[str, Any]:
+        """Trending Products"""
+
+        if filter_date is None:
+            filter_date = datetime.now(timezone.utc)
+
+ 
+        start_date = datetime(filter_date.year, filter_date.month, 1, tzinfo=timezone.utc)
+        next_month = filter_date.replace(month=(filter_date.month % 12) + 1, day=1)
+        end_date = next_month - timedelta(days=1)
+
+        logger.info(f"Filtered date range: {start_date} to {end_date}")
+
+ 
+        order_items, _ = await order_product_service.list_and_count(
+            OrderProductModel.created_at >= start_date,
+            OrderProductModel.created_at <= end_date,
+        )
+
+        trend_products = {}
+ 
+        for item in order_items:
+            if item.product_id not in trend_products:
+                product_obj = await product_service.get(item_id=item.product_id)
+                trend_products[item.product_id] = {
+                    "id": product_obj.id,
+                    "name": product_obj.name,
+                    "image_url": product_obj.image_url,
+                    "revenue": 0.0,
+                    "sold": 0,
+                    "stock":product_obj.stock
+                }
+
+    
+            trend_products[item.product_id]["revenue"] += float(item.price_at_order) * int(item.quantity)
+            trend_products[item.product_id]["sold"] += int(item.quantity)
+
+        # Sorting products by quantity sold and return only the top 10 products
+        sorted_trend_products = sorted(trend_products.values(), key=lambda x:x["sold"], reverse=True)[:10]
+
+        return {
+            "trend": sorted_trend_products,
+            "total_count": len(sorted_trend_products),
+            "date_range": {"start_date": start_date.isoformat(), "end_date": end_date.isoformat()},
+        }
