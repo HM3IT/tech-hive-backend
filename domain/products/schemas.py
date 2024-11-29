@@ -1,9 +1,7 @@
 from uuid import UUID 
 from domain.lib.schema import CamelizedBaseStruct
 from pydantic import BaseModel
-from pydantic import BaseModel
-from pydantic import field_validator
-from litestar.datastructures import UploadFile
+from datetime import datetime
 
 class ProductCreate(CamelizedBaseStruct):
     name:str
@@ -87,3 +85,18 @@ class TypesenseProductSchema(BaseModel):
 class SemanticSearch(BaseModel):
     query: str
  
+
+class ProductReview(CamelizedBaseStruct):
+    user_id: UUID
+    product_id: UUID
+    rating: float
+    review_text: str
+    created_at: datetime
+    updated_at:datetime
+
+
+class ProductReviewCreate(CamelizedBaseStruct):
+    product_id: UUID
+    rating: float
+    review_text: str
+   

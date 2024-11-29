@@ -3,10 +3,10 @@ from __future__ import annotations
 import os
 import typesense
 from logging import getLogger
-from typing import Any, TYPE_CHECKING, Type
-from db.models import Product
-from domain.products.schemas import TypesenseProductSchema, Product as ProductSchema
-from domain.repositories import ProductRepository
+from typing import Any, TYPE_CHECKING
+from db.models import Product, ProductReview
+from domain.products.schemas import TypesenseProductSchema
+from domain.repositories import ProductRepository, ProductReviewRepository
 from advanced_alchemy.service import SQLAlchemyAsyncRepositoryService
 from dotenv import load_dotenv
 from litestar.exceptions import HTTPException
@@ -146,3 +146,10 @@ class ProductService(SQLAlchemyAsyncRepositoryService[Product]):
             raise HTTPException(detail=f"Failed to retrieve {document_id}'s embedding")
             
  
+class ProductReviewService(SQLAlchemyAsyncRepositoryService[ProductReview]):
+
+    repository_type = ProductReviewRepository
+
+    def __init__(self, **repo_kwargs: Any) -> None:
+        self.repository: ProductReviewRepository = self.repository_type(**repo_kwargs)
+        self.model_type = self.repository.model_type

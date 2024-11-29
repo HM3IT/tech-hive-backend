@@ -13,3 +13,9 @@ PRODUCT_EMBEDDING = "/api/products/embedding"
 PRODUCT_IMG_UPLOAD = "/api/files/upload"
 PRODUCT_IMG_UPDATE = "/api/files/update/{id:uuid}"
 GET_IMG = "/api/files/{image_name:str}"
+
+
+PRODUCT_REVIEW_LIST = "/api/reviews/list"
+PRODUCT_REVIEW_ADD = "/api/reviews/add"
+PRODUCT_REVIEW_REMOVE = "/api/reviews/delete"
+PRODUCT_REVIEW_DETAIL = "/api/reviews/detail/{product_id:uuid}"

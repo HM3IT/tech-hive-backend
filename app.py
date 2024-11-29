@@ -13,7 +13,7 @@ from litestar.contrib.sqlalchemy.plugins import SQLAlchemyInitPlugin
 from domain.users.guards import oauth2_auth
 from domain.users.dependencies import provide_user_service
 from domain.users.controllers import UserController, AccessController
-from domain.products.controller import ProductController
+from domain.products.controller import ProductController, ProductReviewController
 from domain.statistics.controller import StatisticController
  
 from domain.categories.controller import CategoryController
@@ -48,7 +48,7 @@ cors_config = CORSConfig(allow_origins=["*"])
 
 app = Litestar(
     debug=True,
-    route_handlers=[UserController, AccessController, CategoryController, TagController, ProductController, OrderController, StatisticController],
+    route_handlers=[UserController, AccessController, CategoryController, TagController, ProductController, OrderController, StatisticController, ProductReviewController],
     dependencies=dependencies,
     on_startup=[on_startup],
     cors_config=cors_config,

@@ -20,21 +20,22 @@ from litestar.enums import RequestEncodingType
 from litestar.exceptions import HTTPException
 from litestar.controller import Controller
 from litestar.di import Provide
-from litestar.pagination import OffsetPagination
-from litestar.repository.filters import LimitOffset
 
-from domain.products.depedencies import provide_product_service
+from litestar.pagination import OffsetPagination
+from litestar.repository.filters import LimitOffset, CollectionFilter
+
+from domain.tags.schemas import ProductTag
+from domain.tags.services import TagService, ProductTagService
 from domain.tags.depedencies import provide_tag_service, provide_product_tag_service
 
-from domain.tags.services import TagService, ProductTagService
-from domain.products.services import ProductService
-
 from domain.products import urls
-
-from domain.products.schemas import ProductCreate, ProductUpdate, Product, ProductDetail, SemanticSearch
-from domain.tags.schemas import ProductTag
+from domain.products.services import ProductService, ProductReviewService
+from domain.products.depedencies import provide_product_service, provide_product_review_service
+from domain.products.schemas import ProductCreate, ProductUpdate, Product, ProductDetail, SemanticSearch, ProductReview, ProductReviewCreate
 
 from domain.users.guards import requires_active_user, requires_superuser
+
+from db.models import User
  
 load_dotenv()
 
@@ -443,3 +444,74 @@ class ProductController(Controller):
             logger.error(f"Error occurred: {e}")
             return Response(status_code=500, content={"error": f"Internal Server Error: {e}"})
 
+
+class ProductReviewController(Controller):
+    """ProductReview CRUD"""
+    tags = ["ProductReview"]
+    dependencies = {
+        "product_service": Provide(provide_product_service),
+        "product_review_service": Provide(provide_product_review_service),
+    }
+
+    @get(path=urls.PRODUCT_REVIEW_LIST, guards=[requires_active_user])
+    async def list_product_review(
+        self,
+        product_review_service: ProductReviewService,
+        limit_offset: LimitOffset,
+    ) -> OffsetPagination[ProductReview]:
+        """List Reviews of Products."""
+        results, total = await product_review_service.list_and_count(limit_offset)
+
+        filters = [limit_offset]
+ 
+        return product_review_service.to_schema(data=results, total=total, schema_type=ProductReview, filters=filters)
+
+
+    @get(path=urls.PRODUCT_REVIEW_DETAIL, guards=[requires_active_user])
+    async def get_product_reviews(
+        self,
+        product_review_service: ProductReviewService,
+        limit_offset: LimitOffset,
+        product_id:UUID
+    ) -> OffsetPagination[ProductReview]:
+        """List Reviews of Products."""
+        filters = [limit_offset, CollectionFilter("product_id", [product_id])]
+        results, total = await product_review_service.list_and_count(*filters)
+
+        filters = [limit_offset]
+ 
+        return product_review_service.to_schema(data=results, total=total, schema_type=ProductReview, filters=filters)
+
+    @post(path=urls.PRODUCT_REVIEW_ADD, guards=[requires_superuser, requires_active_user])
+    async def create_product_review(
+        self,
+        product_review_service: ProductReviewService,
+        data: ProductReviewCreate,
+        current_user: User
+    ) -> ProductReview:
+  
+        """Create a new Product Review."""
+        review = data.to_dict()
+        review.update({"user_id": current_user.id})
+        review_obj = await product_review_service.create(review)
+ 
+        return product_review_service.to_schema(data=review_obj, schema_type=ProductReview)
+
+
+    @delete(path=urls.PRODUCT_REVIEW_REMOVE, guards=[requires_superuser, requires_active_user])
+    async def delete_product_review(
+        self,
+        product_review_service: ProductReviewService,
+        review_id: Annotated[
+                    UUID,
+            Parameter(
+                title="User ID",
+                description="The user to retrieve.",
+            ),
+        ],
+    ) -> None:
+  
+        """Create a new Product Review."""
+    
+        await product_review_service.delete(item_id=review_id)
+ 
