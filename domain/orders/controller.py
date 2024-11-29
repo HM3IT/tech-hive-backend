@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Annotated, Any
+from typing import Annotated, Any, Optional
 from litestar.params import Dependency, Parameter
 from litestar import get, post, patch
 from litestar.exceptions import HTTPException
@@ -104,10 +104,15 @@ class OrderController(Controller):
         order_product_service:OrderProductService,
         # limit_offset: LimitOffset,
         filters: Annotated[CollectionFilter, Dependency(skip_validation=True)] = None,
+        user_id: Optional[UUID] = None
     ) -> OffsetPagination[Order]:
         """List orders."""
         filters = filters or []
-        results, total = await order_service.list_and_count(*filters)
+        if user_id:
+     
+            results, total = await order_service.list_and_count(CollectionFilter("user_id", [user_id]))
+        else:
+            results, total = await order_service.list_and_count(*filters)
 
         return order_service.to_schema(data=results, total=total, schema_type=Order, filters=filters)
 
@@ -128,7 +133,6 @@ class OrderController(Controller):
         results, total = await order_service.list_and_count(*filters)
 
         return order_service.to_schema(data=results, total=total, schema_type=Order, filters=filters)
-
 
 
     @get(path=urls.ORDER_DETAIL)

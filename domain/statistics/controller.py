@@ -1,5 +1,5 @@
 from __future__ import annotations
-
+from datetime import date
 from datetime import datetime, timedelta, timezone
 from typing import Annotated, Any
 from litestar.params import Dependency, Parameter
@@ -45,24 +45,26 @@ class StatisticController(Controller):
         order_service: OrderService,
         user_service:UserService,
         filters: Annotated[CollectionFilter, Dependency(skip_validation=True)] = None,
-        filter_date:datetime | None = None,
+        filter_date:date | None = None,
     ) -> dict[str, float]:
         """Monthly Revenue Statistics"""
         if filter_date is None:
-            filter_date = datetime.now(timezone.utc)
-        
-        start_date = datetime(filter_date.year, filter_date.month, 1, tzinfo=timezone.utc)
- 
-        next_month = filter_date.replace(month=filter_date.month % 12 + 1, day=1)
-        end_date = next_month - timedelta(days=1)
+            filter_date = datetime.now(timezone.utc).date()
 
+        start_date = datetime(filter_date.year, filter_date.month, 1, tzinfo=timezone.utc)
+
+        if filter_date.month == 12:
+            next_month = datetime(filter_date.year + 1, 1, 1, tzinfo=timezone.utc)
+        else:
+            next_month = datetime(filter_date.year, filter_date.month + 1, 1, tzinfo=timezone.utc)
+
+        end_date = next_month - timedelta(seconds=1)
  
         filters = [
             OrderModel.created_at >= start_date,
             OrderModel.created_at <= end_date,
         ]
 
-  
         orders, order_total = await order_service.list_and_count(*filters)
         products, product_total = await product_service.list_and_count()
         users, user_total = await user_service.list_and_count(*filters)
@@ -93,21 +95,26 @@ class StatisticController(Controller):
         product_service: ProductService,
         order_service: OrderService,
         user_service:UserService,
-        filter_date:datetime | None = None,
+        filter_date:date | None = None,
     ) -> dict[str, Any]:
         """Weekly Order Trend"""
  
         if filter_date is None:
-            filter_date = datetime.now(timezone.utc)
-  
-        start_date = filter_date - timedelta(days=6)  
+            filter_date = datetime.now(timezone.utc).date()
 
+       
+        week_start = filter_date - timedelta(days=filter_date.weekday())  
+        week_end = week_start + timedelta(days=6)   
+
+  
+        start_date = datetime(week_start.year, week_start.month, week_start.day, tzinfo=timezone.utc)
+        end_date = datetime(week_end.year, week_end.month, week_end.day, 23, 59, 59, tzinfo=timezone.utc)
  
-        logger.info(f"Weekly range: {start_date} to {filter_date}")
+        logger.info(f"Weekly range: {start_date} to {end_date}")
  
         filters = [
             OrderModel.created_at >= start_date,
-            OrderModel.created_at <= filter_date,
+            OrderModel.created_at <= end_date,
         ]
         orders, order_total = await order_service.list_and_count(*filters)
  
@@ -137,16 +144,21 @@ class StatisticController(Controller):
         product_service: ProductService,
         category_service: CategoryService,
         order_product_service: OrderProductService,
-        filter_date: datetime | None = None,
+        filter_date: date | None = None,
     ) -> dict[str, Any]:
         """Category-wise revenue"""
 
         if filter_date is None:
-            filter_date = datetime.now(timezone.utc)
+            filter_date = datetime.now(timezone.utc).date()
 
         start_date = datetime(filter_date.year, filter_date.month, 1, tzinfo=timezone.utc)
-        next_month = filter_date.replace(month=(filter_date.month % 12) + 1, day=1)
-        end_date = next_month - timedelta(days=1)
+
+        if filter_date.month == 12:
+            next_month = datetime(filter_date.year + 1, 1, 1, tzinfo=timezone.utc)
+        else:
+            next_month = datetime(filter_date.year, filter_date.month + 1, 1, tzinfo=timezone.utc)
+
+        end_date = next_month - timedelta(seconds=1)
 
         logger.info(f"Filtered date range: {start_date} to {end_date}")
  
@@ -185,21 +197,24 @@ class StatisticController(Controller):
         self,
         product_service: ProductService,
         order_product_service: OrderProductService,
-        filter_date: datetime | None = None,
+        filter_date: date | None = None,
     ) -> dict[str, Any]:
         """Trending Products"""
 
         if filter_date is None:
-            filter_date = datetime.now(timezone.utc)
+            filter_date = datetime.now(timezone.utc).date()
 
- 
         start_date = datetime(filter_date.year, filter_date.month, 1, tzinfo=timezone.utc)
-        next_month = filter_date.replace(month=(filter_date.month % 12) + 1, day=1)
-        end_date = next_month - timedelta(days=1)
+
+        if filter_date.month == 12:
+            next_month = datetime(filter_date.year + 1, 1, 1, tzinfo=timezone.utc)
+        else:
+            next_month = datetime(filter_date.year, filter_date.month + 1, 1, tzinfo=timezone.utc)
+    
+        end_date = next_month - timedelta(seconds=1)
 
         logger.info(f"Filtered date range: {start_date} to {end_date}")
 
- 
         order_items, _ = await order_product_service.list_and_count(
             OrderProductModel.created_at >= start_date,
             OrderProductModel.created_at <= end_date,
@@ -224,7 +239,7 @@ class StatisticController(Controller):
             trend_products[item.product_id]["sold"] += int(item.quantity)
 
         # Sorting products by quantity sold and return only the top 10 products
-        sorted_trend_products = sorted(trend_products.values(), key=lambda x:x["sold"], reverse=True)[:10]
+        sorted_trend_products = sorted(trend_products.values(), key=lambda x:x["sold"], reverse=True)[:5]
 
         return {
             "trend": sorted_trend_products,
