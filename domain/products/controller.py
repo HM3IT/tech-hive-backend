@@ -171,8 +171,11 @@ class ProductController(Controller):
 
         overall_rating = 0
         total_reviews = len(db_obj.product_reviews)
-        total_rating = sum(review.rating for review in db_obj.product_reviews)
-        overall_rating = int(total_rating) / float(total_reviews)
+        if total_reviews > 0:
+            total_rating = sum(review.rating for review in db_obj.product_reviews)
+            overall_rating = int(total_rating) / float(total_reviews)
+        else:
+            overall_rating = 0
     
         return ProductDetail(
             id = db_obj.id,

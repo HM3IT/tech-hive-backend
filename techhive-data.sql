@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 17.1 (Debian 17.1-1.pgdg120+1)
--- Dumped by pg_dump version 17.1 (Debian 17.1-1.pgdg120+1)
+-- Dumped from database version 17.2 (Debian 17.2-1.pgdg120+1)
+-- Dumped by pg_dump version 17.2 (Debian 17.2-1.pgdg120+1)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -21,6 +21,13 @@ SET row_security = off;
 -- Data for Name: alembic_version; Type: TABLE DATA; Schema: public; Owner: heinmin2maw
 --
 
+COPY public.alembic_version (version_num) FROM stdin;
+c36a71058b96
+271112da93cb
+50d208a010f8
+eea8065ae907
+\.
+
 
 --
 -- Data for Name: category; Type: TABLE DATA; Schema: public; Owner: heinmin2maw
@@ -36,14 +43,29 @@ Storage	Solid-State Drives (SSDs) and Hard Disk Drives (HDDs) are two common typ
 \.
 
 
+--
+-- Data for Name: user; Type: TABLE DATA; Schema: public; Owner: heinmin2maw
+--
+
+COPY public."user" (name, email, address, hashed_password, image_url, user_type, user_level, total_spent, is_active, is_superuser, is_verified, verified_at, id, sa_orm_sentinel, created_at, updated_at) FROM stdin;
+sl	admin1@gmail.com	\N	$argon2id$v=19$m=65536,t=3,p=4$gFCK8Z6zNqaU0rr3HoPwXg$Tbo0cq+OU4rgZALXZeC1fRPK9345FW0+q51O2LpCZ9s	\N	ADMIN	CLASSIC	0.00	t	t	f	\N	6bbbe785-630c-485c-a7f8-6739048654b5	\N	2024-11-20 16:21:58.182941+00	2024-11-20 16:21:58.182947+00
+test17	test17@gmail.com	\N	$argon2id$v=19$m=65536,t=3,p=4$0jpHCEHonXMupTTGuJfyvg$LKsP6eY5HI/m8kM++CtquuOt9IhA88mWJATbLbz33BU	\N	CUSTOMER	CLASSIC	0.00	t	f	f	\N	21174e20-c7d7-4cd0-aff7-091a2d3df966	\N	2024-11-20 16:29:46.367414+00	2024-11-20 16:29:46.367457+00
+Hein Min Min Maw	admin@gmail.com	Bangkok Bangkapi	$argon2id$v=19$m=65536,t=3,p=4$wXgPgbC21ro3JuTc+39PKQ$vTQrpTR/iNkVylS0LrSEh8al29lSiAGe5nQeOoDvqSM	images/bf6aeef4-c4fb-4b69-ab80-049d001e8c9b_profile.jpg	ADMIN	CLASSIC	0.00	t	t	f	\N	1954fe2f-53ec-402e-b707-8f1097fd29b9	\N	2024-11-12 08:15:10.864226+00	2024-11-26 05:02:19.205291+00
+\.
+
 
 --
 -- Data for Name: order; Type: TABLE DATA; Schema: public; Owner: heinmin2maw
 --
 
-COPY public."order" (user_id, address, phone, total_price, status, id, sa_orm_sentinel, created_at, updated_at, expected_arrived_date) FROM stdin;
-6bbbe785-630c-485c-a7f8-6739048654b5			921.85	PENDING	b09ea695-522f-4e0d-a787-eaf5c3cb3c0a	\N	2024-11-20 16:51:40.190695+00	2024-11-20 16:51:40.241665+00	\N
-6bbbe785-630c-485c-a7f8-6739048654b5			1699.00	PENDING	15b3ecde-7723-449a-a9f7-968554bcc454	\N	2024-11-20 19:44:10.859925+00	2024-11-20 19:44:10.998457+00	\N
+COPY public."order" (user_id, address, phone, total_price, status, expected_arrived_date, handler_id, id, sa_orm_sentinel, created_at, updated_at) FROM stdin;
+1954fe2f-53ec-402e-b707-8f1097fd29b9			541.05	CONFIRM	2024-11-27T00:00:00	6bbbe785-630c-485c-a7f8-6739048654b5	c1b655f4-74d4-4035-b733-84a3840d91e8	\N	2024-11-25 17:08:19.906436+00	2024-11-26 04:19:12.278336+00
+6bbbe785-630c-485c-a7f8-6739048654b5			921.85	DELIVERED	2024-11-25T00:00:00	1954fe2f-53ec-402e-b707-8f1097fd29b9	b09ea695-522f-4e0d-a787-eaf5c3cb3c0a	\N	2024-11-20 16:51:40.190695+00	2024-11-26 05:16:00.116571+00
+6bbbe785-630c-485c-a7f8-6739048654b5			1699.00	DELIVERED	2024-11-28T00:00:00	1954fe2f-53ec-402e-b707-8f1097fd29b9	15b3ecde-7723-449a-a9f7-968554bcc454	\N	2024-11-20 19:44:10.859925+00	2024-11-27 14:08:13.554217+00
+1954fe2f-53ec-402e-b707-8f1097fd29b9	Bangkok Bangkapi	0915715124	2398.74	CONFIRM	2024-12-04T00:00:00	1954fe2f-53ec-402e-b707-8f1097fd29b9	a7e6a638-c959-45e2-bcea-6a4fbab9ae8b	\N	2024-11-27 14:22:32.63245+00	2024-11-27 14:22:52.342663+00
+1954fe2f-53ec-402e-b707-8f1097fd29b9	Bangkok Bangkapi	9125415	203.21	PENDING		\N	01e5638b-309e-4091-9ca0-2d70195155d8	\N	2024-11-28 04:58:26.608723+00	2024-11-28 04:58:26.627206+00
+1954fe2f-53ec-402e-b707-8f1097fd29b9	Yangon Lantan	097713571	94.40	PENDING		\N	0a57be0a-1173-46fc-a163-62cc456e5711	\N	2024-11-28 05:06:43.219265+00	2024-11-28 05:06:43.224563+00
+1954fe2f-53ec-402e-b707-8f1097fd29b9	Bangkok Bangkapi	091512521	155.12	CONFIRM	2024-11-30T00:00:00	1954fe2f-53ec-402e-b707-8f1097fd29b9	2b5ca45a-4120-4750-a9b3-d76f80ad8590	\N	2024-11-27 14:23:29.489891+00	2024-11-28 05:09:41.406198+00
 \.
 
 
@@ -52,6 +74,10 @@ COPY public."order" (user_id, address, phone, total_price, status, id, sa_orm_se
 --
 
 COPY public.product (name, description, price, discount_percent, image_url, sub_image_url, brand, stock, sold, category_id, id, sa_orm_sentinel) FROM stdin;
+TUF Gaming VG27AQ1A 27"	A 27" QHD (2560x1440) IPS monitor with 170Hz refresh rate, 1ms response time, Adaptive-Sync, and ELMB for smooth, tear-free gaming.	205.00	15.00	images/21c2fd30-6654-48c6-b599-cdec4ed74ec2_tuf-27-main.jpg	{"first": "images/6acd3b54-e771-4c91-8835-e3ec9e06daf4_tuf-27-sub1.jpg", "third": "images/c6341764-3068-4511-b262-638f54a179b7_tuf-27-sub3.jpg", "second": "images/fbc0e866-1c90-4e72-ba8a-a72af51988a7_tuf-27-sub2.jpg"}	ASUS	5	0	6247c285-912a-4f4a-8225-88076c2c3505	bbb48a6d-3f96-4ab2-b8f4-59aa649847c4	\N
+Trident Z RGB	Premium RGB-lit RAM designed for gaming and creative builds, offering high speeds and sleek aesthetics.	129.00	10.00	images/f20195aa-43c0-4988-8364-26579de21e82_gskill-DDR4-RAM-main.jpg	{"first": "images/e1cfe776-bdc7-4f6a-867d-6aea4407d28e_gskill-DDR4_RAM-sub1.jpg", "third": "images/11ffbdba-da27-4958-9e24-f08f438ed313_gskill-DDR4-RAM-sub4.jpg", "fourth": "images/bbed6acf-a9a9-48f7-b450-0a79e79a9c59_gskill-RAM-DDR4-sub2.jpg", "second": "images/fe18ffcb-b177-4857-a514-fe63436735b6_gskill-DDR4-RAM-sub3.jpg"}	G.Skill	1	0	d2bbfc43-29c5-44c0-84f2-25a2edc4b1e5	289d67ed-8c1f-43fd-924d-6355a100e543	\N
+HyperX Fury\t	Reliable and affordable RAM for general use, gaming, and multitasking, with basic overclocking support.	64.00	0.00	images/95d9e0d1-a68f-4317-9bfb-401ec4b0a7ce_kingston_RAM_DDR4_main.jpg	{"first": "images/30419188-e6a3-4412-966d-db3afab86c05_hyperx-DDR4-RAM-sub2.jpg", "third": "images/4577e1df-5b92-42c5-8553-cd8ea18f217a_kingston-DDR4-RAM-sub1.jpg", "second": "images/06c6c0c7-ff29-4bc1-b0fc-47a93b55ab00_hyperx-DDR4-RAM-sub3.jpg"}	Kingston\t	10	0	d2bbfc43-29c5-44c0-84f2-25a2edc4b1e5	d84ed9d3-c685-4ac2-8ef8-3027e449c49f	\N
+Ballistix	Gaming-focused RAM with low latency and great performance for gaming and productivity tasks.	88.00	2.00	images/6eb17946-dd75-48b2-88e0-52a440571731_Ballistix-Memoria-RAM-DDR4-main.jpg	{"first": "images/cc99ec9a-9f4b-4dc0-baa9-fc1b3d705736_balli-DDR4-RAM-sub1.jpg", "third": "images/3e0d8193-a172-49b2-865e-6c7b1e302296_ballis-DDR4-RAM-sub2.jpg", "second": "images/c2b5ad28-3560-4d33-a521-a0b829889bf4_balli-DDR4-RAM-sub3.jpg"}	Crucial	20	0	d2bbfc43-29c5-44c0-84f2-25a2edc4b1e5	207f63f4-99f8-4096-b0a2-861199fcdcf2	\N
 Intel Pentium Gold G7400	Budget-friendly, entry-level CPUs with 2 cores, suitable for basic tasks like web browsing and office applications.	80.00	0.00	images/64f8fb62-ac63-43a7-bfda-7f043c3c1301_intel_cpu_pen_gold.jpg	{}	Intel	50	\N	ef296e7a-7f6d-4b97-bd1f-ab881ba98ce4	222256e1-51ee-47dc-8371-dfdcd6bbd4ae	\N
 AMD Ryzen 5	A mid-range processor with up to 6 cores and 12 threads, built on the Zen architecture. Ryzen 5 processors are considered to be some of the fastest available, and are good for gaming and other intense workloads.	540.00	4.00	images/d87953d2-9499-4126-82f3-d51942744728_cpu_ryzen.jpg	{}	AMD	20	\N	ef296e7a-7f6d-4b97-bd1f-ab881ba98ce4	2e2a77d5-2681-47b4-b483-bf9b11a81997	\N
 ASRock X570 Phantom Gaming X	High-performance motherboard for Ryzen 3000 and 5000 series (AM4), supports PCIe 4.0 and advanced cooling features, ideal for enthusiasts.	400.00	5.00	images/852bf6be-8958-4568-a685-c7c76832a404_ASRock X570 Phantom Gaming X_motherboard_AMD.jpg	{}	AMD	10	\N	da4be9a4-891d-439a-ade4-aa719f92fe69	e184a2a3-7fec-4234-ba40-f2553dc34d3a	\N
@@ -72,9 +98,6 @@ Ryzen 9 7950X	High-end performance for gaming, content creation, and multitaskin
 Ryzen Threadripper PRO 5995WX	High-performance CPUs for professional workloads like 3D rendering, simulations, video editing, and data analysis. Designed for workstations and high-performance desktops (HEDT).	6550.00	30.00	images/e2602253-47bf-4ec6-b595-a4a8f0ebe5a9_cpu_threadripper.jpg	{}	AMD	25	\N	ef296e7a-7f6d-4b97-bd1f-ab881ba98ce4	14bba65a-51a9-4d14-9f6f-bfdbb60bd95e	\N
 X299 Motherboard	High-performance motherboard for Intel Core X-series (HEDT) processors, ideal for workstations and content creators.	300.00	4.00	images/67f47ebd-130e-4a1a-9403-78cc5e484e08_prime_x299_intel_motherboard.jpg	{}	Asus	5	\N	da4be9a4-891d-439a-ade4-aa719f92fe69	1a9eb66d-78aa-43d9-99cf-b1631327754a	\N
 Vengeance LPX	High-performance RAM with heat spreaders, optimized for gaming, overclocking, and heavy multitasking.	60.00	12.00	images/c7ced6c9-4df1-4199-823b-373fe503f2ce_Vengeance LPX_RAM_main1(DDR4).jpg	{"first": "images/e81e7f8d-cfe3-4d8f-a145-bcc2432222ce_Corsair-VengeanceRAM(DDR4_sub2).jpg", "third": "images/f7a98d27-8b1a-4303-893a-17965e019c05_ven_RAM_DDR4_sub3.jpg", "fourth": "images/cd1c2c86-3950-43ff-982b-9954b6f9f94d_VENG_LPX_BLK_02(DDR4_sub1).jpg", "second": "images/3bcd05d0-ae1f-4d9c-ad10-bded122c356b_RAM-DDR4-sub4.jpg"}	Corsair	12	0	d2bbfc43-29c5-44c0-84f2-25a2edc4b1e5	c0ba1f66-d3a3-45d8-ac47-a88c40386841	\N
-Trident Z RGB	Premium RGB-lit RAM designed for gaming and creative builds, offering high speeds and sleek aesthetics.	129.00	10.00	images/f20195aa-43c0-4988-8364-26579de21e82_gskill-DDR4-RAM-main.jpg	{"first": "images/e1cfe776-bdc7-4f6a-867d-6aea4407d28e_gskill-DDR4_RAM-sub1.jpg", "third": "images/11ffbdba-da27-4958-9e24-f08f438ed313_gskill-DDR4-RAM-sub4.jpg", "fourth": "images/bbed6acf-a9a9-48f7-b450-0a79e79a9c59_gskill-RAM-DDR4-sub2.jpg", "second": "images/fe18ffcb-b177-4857-a514-fe63436735b6_gskill-DDR4-RAM-sub3.jpg"}	G.Skill	1	0	d2bbfc43-29c5-44c0-84f2-25a2edc4b1e5	289d67ed-8c1f-43fd-924d-6355a100e543	\N
-HyperX Fury\t	Reliable and affordable RAM for general use, gaming, and multitasking, with basic overclocking support.	64.00	0.00	images/95d9e0d1-a68f-4317-9bfb-401ec4b0a7ce_kingston_RAM_DDR4_main.jpg	{"first": "images/30419188-e6a3-4412-966d-db3afab86c05_hyperx-DDR4-RAM-sub2.jpg", "third": "images/4577e1df-5b92-42c5-8553-cd8ea18f217a_kingston-DDR4-RAM-sub1.jpg", "second": "images/06c6c0c7-ff29-4bc1-b0fc-47a93b55ab00_hyperx-DDR4-RAM-sub3.jpg"}	Kingston\t	10	0	d2bbfc43-29c5-44c0-84f2-25a2edc4b1e5	d84ed9d3-c685-4ac2-8ef8-3027e449c49f	\N
-Ballistix	Gaming-focused RAM with low latency and great performance for gaming and productivity tasks.	88.00	2.00	images/6eb17946-dd75-48b2-88e0-52a440571731_Ballistix-Memoria-RAM-DDR4-main.jpg	{"first": "images/cc99ec9a-9f4b-4dc0-baa9-fc1b3d705736_balli-DDR4-RAM-sub1.jpg", "third": "images/3e0d8193-a172-49b2-865e-6c7b1e302296_ballis-DDR4-RAM-sub2.jpg", "second": "images/c2b5ad28-3560-4d33-a521-a0b829889bf4_balli-DDR4-RAM-sub3.jpg"}	Crucial	20	0	d2bbfc43-29c5-44c0-84f2-25a2edc4b1e5	207f63f4-99f8-4096-b0a2-861199fcdcf2	\N
 T-Force Delta RGB	Stylish RAM with vibrant RGB lighting and overclocking capabilities, ideal for gaming setups.	120.00	15.00	images/fa2acc3f-a216-461e-bf58-324cad8f1858_T-force-DDR4-RAM-main.jpg	{"first": "images/3be035d6-16b4-492b-9c82-6c043dfead5e_t-force-DDR4-RAM-sub2.jpg", "third": "images/324dbf08-5012-4143-b7be-8bcd9796fc97_t-force-RAM-DDR4-sub3.jpg", "second": "images/070233cd-aa0c-4272-a318-1d6d6cb45f9a_t-force-RAM-DDR4-sub1.jpg"}	TEAMGROUP	15	0	d2bbfc43-29c5-44c0-84f2-25a2edc4b1e5	8e75f1c6-4eeb-498a-a997-2d503627c4f0	\N
 XPG Lancer DDR5	High-speed DDR5 RAM designed for gaming and overclocking, featuring a sleek design and excellent performance.	145.00	12.00	images/e1f94684-c731-4e92-b8d0-edcdc273d4c5_xpg-RAM-DDR5-main.jpg	{"first": "images/2c07ba69-5a26-4a76-99eb-5126cad96a67_xpg-DDR5-RAM-sub1.jpg", "third": "images/97893811-dd04-4ee2-a935-6f0cfe2ed0fa_xpg-DDR5-RAM-sub3.jpg", "second": "images/2c0e6474-810a-4f5a-bc72-89ce54345230_xpg-DDR5-RAM-sub2.jpg"}	ADATA	29	0	d2bbfc43-29c5-44c0-84f2-25a2edc4b1e5	239cfa8a-a8e5-436c-bf30-51973d25faac	\N
 Viper Venom DDR5	Performance-focused DDR5 RAM for gaming and productivity, with support for overclocking and enhanced cooling.	150.00	12.00	images/9ddf2d52-e84d-48b7-9877-9204e46ea3b8_viper-DDR5-RAM-sub2.jpg	{"first": "images/5dc60d76-b40f-48d5-9f15-8518c65e68a9_viper-DDR5-RAM-main.jpg", "third": "images/f2fadf57-b2a6-40fd-8da2-0b030b31d4b5_viper-DDR5-RAM-sub3.jpg", "second": "images/4466dcf9-e48c-435f-87f8-9e60902ac9ca_viper-DDR5-RAM-sub1.jpg"}	Patriot	23	0	d2bbfc43-29c5-44c0-84f2-25a2edc4b1e5	f0cf2859-a712-499a-83bd-a947d6b7d6c1	\N
@@ -88,14 +111,13 @@ UltraGear 24GN600-B	A 24" IPS Full HD monitor with 144Hz refresh rate, 1ms respo
 S2722Q	A 27" 4K UHD (3840x2160) IPS monitor with HDR, 60Hz refresh rate, USB-C connectivity, and a sleek design. Perfect for productivity and media consumption.	176.00	10.00	images/1e213a61-a9e9-48a5-856b-190399a92714_Dell-main.jpg	{"first": "images/89f84484-2ce8-4f87-9b69-4f4d6517cae7_dell-sub1.jpg", "third": "images/0313cac3-db63-4f00-b414-bd3d3b487038_dell-sub3.jpg", "second": "images/db24a354-ab99-4da5-946f-af281d796d8a_dell-sub2.jpg"}	Dell	20	0	6247c285-912a-4f4a-8225-88076c2c3505	f517729b-9753-4173-ae0f-03d74a68543b	\N
 Odyssey G7	A 27" QHD (2560x1440) curved monitor with a 1000R curvature, 240Hz refresh rate, 1ms response time, HDR600, and G-Sync/FreeSync compatibility for immersive gaming.	207.00	3.00	images/5d232db2-c8d1-4f87-b59f-914b3ed3fe16_samsung-curve-main.jpg	{"first": "images/b19e4835-636c-407d-a644-041d66598a9c_samsung-curve-sub1.jpg", "third": "images/f0269e5d-ff7f-4c4b-84f6-92ecddc0649e_samsung-sub2-curve.jpg", "second": "images/36a986e6-aa11-4a93-8ee0-07762ae62a02_samsung-curve-sub3.jpg"}	Samsung	20	0	6247c285-912a-4f4a-8225-88076c2c3505	8eb93b0f-0c61-44eb-b0e6-1bf518dd314e	\N
 Optix MAG342CQR	A 34" UWQHD (3440x1440) ultra-wide curved monitor with a 1500R curvature, 144Hz refresh rate, HDR support, and Adaptive-Sync for cinematic gaming and productivity.	180.00	30.00	images/56d6fa7e-82a0-4dfc-8a83-11a7797c1762_msi-curve-main.jpg	{"first": "images/2518e765-4bdb-40c3-a839-a3469d2d1445_msi-curve-sub1.jpg", "third": "images/2a8b285f-b893-4e1b-a39c-cea3e92ae0b9_msi-curve-sub3.jpg", "second": "images/f02b08c3-b61c-44fb-b6a6-ded1450bfb1e_msi-curve-sub2.jpg"}	MSI	9	0	6247c285-912a-4f4a-8225-88076c2c3505	68e8c5aa-d3b4-45b1-8fbd-beaf1be3c355	\N
-TUF Gaming VG27AQ1A 27"	A 27" QHD (2560x1440) IPS monitor with 170Hz refresh rate, 1ms response time, Adaptive-Sync, and ELMB for smooth, tear-free gaming.	205.00	15.00	images/21c2fd30-6654-48c6-b599-cdec4ed74ec2_tuf-27-main.jpg	{"first": "images/6acd3b54-e771-4c91-8835-e3ec9e06daf4_tuf-27-sub1.jpg", "third": "images/c6341764-3068-4511-b262-638f54a179b7_tuf-27-sub3.jpg", "second": "images/fbc0e866-1c90-4e72-ba8a-a72af51988a7_tuf-27-sub2.jpg"}	ASUS	5	0	6247c285-912a-4f4a-8225-88076c2c3505	bbb48a6d-3f96-4ab2-b8f4-59aa649847c4	\N
 Corsair RM750e (2023)	A Fully Modular PSU offers efficient, low-noise power with modular cabling, allowing you to connect only the necessary cables. Intel ATX 3.0 certification ensures compatibility with PCIe Gen 5 and resilience to power spikes. Its 120mm rifle bearing fan operates quietly even under full load, while 105°C-rated capacitors provide reliable, steady performance. Additionally, Modern Standby compatibility enables fast wake times and enhanced efficiency at low loads.	93.00	15.00	images/67855a60-ceca-4003-9732-78ca2c44f29e_power-supply-rm750-main.jpg	{"first": "images/7d4cea2d-a9fb-4473-96bf-36cc8103a160_power-supply-RM-sub1.jpg", "third": "images/5f03e9d1-ffc3-4c55-9aa4-a5cd0d9d7918_power-supply-rm-sub3.jpg", "second": "images/a5c68dd0-39fc-4d78-a26a-bbfd60263ad6_power-supply-rm-sub2.jpg"}	Corsair	40	0	55500662-ecd2-43a4-9a06-27bd37df953e	003d93c6-6ccd-4fc4-86e0-412fadae6325	\N
 MAG A750GL PCIE5	MSI MAG A750GL PCIE 5 & ATX 3.0 Gaming Power Supply - Full Modular - 80 Plus Gold Certified 750W - Compact Size - ATX PSU 	79.00	5.00	images/6ababb3a-54c7-43f0-8bd5-26650095bd8c_power-sup-msi-main.jpg	{"first": "images/5192977e-eebd-4681-9ad8-4eead9728053_power-sup-msi-sub2.jpg", "third": "images/5c634f38-59ce-4187-9b9a-2935e4fc7cd0_power-supp-msi-sub3.jpg", "second": "images/e7ca87b6-cc71-4f44-95f1-378e3c3eb34a_power-supply-msi-sub1.jpg"}	MSI	11	0	55500662-ecd2-43a4-9a06-27bd37df953e	cd53da27-674a-4293-a8e8-67e988924249	\N
 GX2 80+ Gold 600W Power	The Certified Gold PSU offers 80 Plus Gold efficiency up to 90%, optimized for C6/C7 States. It features non-modular connectors, including 24-pin main power, 4+4-pin ATX 12V, multiple SATA and PCIe options, and more. A dynamic bearing 120mm fan ensures ultra-quiet operation and effective cooling, while high-quality capacitors provide exceptional reliability and performance. With low ripple noise, it ensures power stability, keeping critical components like GPUs reliable. The single +12V rail design supports modern GPU demands, and industry-grade protections (OPP, OVP, UVP, SCP) safeguard your system. It operates within a 47Hz-63Hz frequency range for versatility.	50.00	12.00	images/8ac30330-97e3-44c3-98ec-e5a8a5031c47_ps-t-take-main.jpg	{"first": "images/606c9b7a-3241-470a-b6ec-df2ca1b6be68_ps-t-take-sub1.jpg", "third": "images/f1a2c3c9-ff0e-4737-88d8-cb506b2e6a4e_ps-t-take-sub3.jpg", "second": "images/79d995b1-afbc-476c-9a56-4dda755b9f61_ps-t-take-sub2.jpg"}	Thermaltake	34	0	55500662-ecd2-43a4-9a06-27bd37df953e	ae1f4b4b-a70c-4c53-8254-486ffe3e2494	\N
-Supernova	EVGA 1000 GT, 80 Plus Gold 1000W, Fully Modular, Eco Mode with FDB Fan, 100% Japanese Capacitors, 10 Year Warranty, Includes Power ON Self Tester, Compact 150mm Size, Power Supply 220-GT-1000-X1	118.00	20.00	images/922d7ca8-f04a-4519-a32a-c53c011d6b11_evga-main.jpg	{"first": "images/c8c6d6d8-1c44-4250-8587-b9767f000336_evga-ps-sub1.jpg", "third": "images/ad8f05d7-7517-49f9-ad22-266ed18e55c6_ps-evga-sub3.jpg", "second": "images/6a4857cf-f1e8-4802-a316-e00c1341be7a_ps-evga-sub2.jpg"}	EVGA	22	0	55500662-ecd2-43a4-9a06-27bd37df953e	dd943fc0-3692-4136-8165-0d261cf001e3	\N
 gamemax	GAMEMAX 850W 80 Plus Gold Power Supply, ATX 3.0 & PCIE 5.0 Ready, 100% Japanese Capacitors, Fully Modular, ARGB SYNC, RGB-850 Pro	90.00	9.00	images/b4639183-d317-4ece-9c83-f7355d2bf453_ps-gamemax-main.jpg	{"first": "images/32f4c9fc-3db0-45a8-a433-51156faf76d9_ps-gamemax-sub1.jpg", "third": "images/723bb2d3-807d-4b5e-967f-7a828c5dc73c_ps-gamemax-sub3.jpg", "second": "images/95d2e9d2-6afc-4113-8e38-bc020f6c8221_ps-gamemax-sub2.jpg"}	GAMEMAX	15	0	55500662-ecd2-43a4-9a06-27bd37df953e	242d0cec-97ef-42f3-bb84-aaa4271f5901	\N
 NZXT C850 Gold ATX 3.1	NZXT C850 Gold ATX 3.1 - Fully Modular Low-Noise PC Gaming Power Supply - 850 Watts - 80 Plus Gold - 12V-2x6 Connector - Zero Fan Mode - 100% Japanese Capacitors - Black	117.00	7.00	images/93e5fa2a-70b2-4bb0-8ecf-41ddc51f16c2_ps-next-main.jpg	{"first": "images/3c537b5a-4801-4216-a3bf-095439f25ed5_ps-next-sub1.jpg", "third": "images/c0d9e9e4-2d11-42d7-acb4-4012428829a5_ps-next-sub3.jpg", "second": "images/97b0cace-50d7-439d-8bee-f8567a967ba4_ps-next-sub2.jpg"}	NZXT	10	0	55500662-ecd2-43a4-9a06-27bd37df953e	834f1366-4b5e-4c55-b1e7-f895e9e12cac	\N
 MWE Gold 850 V2	Cooler Master MWE Gold 850 V2 Full Modular, 850W, 80+ Gold Efficiency, 2 EPS Connectors, 120mm HDB Fan, Semi-fanless Operation	69.00	12.00	images/cf34dbc9-81bc-4899-a54e-1cbf930a93e9_ps-coolermaster-main.jpg	{"first": "images/a2c5db10-48fd-45a8-97a7-11969882d922_ps-coolermaster-sub1.jpg", "third": "images/5e4346ee-0e5b-4895-8ac9-f65d52a52b0a_ps-coolermaster-sub3.jpg", "second": "images/26975a49-9946-4b3b-a546-42659fc92268_ps-coolermaster-sub2.jpg"}	Cooler Master	45	0	55500662-ecd2-43a4-9a06-27bd37df953e	555c6d2a-0daa-4183-9af3-6c6ff1e69e77	\N
+Supernova	EVGA 1000 GT, 80 Plus Gold 1000W, Fully Modular, Eco Mode with FDB Fan, 100% Japanese Capacitors, 10 Year Warranty, Includes Power ON Self Tester, Compact 150mm Size, Power Supply 220-GT-1000-X1	118.00	20.00	images/922d7ca8-f04a-4519-a32a-c53c011d6b11_evga-main.jpg	{"first": "images/c8c6d6d8-1c44-4250-8587-b9767f000336_evga-ps-sub1.jpg", "third": "images/ad8f05d7-7517-49f9-ad22-266ed18e55c6_ps-evga-sub3.jpg", "second": "images/6a4857cf-f1e8-4802-a316-e00c1341be7a_ps-evga-sub2.jpg"}	EVGA	22	0	55500662-ecd2-43a4-9a06-27bd37df953e	dd943fc0-3692-4136-8165-0d261cf001e3	\N
 \.
 
 
@@ -104,6 +126,13 @@ MWE Gold 850 V2	Cooler Master MWE Gold 850 V2 Full Modular, 850W, 80+ Gold Effic
 --
 
 COPY public.order_product (product_id, order_id, quantity, price_at_order, discount_percent_at_order, id, sa_orm_sentinel, created_at, updated_at) FROM stdin;
+dd943fc0-3692-4136-8165-0d261cf001e3	a7e6a638-c959-45e2-bcea-6a4fbab9ae8b	2	118.00	20.00	0c4727c2-5689-4441-9dca-5c894e021a3d	0	2024-11-27 14:22:32.642654+00	2024-11-27 14:22:32.646247+00
+68e8c5aa-d3b4-45b1-8fbd-beaf1be3c355	a7e6a638-c959-45e2-bcea-6a4fbab9ae8b	3	180.00	30.00	2f5f795c-de73-4ab0-90fb-26fbb701a9a7	9	2024-11-27 14:22:32.642781+00	2024-11-27 14:22:32.646249+00
+834f1366-4b5e-4c55-b1e7-f895e9e12cac	a7e6a638-c959-45e2-bcea-6a4fbab9ae8b	1	117.00	7.00	441e4d37-2aac-4a78-bf21-af73607c5603	6	2024-11-27 14:22:32.642767+00	2024-11-27 14:22:32.646256+00
+2953a7d5-29a2-43d5-8819-1b66e6d93229	a7e6a638-c959-45e2-bcea-6a4fbab9ae8b	1	690.00	10.00	586df727-d0df-4af6-9439-4b3fd1363e38	5	2024-11-27 14:22:32.642762+00	2024-11-27 14:22:32.646252+00
+555c6d2a-0daa-4183-9af3-6c6ff1e69e77	a7e6a638-c959-45e2-bcea-6a4fbab9ae8b	2	69.00	12.00	72cbbb2b-0466-4824-8bd8-e2b688bbc934	1	2024-11-27 14:22:32.642664+00	2024-11-27 14:22:32.646258+00
+8eb93b0f-0c61-44eb-b0e6-1bf518dd314e	a7e6a638-c959-45e2-bcea-6a4fbab9ae8b	1	207.00	3.00	91dd42b0-b116-4600-9b90-e3df0455c60c	8	2024-11-27 14:22:32.642777+00	2024-11-27 14:22:32.646254+00
+ddc0dade-0582-434d-91f6-675600c075c7	a7e6a638-c959-45e2-bcea-6a4fbab9ae8b	1	220.00	0.00	a579b050-9ea1-4ce9-9e2e-f754ae1bbe14	4	2024-11-27 14:22:32.642757+00	2024-11-27 14:22:32.646237+00
 b0a07d18-151a-4a9f-852d-feaaf2546d4c	b09ea695-522f-4e0d-a787-eaf5c3cb3c0a	2	129.00	5.00	01639f83-fe65-47ea-8a9f-0f0f958e519c	0	2024-11-20 16:51:40.22662+00	2024-11-20 16:51:40.241649+00
 1aa2097a-25b2-4c29-9513-6677f5af9bb5	b09ea695-522f-4e0d-a787-eaf5c3cb3c0a	1	200.00	5.00	020df7f3-76d5-40e8-9f6d-2ce13c21f80e	2	2024-11-20 16:51:40.226632+00	2024-11-20 16:51:40.241531+00
 f0cf2859-a712-499a-83bd-a947d6b7d6c1	b09ea695-522f-4e0d-a787-eaf5c3cb3c0a	1	150.00	12.00	be210aec-584e-40c2-b376-2b824697655d	4	2024-11-20 16:51:40.226639+00	2024-11-20 16:51:40.24177+00
@@ -112,6 +141,16 @@ b0a07d18-151a-4a9f-852d-feaaf2546d4c	b09ea695-522f-4e0d-a787-eaf5c3cb3c0a	1	129.
 b233aa7e-a661-4a43-94d1-a19f3f105ab4	15b3ecde-7723-449a-a9f7-968554bcc454	2	70.00	0.00	4486eb91-f21d-4e89-ba8b-d920d38fbdb9	2	2024-11-20 19:44:10.974527+00	2024-11-20 19:44:11.001068+00
 d84ed9d3-c685-4ac2-8ef8-3027e449c49f	15b3ecde-7723-449a-a9f7-968554bcc454	20	64.00	0.00	bc09d069-8211-4409-8611-47ed0eb6baf6	0	2024-11-20 19:44:10.974516+00	2024-11-20 19:44:11.00114+00
 eaf36102-519d-4558-844f-b0b565cf4215	15b3ecde-7723-449a-a9f7-968554bcc454	2	150.00	7.00	d31a5fc5-7461-4afa-8985-39c6995b4e41	1	2024-11-20 19:44:10.974523+00	2024-11-20 19:44:11.001136+00
+4507caf7-83d7-47b1-99c2-654fca04ea94	c1b655f4-74d4-4035-b733-84a3840d91e8	3	155.00	10.00	ad8f482f-2820-4d20-9446-40d3252f8ab1	1	2024-11-25 17:08:19.912639+00	2024-11-25 17:08:19.914588+00
+b0a07d18-151a-4a9f-852d-feaaf2546d4c	c1b655f4-74d4-4035-b733-84a3840d91e8	1	129.00	5.00	f2784547-7008-43ed-a33b-62c4d7c891b7	0	2024-11-25 17:08:19.91263+00	2024-11-25 17:08:19.914601+00
+242d0cec-97ef-42f3-bb84-aaa4271f5901	a7e6a638-c959-45e2-bcea-6a4fbab9ae8b	1	90.00	9.00	be691787-07cc-4635-8c79-b865b3c6a9a6	7	2024-11-27 14:22:32.642771+00	2024-11-27 14:22:32.646244+00
+1a9eb66d-78aa-43d9-99cf-b1631327754a	a7e6a638-c959-45e2-bcea-6a4fbab9ae8b	1	300.00	4.00	cad181a1-497b-4405-8693-e31ac07248d0	2	2024-11-27 14:22:32.642746+00	2024-11-27 14:22:32.64626+00
+1aa2097a-25b2-4c29-9513-6677f5af9bb5	a7e6a638-c959-45e2-bcea-6a4fbab9ae8b	1	200.00	5.00	e00986c8-d646-417b-a264-e3c0afdab73a	3	2024-11-27 14:22:32.642752+00	2024-11-27 14:22:32.646262+00
+dd943fc0-3692-4136-8165-0d261cf001e3	2b5ca45a-4120-4750-a9b3-d76f80ad8590	1	118.00	20.00	1f7c8580-26a8-40ff-97b3-4ef909847db3	0	2024-11-27 14:23:29.495805+00	2024-11-27 14:23:29.499174+00
+555c6d2a-0daa-4183-9af3-6c6ff1e69e77	2b5ca45a-4120-4750-a9b3-d76f80ad8590	1	69.00	12.00	a66e23f6-358c-4ba8-bcdc-c83267e2b3f5	1	2024-11-27 14:23:29.495822+00	2024-11-27 14:23:29.499152+00
+dd943fc0-3692-4136-8165-0d261cf001e3	01e5638b-309e-4091-9ca0-2d70195155d8	1	118.00	20.00	0f811e57-6b4c-438d-946a-d927fd2d1998	0	2024-11-28 04:58:26.623512+00	2024-11-28 04:58:26.627215+00
+834f1366-4b5e-4c55-b1e7-f895e9e12cac	01e5638b-309e-4091-9ca0-2d70195155d8	1	117.00	7.00	5017c06e-c47a-4742-8f20-ec6741ff4270	1	2024-11-28 04:58:26.623534+00	2024-11-28 04:58:26.627184+00
+dd943fc0-3692-4136-8165-0d261cf001e3	0a57be0a-1173-46fc-a163-62cc456e5711	1	118.00	20.00	dc5e478c-7d85-4728-985c-2ab2bde6c897	\N	2024-11-28 05:06:43.222969+00	2024-11-28 05:06:43.22455+00
 \.
 
 
@@ -120,6 +159,38 @@ eaf36102-519d-4558-844f-b0b565cf4215	15b3ecde-7723-449a-a9f7-968554bcc454	2	150.
 --
 
 COPY public.product_review (user_id, product_id, rating, review_text, id, sa_orm_sentinel, created_at, updated_at) FROM stdin;
+1954fe2f-53ec-402e-b707-8f1097fd29b9	bbb48a6d-3f96-4ab2-b8f4-59aa649847c4	5.0	Great as expected	8fa26e74-07ac-4555-9c1a-5d8cf74db112	\N	2024-11-29 11:29:29.073336+00	2024-11-29 11:29:29.073355+00
+1954fe2f-53ec-402e-b707-8f1097fd29b9	bbb48a6d-3f96-4ab2-b8f4-59aa649847c4	4.0	Testing Review message	8478cbfa-bc55-4e51-9604-5e5935aeae85	\N	2024-11-29 14:06:29.819602+00	2024-11-29 14:06:29.819608+00
+1954fe2f-53ec-402e-b707-8f1097fd29b9	bbb48a6d-3f96-4ab2-b8f4-59aa649847c4	4.0	What a great monitor\n	fb7bafe5-0a24-43bf-aef5-b5a2858f07d0	\N	2024-11-30 03:31:51.56687+00	2024-11-30 03:31:51.566875+00
+1954fe2f-53ec-402e-b707-8f1097fd29b9	bbb48a6d-3f96-4ab2-b8f4-59aa649847c4	2.0	The product is fine but the delivery service is really bad.	be877b88-0748-47db-97fc-ebaedae6981c	\N	2024-11-30 03:34:23.066703+00	2024-11-30 03:34:23.06671+00
+1954fe2f-53ec-402e-b707-8f1097fd29b9	bbb48a6d-3f96-4ab2-b8f4-59aa649847c4	5.0	testing more review	a0baadab-81d7-4bdf-a945-8b1e064b9ee0	\N	2024-11-30 03:42:19.103673+00	2024-11-30 03:42:19.103678+00
+1954fe2f-53ec-402e-b707-8f1097fd29b9	bbb48a6d-3f96-4ab2-b8f4-59aa649847c4	4.0	testing more review	d5735085-6a9f-49dc-aa6a-415bd0af1c5d	\N	2024-11-30 03:42:25.113644+00	2024-11-30 03:42:25.113649+00
+1954fe2f-53ec-402e-b707-8f1097fd29b9	bbb48a6d-3f96-4ab2-b8f4-59aa649847c4	5.0	testing more review	d22a25b6-58f4-4d12-be3f-4738cf1459a6	\N	2024-11-30 03:42:28.082776+00	2024-11-30 03:42:28.082778+00
+1954fe2f-53ec-402e-b707-8f1097fd29b9	bbb48a6d-3f96-4ab2-b8f4-59aa649847c4	4.0	Testing last review	63ca3fac-2a11-424c-8af7-059aa7931c03	\N	2024-11-30 04:18:34.325913+00	2024-11-30 04:18:34.325916+00
+\.
+
+
+--
+-- Data for Name: tags; Type: TABLE DATA; Schema: public; Owner: heinmin2maw
+--
+
+COPY public.tags (name, description, id, sa_orm_sentinel) FROM stdin;
+New Arrival		122eb09b-ed64-438b-98d3-4d49e3bafa23	\N
+Promotion		b944712e-a506-4c7f-bb22-a19fbf33afef	\N
+Discounted		47bfc859-bfde-4e82-b23c-c633543979ef	\N
+\.
+
+
+--
+-- Data for Name: product_tags; Type: TABLE DATA; Schema: public; Owner: heinmin2maw
+--
+
+COPY public.product_tags (product_id, tag_id, id, sa_orm_sentinel) FROM stdin;
+555c6d2a-0daa-4183-9af3-6c6ff1e69e77	b944712e-a506-4c7f-bb22-a19fbf33afef	276069c5-c1e3-45d4-9803-4d2fc9fc95ad	\N
+555c6d2a-0daa-4183-9af3-6c6ff1e69e77	122eb09b-ed64-438b-98d3-4d49e3bafa23	bb111b86-0796-4e6d-8704-1c9a98178200	\N
+dd943fc0-3692-4136-8165-0d261cf001e3	b944712e-a506-4c7f-bb22-a19fbf33afef	8ca73f89-e295-48d3-9853-573a79e5184c	\N
+dd943fc0-3692-4136-8165-0d261cf001e3	122eb09b-ed64-438b-98d3-4d49e3bafa23	9c787b5a-a4df-4cc2-ae93-419ac6e7bb26	\N
+bbb48a6d-3f96-4ab2-b8f4-59aa649847c4	b944712e-a506-4c7f-bb22-a19fbf33afef	ee2c33f7-4ae7-466b-8915-f3da6bf14c7b	\N
 \.
 
 
