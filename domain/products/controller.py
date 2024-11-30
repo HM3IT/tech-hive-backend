@@ -10,7 +10,7 @@ from uuid import uuid4, UUID
 from litestar.response import File
 from logging import getLogger
 from urllib.parse import unquote
-from typing import Annotated
+from typing import Annotated, Any
 from decimal import Decimal, getcontext
 
 from litestar import get, post, delete, patch, Response
@@ -33,6 +33,7 @@ from domain.products.services import ProductService, ProductReviewService
 from domain.products.depedencies import provide_product_service, provide_product_review_service
 from domain.products.schemas import ProductCreate, ProductUpdate, Product, ProductDetail, SemanticSearch, ProductReview, ProductReviewCreate
 
+from domain.users.services import UserService
 from domain.users.guards import requires_active_user, requires_superuser
 
 from db.models import User
@@ -66,7 +67,8 @@ class ProductController(Controller):
     dependencies = {
         "product_service": Provide(provide_product_service),
         "tag_service": Provide(provide_tag_service),
-        "product_tag_service": Provide(provide_product_tag_service)
+        "product_tag_service": Provide(provide_product_tag_service),
+        "product_review_service": Provide(provide_product_review_service),
     }
 
     @get(path=urls.PRODUCT_LIST)
@@ -154,6 +156,7 @@ class ProductController(Controller):
         self,
         product_service: ProductService,
         product_tag_service:ProductTagService,
+        product_review_service:ProductReviewService,
         id: UUID = Parameter(
             title="Product ID",
             description="The Product to retrieve.",
@@ -166,12 +169,18 @@ class ProductController(Controller):
             product_tag_res = product_tag_service.to_schema(data=db_obj.product_tags, total=len(db_obj.product_tags), schema_type=ProductTag)
             product_tags = product_tag_res.items
 
+        overall_rating = 0
+        total_reviews = len(db_obj.product_reviews)
+        total_rating = sum(review.rating for review in db_obj.product_reviews)
+        overall_rating = int(total_rating) / float(total_reviews)
+    
         return ProductDetail(
             id = db_obj.id,
             name = db_obj.name,
             description = db_obj.description,
             image_url = db_obj.image_url,
             brand = db_obj.brand,
+            overall_rating = overall_rating,
             category_id =db_obj.category_id,
             price = db_obj.price,
             stock = db_obj.stock,
@@ -471,16 +480,33 @@ class ProductReviewController(Controller):
     async def get_product_reviews(
         self,
         product_review_service: ProductReviewService,
+        user_service:UserService,
         limit_offset: LimitOffset,
         product_id:UUID
-    ) -> OffsetPagination[ProductReview]:
+    ) ->dict[str, Any]:
         """List Reviews of Products."""
         filters = [limit_offset, CollectionFilter("product_id", [product_id])]
         results, total = await product_review_service.list_and_count(*filters)
 
         filters = [limit_offset]
- 
-        return product_review_service.to_schema(data=results, total=total, schema_type=ProductReview, filters=filters)
+
+        items = []
+        for reviewer in results:
+            user_obj = await user_service.get(item_id=reviewer.user_id)
+            data = {
+                "review": reviewer.review_text,
+                "rating": reviewer.rating,
+                "profileUrl": user_obj.image_url,
+                "username":    user_obj.name,
+                "createdAt": reviewer.created_at
+            }
+            items.append(data)
+        
+        return {
+            "items": items,
+            "total": total,
+            "productId": product_id
+        }
 
     @post(path=urls.PRODUCT_REVIEW_ADD, guards=[requires_superuser, requires_active_user])
     async def create_product_review(

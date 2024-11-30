@@ -57,6 +57,7 @@ class ProductDetail(CamelizedBaseStruct):
     description: str
     image_url:str
     brand:str
+    overall_rating:float
     category_id: UUID
     price: float= 0.0
     stock:int =0
