@@ -526,6 +526,7 @@ class ProductReviewController(Controller):
         self,
         product_review_service: ProductReviewService,
         user_service:UserService,
+        current_user: User,
         limit_offset: LimitOffset,
         product_id:UUID
     ) ->dict[str, Any]:
@@ -536,8 +537,11 @@ class ProductReviewController(Controller):
         paginated_reviews = sorted_reviews[limit_offset.offset : limit_offset.offset + limit_offset.limit]
 
         items = []
+        is_reviewed = False
         for reviewer in paginated_reviews:
             user_obj = await user_service.get(item_id=reviewer.user_id)
+            if current_user.id == user_obj.id:
+                is_reviewed = True
             data = {
                 "review": reviewer.review_text,
                 "rating": reviewer.rating,
@@ -550,7 +554,9 @@ class ProductReviewController(Controller):
         return {
             "items": items,
             "total": total,
-            "productId": product_id
+            "productId": product_id,
+            # This boolean field is used to enhance security by avoiding passing user id to frontend in case of user has already reviewed checking
+            "is_reviewed": is_reviewed,
         }
 
     @post(path=urls.PRODUCT_REVIEW_ADD, guards=[requires_superuser, requires_active_user])
