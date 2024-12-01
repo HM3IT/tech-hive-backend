@@ -1,6 +1,7 @@
 # Products URLS
 
 PRODUCT_LIST = "/api/products/list"
+PRODUCT_TREND = "/api/products/trend"
 PRODUCT_ADD = "/api/products/add"
 PRODUCT_UPDATE = "/api/products/update/{id:uuid}"
 PRODUCT_REMOVE = "/api/products/delete/{id:uuid}"

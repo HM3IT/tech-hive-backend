@@ -10,7 +10,7 @@ from uuid import uuid4, UUID
 from litestar.response import File
 from logging import getLogger
 from urllib.parse import unquote
-from typing import Annotated, Any
+from typing import Annotated, Any, Optional, Literal
 from decimal import Decimal, getcontext
 
 from litestar import get, post, delete, patch, Response
@@ -27,6 +27,9 @@ from litestar.repository.filters import LimitOffset, CollectionFilter
 from domain.tags.schemas import ProductTag
 from domain.tags.services import TagService, ProductTagService
 from domain.tags.depedencies import provide_tag_service, provide_product_tag_service
+
+from domain.orders.services import OrderProductService
+from domain.orders.dependencies import provide_ordered_product_service 
 
 from domain.products import urls
 from domain.products.services import ProductService, ProductReviewService
@@ -67,6 +70,7 @@ class ProductController(Controller):
     dependencies = {
         "product_service": Provide(provide_product_service),
         "tag_service": Provide(provide_tag_service),
+        "order_product_service": Provide(provide_ordered_product_service),
         "product_tag_service": Provide(provide_product_tag_service),
         "product_review_service": Provide(provide_product_review_service),
     }
@@ -78,11 +82,49 @@ class ProductController(Controller):
         limit_offset: LimitOffset,
     ) -> OffsetPagination[Product]:
         """List Products."""
+ 
         results, total = await product_service.list_and_count(limit_offset)
-
         filters = [limit_offset]
  
         return product_service.to_schema(data=results, total=total, schema_type=Product, filters=filters)
+
+
+    @get(path=urls.PRODUCT_TREND)
+    async def list_trend_products(
+        self,
+        product_service: ProductService,
+        order_product_service: OrderProductService,
+        limit_offset: LimitOffset,
+    ) -> dict[str, Any]:
+        """List Products."""
+     
+        order_items, _ = await order_product_service.list_and_count()
+        trend_products = {}
+
+        for item in order_items:
+            if item.product_id not in trend_products:
+                product_obj = await product_service.get(item_id=item.product_id)
+                trend_products[item.product_id] = {
+                    "id": product_obj.id,
+                    "name": product_obj.name,
+                    "image_url": product_obj.image_url,
+                    "description": product_obj.description,
+                    "price": product_obj.price,
+                    "sold": 0,
+                    "stock":product_obj.stock
+                }
+
+            trend_products[item.product_id]["sold"] += int(item.quantity)
+
+        # Sorting products by quantity sold and return only the top 10 products
+        sorted_trend_products = sorted(trend_products.values(), key=lambda x:x["sold"], reverse=True)[:limit_offset.limit]
+
+ 
+        return  {
+            "items":sorted_trend_products,
+            "total": limit_offset.limit
+        }
+
 
     @post(path=urls.PRODUCT_ADD, guards=[requires_superuser, requires_active_user])
     async def create_product(
@@ -427,12 +469,12 @@ class ProductController(Controller):
                     filters =  f"discountPrice:[{min_price}..{max_price}]"
             if query_str in ("None","null"):
                 query_str = "*"
-
+  
             search_param = {
                 "q": query_str,  
                 "query_by": "name, brand, categoryName, tags", 
                 "filter_by": filters, 
-                "sort_by": "productRating:desc, sold:desc",  
+                "sort_by":"productRating:desc, sold:desc" ,  
                 "page": page,
                 "per_page": limit,
                 "exclude_fields": "embedding"  
