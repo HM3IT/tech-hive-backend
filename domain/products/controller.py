@@ -530,13 +530,13 @@ class ProductReviewController(Controller):
         product_id:UUID
     ) ->dict[str, Any]:
         """List Reviews of Products."""
-        filters = [limit_offset, CollectionFilter("product_id", [product_id])]
+        filters = [CollectionFilter("product_id", [product_id])]
         results, total = await product_review_service.list_and_count(*filters)
-
-        filters = [limit_offset]
+        sorted_reviews = sorted(results, key=lambda r: r.created_at, reverse=True)
+        paginated_reviews = sorted_reviews[limit_offset.offset : limit_offset.offset + limit_offset.limit]
 
         items = []
-        for reviewer in results:
+        for reviewer in paginated_reviews:
             user_obj = await user_service.get(item_id=reviewer.user_id)
             data = {
                 "review": reviewer.review_text,
