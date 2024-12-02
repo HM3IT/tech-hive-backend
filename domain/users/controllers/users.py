@@ -4,23 +4,24 @@ from __future__ import annotations
 
 from typing import Annotated
 
-import logging
-from litestar import Controller, Request, Response, delete, get, patch, post
- 
-from litestar.params import Dependency, Parameter, Body
+from uuid import UUID
+from logging import getLogger
 
-from db.models import User as UserModel
+from litestar import Controller, Request, Response, delete, get, patch, post
+from litestar.params import Dependency, Parameter
+from litestar.repository.filters import CollectionFilter
+
 from domain.users  import urls
 from domain.users.guards import requires_active_user, requires_superuser
 from domain.users.schemas import User, UserCreate, UserUpdate
 from domain.users.services import UserService
-from db.models.enums import UserType
-from litestar.repository.filters import CollectionFilter
 
-from uuid import UUID
+from db.models import User as UserModel
+from db.models.enums import UserType
+
 from advanced_alchemy.service import OffsetPagination
 
-logger = logging.getLogger()
+logger = getLogger()
 
 class UserController(Controller):
     """User Account Controller."""
@@ -127,7 +128,7 @@ class UserController(Controller):
         if not old_password:
             return Response(content={"message":"Original Password must be included"}, status_code=401)
 
-        
+
         # Authentication check    
         user_obj = await user_service.authenticate(email=current_user.email, password= old_password)
         if not user_obj:

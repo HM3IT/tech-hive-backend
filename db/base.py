@@ -1,14 +1,17 @@
 from __future__ import annotations
 
 import os
-from advanced_alchemy.extensions.litestar.plugins.init.config.asyncio import autocommit_before_send_handler
-from litestar.contrib.sqlalchemy.plugins import AsyncSessionConfig, SQLAlchemyAsyncConfig, SQLAlchemyInitPlugin
-
 from dotenv import load_dotenv
+
 from db.models.user import UUIDAuditBase 
+
 from domain.users import urls
 from domain.products import urls as product_urls
 from domain.categories import urls as category_urls
+
+from advanced_alchemy.extensions.litestar.plugins.init.config.asyncio import autocommit_before_send_handler
+from litestar.contrib.sqlalchemy.plugins import AsyncSessionConfig, SQLAlchemyAsyncConfig, SQLAlchemyInitPlugin
+
 
 __all__ = ["sqlalchemy_config","on_startup", "AUTH_EXCLUDE_API_ROUTE"]
 

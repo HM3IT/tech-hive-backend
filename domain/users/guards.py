@@ -1,19 +1,21 @@
 from __future__ import annotations
 
 import os
-from dotenv import load_dotenv
 from typing import Any
+from dotenv import load_dotenv
+from logging import getLogger
 
-from litestar.exceptions import PermissionDeniedException
-from litestar.security.jwt import OAuth2PasswordBearerAuth
-from domain.users.dependencies import provide_user_service
 from db.models import User
 from db.base import sqlalchemy_config, AUTH_EXCLUDE_API_ROUTE
+
 from domain.users import urls
+from domain.users.dependencies import provide_user_service
+
 from litestar.connection import ASGIConnection
 from litestar.handlers.base import BaseRouteHandler
-from litestar.security.jwt import Token
-from logging import getLogger
+from litestar.exceptions import PermissionDeniedException
+from litestar.security.jwt import OAuth2PasswordBearerAuth, Token
+
 
 
 logger = getLogger()

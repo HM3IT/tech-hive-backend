@@ -1,26 +1,24 @@
 from __future__ import annotations
 
-from datetime import datetime
+from uuid import UUID
 from typing import Annotated, Any, Optional
-from litestar.params import Dependency, Parameter
 from litestar import get, post, patch
+
+from litestar.params import Dependency, Parameter
 from litestar.exceptions import HTTPException
 from litestar.controller import Controller
 from litestar.di import Provide
 from litestar.pagination import OffsetPagination
-from litestar.repository.filters import LimitOffset
-from domain.orders.dependencies  import provide_order_service, provide_ordered_product_service
-# from domain.users.dependencies import provide_user_service
-from domain.orders.services import OrderService, OrderProductService
-# from domain.users.services import UserService
+from litestar.repository.filters import LimitOffset, CollectionFilter
+
+from db.models import User, Order as OrderModel, OrderStatus
+
 from domain.orders import urls
-from domain.users.guards import requires_active_user, requires_superuser
-from litestar.repository.filters import CollectionFilter
-from db.models import User, Order as OrderModel, OrderStatus, OrderProduct as OrderProductModel
+from domain.orders.services import OrderService, OrderProductService
+from domain.orders.dependencies  import provide_order_service, provide_ordered_product_service
 from domain.orders.schemas import Order, OrderCreate, OrderProduct, OrderUpdate, OrderProductCreate, OrderDetail
 
-from uuid import UUID
-
+from domain.users.guards import requires_active_user, requires_superuser
 
 from logging import getLogger
 

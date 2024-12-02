@@ -1,18 +1,22 @@
 from __future__ import annotations
 
-from litestar import get, post, delete, patch
-from litestar.controller import Controller
-from litestar.di import Provide
-from litestar.pagination import OffsetPagination
-from litestar.params import Parameter
-from litestar.repository.filters import LimitOffset
-from domain.tags.depedencies import provide_tag_service
-from domain.tags.services import TagService
-from domain.tags import urls
-from domain.tags.schemas import Tag, TagCreate
-from domain.users.guards import requires_active_user, requires_superuser
-from logging import getLogger
 from uuid import UUID
+from logging import getLogger
+
+from litestar import get, post, patch
+from litestar.di import Provide
+from litestar.params import Parameter
+from litestar.controller import Controller
+from litestar.pagination import OffsetPagination
+from litestar.repository.filters import LimitOffset
+
+from domain.tags import urls
+from domain.tags.services import TagService
+from domain.tags.schemas import Tag, TagCreate
+from domain.tags.depedencies import provide_tag_service
+
+from domain.users.guards import requires_active_user, requires_superuser
+
 
 logger = getLogger()
 

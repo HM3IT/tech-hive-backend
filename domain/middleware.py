@@ -2,13 +2,13 @@
 
 from __future__ import annotations
 
-# import os
 import logging
+
 from litestar import Request
-# from litestar.connection import ASGIConnection
-from litestar.exceptions import NotAuthorizedException
-from litestar.middleware import AbstractMiddleware
 from litestar.types import Receive, Scope, Send
+from litestar.middleware import AbstractMiddleware
+from litestar.exceptions import NotAuthorizedException
+
 from db.base import AUTH_EXCLUDE_API_ROUTE
 from domain.users.urls import ACCOUNT_AUTH
 

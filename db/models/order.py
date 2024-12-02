@@ -1,11 +1,13 @@
-from sqlalchemy.orm import relationship, Mapped, mapped_column
-from litestar.contrib.sqlalchemy.base import UUIDAuditBase
-from sqlalchemy import ForeignKey, DECIMAL, TEXT, String
 from typing import TYPE_CHECKING
 
-from .enums import OrderStatus
 from uuid import UUID
- 
+from .enums import OrderStatus
+
+from litestar.contrib.sqlalchemy.base import UUIDAuditBase
+
+from sqlalchemy.orm import relationship, Mapped, mapped_column
+from sqlalchemy import ForeignKey, DECIMAL, TEXT, String
+
 if TYPE_CHECKING:
     from .user import User
     from .order_product import OrderProduct

@@ -3,13 +3,17 @@ from __future__ import annotations
 import os
 import typesense
 from logging import getLogger
+from dotenv import load_dotenv
 from typing import Any, TYPE_CHECKING
+
+from litestar.exceptions import HTTPException
+
 from db.models import Product, ProductReview
 from domain.products.schemas import TypesenseProductSchema
 from domain.repositories import ProductRepository, ProductReviewRepository
+
 from advanced_alchemy.service import SQLAlchemyAsyncRepositoryService
-from dotenv import load_dotenv
-from litestar.exceptions import HTTPException
+
 if TYPE_CHECKING:
     from sentence_transformers import SentenceTransformer
 

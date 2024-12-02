@@ -10,16 +10,16 @@ from litestar.config.cors import CORSConfig
 from litestar.openapi.config import OpenAPIConfig
 from litestar.contrib.sqlalchemy.plugins import SQLAlchemyInitPlugin
 
-from domain.users.guards import oauth2_auth
-from domain.users.dependencies import provide_user_service
-from domain.users.controllers import UserController, AccessController
-from domain.products.controller import ProductController, ProductReviewController
-from domain.statistics.controller import StatisticController
- 
-from domain.categories.controller import CategoryController
 from domain.tags.controller import TagController
 from domain.orders.controller import OrderController
+from domain.users.dependencies import provide_user_service
+from domain.categories.controller import CategoryController
+from domain.statistics.controller import StatisticController
+from domain.users.controllers import UserController, AccessController
+from domain.products.controller import ProductController, ProductReviewController
+ 
 from domain.middleware import AuthMiddleware
+from domain.users.guards import oauth2_auth
 
 from db.base import sqlalchemy_config, on_startup
 from db.dependencies import create_collection_dependencies, provide_user
@@ -33,9 +33,6 @@ logging.basicConfig(level=logging.DEBUG)
 openapi_config = OpenAPIConfig(
     title="My API",
     version="1.0.0",
-    # components=[oauth2_auth.openapi_components],
-    # security=[oauth2_auth.security_requirement],
-    # use_handler_docstrings=True,
 )
 dependencies = {
     "user_service": Provide(provide_user_service),

@@ -1,9 +1,8 @@
 from __future__ import annotations
 
-
-from domain.lib.schema import CamelizedBaseStruct
 from uuid import UUID 
 from datetime import datetime
+from domain.lib.schema import CamelizedBaseStruct
 
 __all__ = (
     "AccountLogin",

@@ -1,9 +1,8 @@
 from __future__ import annotations
 
+from typing import Any
 from logging import getLogger
-from typing import Any, TYPE_CHECKING
 from db.models import Order, OrderProduct
-# from domain.orders.schemas import 
 from domain.repositories import OrderRepository, OrderProductRepository
 from advanced_alchemy.service import SQLAlchemyAsyncRepositoryService
 

@@ -1,8 +1,11 @@
 from typing import TYPE_CHECKING
-from sqlalchemy.orm import Mapped, mapped_column, relationship
-from litestar.contrib.sqlalchemy.base import UUIDAuditBase
-from sqlalchemy import ForeignKey, DECIMAL, TEXT
 from uuid import UUID
+
+from litestar.contrib.sqlalchemy.base import UUIDAuditBase
+
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy import ForeignKey, DECIMAL, TEXT
+
 if TYPE_CHECKING:
     from .product import Product
  

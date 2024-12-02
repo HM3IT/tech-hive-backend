@@ -1,28 +1,31 @@
 from __future__ import annotations
 from datetime import date
-from datetime import datetime, timedelta, timezone
-from typing import Annotated, Any
-from litestar.params import Dependency, Parameter
-from litestar import get, post, patch
-from litestar.exceptions import HTTPException
-from litestar.controller import Controller
-from litestar.di import Provide
-from litestar.pagination import OffsetPagination
-from litestar.repository.filters import LimitOffset
-from domain.orders.dependencies  import provide_order_service, provide_ordered_product_service
-from domain.products.depedencies import provide_product_service
-from domain.categories.depedencies import provide_category_service
-from domain.orders.services import OrderService, OrderProductService
-from domain.products.services import ProductService
-from domain.users.services import UserService
-from domain.categories.services import CategoryService
-from domain.statistics import urls
-from domain.users.guards import requires_active_user, requires_superuser
-from litestar.repository.filters import CollectionFilter
-from db.models import User, Order as OrderModel, OrderStatus, OrderProduct as OrderProductModel, User as UserModel, Product as ProductModel
-from domain.orders.schemas import Order, OrderCreate, OrderProduct, OrderUpdate, OrderProductCreate, OrderDetail
-
 from logging import getLogger
+from typing import Annotated, Any
+from datetime import datetime, timedelta, timezone
+
+from litestar import get
+from litestar.di import Provide
+from litestar.params import Dependency
+from litestar.controller import Controller
+from litestar.repository.filters import CollectionFilter
+
+from domain.statistics import urls
+
+from domain.orders.services import OrderService, OrderProductService
+from domain.orders.dependencies  import provide_order_service, provide_ordered_product_service
+
+from domain.products.services import ProductService
+from domain.products.depedencies import provide_product_service
+
+from domain.categories.services import CategoryService
+from domain.categories.depedencies import provide_category_service
+
+from domain.users.services import UserService
+from domain.users.guards import requires_active_user, requires_superuser
+
+from db.models import Order as OrderModel, OrderProduct as OrderProductModel
+
 
 logger = getLogger()
 

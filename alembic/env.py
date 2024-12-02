@@ -1,22 +1,19 @@
 import os
-from dotenv import load_dotenv
 import asyncio
+from dotenv import load_dotenv
+from alembic import context
 from logging.config import fileConfig
 
 from sqlalchemy import pool
 from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
-from alembic import context
 
-# from litestar.contrib.sqlalchemy.base import 
 from db.models.user import UUIDAuditBase
 
 load_dotenv()  # take environment variables from.env.
 
 DATABASE_URL = os.environ.get("DATABASE_URI","")
-
-
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

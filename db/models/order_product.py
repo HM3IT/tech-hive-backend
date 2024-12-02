@@ -1,8 +1,10 @@
-from sqlalchemy.orm import Mapped, mapped_column, relationship
-from litestar.contrib.sqlalchemy.base import UUIDAuditBase
-from sqlalchemy import Integer, ForeignKey, DECIMAL, String
-from uuid import UUID
 from typing import TYPE_CHECKING
+from uuid import UUID
+
+from litestar.contrib.sqlalchemy.base import UUIDAuditBase
+
+from sqlalchemy import Integer, ForeignKey, DECIMAL
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 if TYPE_CHECKING:
     from db.models import Product

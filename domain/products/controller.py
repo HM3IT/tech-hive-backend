@@ -10,7 +10,7 @@ from uuid import uuid4, UUID
 from litestar.response import File
 from logging import getLogger
 from urllib.parse import unquote
-from typing import Annotated, Any, Optional, Literal
+from typing import Annotated, Any
 from decimal import Decimal, getcontext
 
 from litestar import get, post, delete, patch, Response
@@ -559,7 +559,7 @@ class ProductReviewController(Controller):
             "is_reviewed": is_reviewed,
         }
 
-    @post(path=urls.PRODUCT_REVIEW_ADD, guards=[requires_superuser, requires_active_user])
+    @post(path=urls.PRODUCT_REVIEW_ADD, guards=[requires_active_user])
     async def create_product_review(
         self,
         product_review_service: ProductReviewService,

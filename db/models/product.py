@@ -1,14 +1,17 @@
-from sqlalchemy.orm import relationship, Mapped, mapped_column
-from litestar.contrib.sqlalchemy.base import UUIDBase
-from sqlalchemy import String, Integer, ForeignKey, DECIMAL, TEXT
 from typing import TYPE_CHECKING
-# from uuid import UUID
-from sqlalchemy.dialects.postgresql import UUID 
+from uuid import UUID
+# from sqlalchemy.dialects.postgresql import UUID 
+
+from litestar.contrib.sqlalchemy.base import UUIDBase
+
+from sqlalchemy.orm import relationship, Mapped, mapped_column
+from sqlalchemy import String, Integer, ForeignKey, DECIMAL, TEXT
+
 if TYPE_CHECKING:
     from .category import Category
     from .product_review import ProductReview 
     from .order_product import OrderProduct
-    from .tags import Tags, ProductTags
+    from .tags import ProductTags
     
  
  

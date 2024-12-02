@@ -3,22 +3,19 @@
 from __future__ import annotations
 
 from typing import Annotated
+from logging import getLogger
 
-from advanced_alchemy.utils.text import slugify
-from litestar import Controller, Request, Response, get, post
-from litestar.di import Provide
+from litestar import Controller, Request, Response, post
 from litestar.enums import RequestEncodingType
 from litestar.params import Body
 from litestar.security.jwt import OAuth2Login
 
-from db.models import User as UserModel
 from domain.users import urls
-from domain.users.guards import oauth2_auth, requires_active_user
-from domain.users.schemas import AccountLogin, AccountRegister, User, APIAuth
+from domain.users.guards import oauth2_auth
 from domain.users.services import UserService
-import logging
+from domain.users.schemas import AccountLogin, AccountRegister, User, APIAuth
 
-logger = logging.getLogger()
+logger = getLogger()
 
 class AccessController(Controller):
     """User login and registration."""

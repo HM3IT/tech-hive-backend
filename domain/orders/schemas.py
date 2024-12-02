@@ -5,7 +5,6 @@ from domain.lib.schema import CamelizedBaseStruct
 from uuid import UUID
 
 from db.models import OrderStatus
-from domain.products.schemas import Product
 from datetime import datetime
 
 __all__ = (

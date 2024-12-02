@@ -1,9 +1,11 @@
 from __future__ import annotations
-from datetime import date
-from sqlalchemy.orm import relationship, Mapped, mapped_column
-from litestar.contrib.sqlalchemy.base import UUIDAuditBase
-from sqlalchemy import String, DECIMAL, TEXT
 from typing import TYPE_CHECKING
+from datetime import date
+
+from litestar.contrib.sqlalchemy.base import UUIDAuditBase
+
+from sqlalchemy import String, DECIMAL, TEXT
+from sqlalchemy.orm import relationship, Mapped, mapped_column
  
 from .enums import UserType, CustomerLevel
 

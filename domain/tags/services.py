@@ -5,7 +5,6 @@ from db.models import Tags, ProductTags
 from domain.repositories import TagRepository, ProductTagRepository
 from advanced_alchemy.service import SQLAlchemyAsyncRepositoryService
 
- 
     
 class TagService(SQLAlchemyAsyncRepositoryService[Tags]):
     """Handles database operations for products' Tags."""

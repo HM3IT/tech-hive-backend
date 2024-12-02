@@ -1,7 +1,7 @@
 from uuid import UUID 
-from domain.lib.schema import CamelizedBaseStruct
-from pydantic import BaseModel
 from datetime import datetime
+from pydantic import BaseModel
+from domain.lib.schema import CamelizedBaseStruct
 
 class ProductCreate(CamelizedBaseStruct):
     name:str

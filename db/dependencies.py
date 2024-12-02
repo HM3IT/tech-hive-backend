@@ -1,8 +1,10 @@
 from typing import Any
+from uuid import UUID
+
 from litestar.di import Provide
 from litestar import Request
 from litestar.params import Parameter, Dependency
-from uuid import UUID
+
 from db.models import User as UserModel
 from advanced_alchemy.filters import (
     BeforeAfter,

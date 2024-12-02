@@ -1,8 +1,9 @@
 from typing import TYPE_CHECKING, Optional
 
-from sqlalchemy.orm import relationship, Mapped, mapped_column
 from litestar.contrib.sqlalchemy.base import UUIDBase
+
 from sqlalchemy import String, Text, Float
+from sqlalchemy.orm import relationship, Mapped, mapped_column
 from sqlalchemy.dialects.postgresql import ARRAY
 
 if TYPE_CHECKING:

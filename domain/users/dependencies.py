@@ -1,13 +1,10 @@
-from typing import TYPE_CHECKING
-from sqlalchemy import select
-from sqlalchemy.orm import selectinload
 
-from db.models import Product, Order, User
-from domain.repositories import UserRepository, OrderRepository, ProductRepository
+from db.models import User
 
 from domain.users.services import UserService
-from sqlalchemy.ext.asyncio import AsyncSession
 
+from sqlalchemy.orm import selectinload
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from collections.abc import AsyncGenerator
 

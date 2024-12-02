@@ -1,12 +1,10 @@
 from sqlalchemy.orm import selectinload
+from sqlalchemy.ext.asyncio import AsyncSession
+from collections.abc import AsyncGenerator
 
 from db.models import Product, ProductReview
 from domain.products.services import ProductService, ProductReviewService
 
-from sqlalchemy.ext.asyncio import AsyncSession
-from collections.abc import AsyncGenerator
-
- 
 
 async def provide_product_service(db_session: AsyncSession) -> AsyncGenerator[ProductService, None]:
 

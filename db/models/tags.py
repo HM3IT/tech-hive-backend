@@ -1,10 +1,11 @@
 from typing import TYPE_CHECKING
-
-from sqlalchemy.orm import relationship, Mapped, mapped_column
-from litestar.contrib.sqlalchemy.base import UUIDBase
-from sqlalchemy import String, Text, ForeignKey
-
 from uuid import UUID
+
+from litestar.contrib.sqlalchemy.base import UUIDBase
+
+from sqlalchemy import String, Text, ForeignKey
+from sqlalchemy.orm import relationship, Mapped, mapped_column
+
 
 if TYPE_CHECKING:
     from .product import Product
