@@ -46,8 +46,8 @@ class ProductService(SQLAlchemyAsyncRepositoryService[Product]):
         #     product_info_embedding = embedding_model.encode(text).tolist()
         #     return [x + y for x, y in zip(product_info_embedding, product_info_embedding)]
         #     return embedding_model.encode(text).tolist()
-        # else:
-        #     return embedding_model.encode(query).tolist()
+        else:
+            return embedding_model.encode(query).tolist()
 
 
     async def bulk_insert_into_typesense(self, typesense_client: typesense.Client, products: list[TypesenseProductSchema]) ->list[dict[str, Any]]:
