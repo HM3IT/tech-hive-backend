@@ -36,10 +36,10 @@ class ProductService(SQLAlchemyAsyncRepositoryService[Product]):
     async def generate_embedding(self, embedding_model:SentenceTransformer, product: Product|None = None, query:str="") -> list[float]:
        
         if product:
-            # product_related_content_embed = product.category.context_embedding
-            # product_related_content = product.category.context_embedding
-            # if product_related_content is None:
-            #     return [0.00] # not allow to generate embedding without related content of category 
+            product_related_content_embed = product.category.context_embedding
+            product_related_content = product.category.context_embedding
+            if product_related_content is None:
+                return [0.00] # not allow to generate embedding without related content of category 
             text = f"Product Name: {product.name}, Brand: {product.brand}, Price:${product.price}, Description: {product.description}."
             # product_info_embedding = embedding_model.encode(text).tolist()
             # return [x + y for x, y in zip(product_info_embedding, product_info_embedding)]
