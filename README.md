@@ -23,29 +23,22 @@ Tech Hive is an e-commerce platform specializing in computer-related products, o
 
 ### Backend
 - **[Litestar](https://docs.litestar.dev/2/)**: Used to build robust and scalable backend services.
-- **PostgreSQL**: Database management system to handle data storage and retrieval.
-- **Alembic**: For managing database migrations.
-- **Docker**: Containers are used to ensure consistency across development, testing, and production environments.
+- **[PostgreSQL](https://www.postgresql.org/)**: Database management system to handle data storage and retrieval.
+- **[Alembic](https://alembic.sqlalchemy.org/en/latest/)**: For managing database migrations.
+- **[Docker](https://docs.docker.com/)**: Containers are used to ensure consistency across development, testing, and production environments.
 
 ---
 
 ## Getting Started
 
-### Prerequisites
-
-- **Docker**: Make sure Docker is installed and running on your machine.
-- **Python**: Version 3.12 or above.
-- **PostgreSQL**: For local development, ensure you have PostgreSQL installed, or use the provided Docker setup.
-
 ### Installation & setup
 
 1. **Clone the repository:**
    ```bash
-   git clone https://Hein_Min_square_Maw@bitbucket.org/hm3-it/e-commerce-backend.git
+   git clone https://github.com/HM3IT/tech-hive-backend.git
    cd e-commerce-backend
-
-2. **Setup**
-   Run the following command:
+   ```
+2. **Start the docker-container**
    For window user
     ```bash
     ./start.dev.sh
@@ -55,3 +48,8 @@ Tech Hive is an e-commerce platform specializing in computer-related products, o
     ```bash
     bash start.dev.sh
     ```
+
+![image](https://github.com/user-attachments/assets/c39bd119-bb33-453b-bdf2-ffc9d65c5d9d)
+
+3. **API endpoint**:
+To test the API separately from the front-end, use the [Swagger UI](http://127.0.0.1:8000/schema/swagger)
